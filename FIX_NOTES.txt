@@ -1,0 +1,6 @@
+Desktop compact-size fix
+
+- Removed the root-level zoom/133.33% width method.
+- Original containers, grid alignment, column positions and horizontal layout are preserved.
+- Only desktop typography, buttons, card heights, image heights and internal spacing are reduced.
+- Mobile/tablet rules remain unchanged.

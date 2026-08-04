@@ -1,0 +1,32 @@
+/* Styles scoped to the ReviewsSection component. */
+
+.review-summary {display: flex; justify-content: center; gap: 34px; margin: 30px 0 42px; color: var(--muted);}
+
+.review-summary strong {color: var(--ink);}
+
+.reviews-grid {display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; max-width: 1200px; margin: auto;}
+
+.review-card {background: var(--cream); border: 1px solid #ece1d1; border-radius: 16px; padding: 24px;}
+
+.review-card > span {color: var(--gold); letter-spacing: 2px;}
+
+.review-card p {min-height: 74px; line-height: 1.55; color: #3f4650;}
+
+.review-card div {display: flex; flex-direction: column;}
+
+.review-card small {color: #8a8f96; margin-top: 3px;}
+
+@media (max-width: 900px) {
+  .reviews-grid {grid-template-columns: 1fr 1fr;}
+}
+
+@media (max-width: 640px) {
+  .reviews-grid {grid-template-columns: 1fr;}
+  .review-summary {flex-wrap: wrap; gap: 14px;}
+}
+
+@media (min-width: 901px) {
+  .review-summary {margin-block: 22.5px 31.5px; font-size: 12px;}
+  .review-card {border-radius: 12px; padding: 18px;}
+  .review-card p {min-height: 55.5px; font-size: 12px;}
+}

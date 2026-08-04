@@ -1,0 +1,39 @@
+/* Styles scoped to the CityTours component. */
+
+.city-grid {display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 62px;}
+
+.city-card {position: relative; min-height: 390px; border-radius: 24px; overflow: hidden; box-shadow: var(--shadow);}
+
+.city-card:nth-child(4) {grid-column: 1;}
+
+.city-card img {width: 100%; height: 100%; object-fit: cover; transition: transform .7s ease;}
+
+.city-card:hover img {transform: scale(1.05);}
+
+.city-overlay {position: absolute; inset: 0; background: linear-gradient(0deg, rgba(8,18,31,.88), transparent 65%);}
+
+.city-content {position: absolute; left: 34px; right: 34px; bottom: 30px; color: white;}
+
+.city-content span {display: flex; gap: 8px; align-items: center; color: var(--gold-light); font-weight: 800; text-transform: uppercase; letter-spacing: 2px; font-size: 13px;}
+
+.city-content h3 {font-size: 30px; line-height: 1.15; margin: 10px 0;}
+
+.city-content p {margin: 0; font-size: 19px;}
+
+@media (max-width: 900px) {
+  .city-grid {grid-template-columns: 1fr 1fr;}
+}
+
+@media (max-width: 640px) {
+  .city-grid {grid-template-columns: 1fr;}
+  .city-card:nth-child(4) {grid-column: auto;}
+  .city-card {min-height: 340px; height: 340px;}
+}
+
+@media (min-width: 901px) {
+  .city-card {min-height: 293px; border-radius: 18px;}
+  .city-content {left: 25.5px; right: 25.5px; bottom: 22.5px;}
+  .city-content span {font-size: 9.75px; letter-spacing: 1.5px;}
+  .city-content h3 {font-size: 22.5px; margin-block: 7.5px;}
+  .city-content p {font-size: 14.25px;}
+}

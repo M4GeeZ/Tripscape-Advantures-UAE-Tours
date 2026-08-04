@@ -1,0 +1,60 @@
+/* Styles scoped to the Footer component. */
+
+.footer {background: var(--navy); color: white;}
+
+.newsletter {border-bottom: 1px solid rgba(255,255,255,.1); padding: 48px 0;}
+
+.newsletter-inner {display: flex; justify-content: space-between; align-items: center; gap: 40px;}
+
+.newsletter span {color: var(--gold-light); text-transform: uppercase; letter-spacing: 2px; font-size: 11px; font-weight: 800;}
+
+.newsletter h3 {margin: 8px 0 0; font-size: 28px; max-width: 600px;}
+
+.newsletter form {display: flex; gap: 8px; min-width: 480px;}
+
+.newsletter input {flex: 1; border-radius: 10px; border: 1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.06); color: white; padding: 0 16px; outline: 0;}
+
+.footer-grid {padding: 70px 0; display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 70px;}
+
+.footer-brand {display: flex; flex-direction: column; gap: 10px; max-width: 470px; color: rgba(255,255,255,.66);}
+
+.footer-logo {color: white; margin-bottom: 10px;}
+
+.footer-grid h4 {margin: 0 0 18px;}
+
+.footer-grid > div:not(:first-child) {display: flex; flex-direction: column; gap: 12px; color: rgba(255,255,255,.66);}
+
+.footer-grid a:hover {color: var(--gold-light);}
+
+.footer-bottom {border-top: 1px solid rgba(255,255,255,.09); padding: 22px 0; color: rgba(255,255,255,.5); font-size: 12px;}
+
+.footer-bottom .container {display: flex; justify-content: space-between; gap: 20px;}
+
+@media (max-width: 900px) {
+  .newsletter-inner {flex-direction: column; align-items: flex-start;}
+  .newsletter form {min-width: 0; width: 100%;}
+  .footer-grid {grid-template-columns: 1.5fr 1fr 1fr;}
+  .footer-grid > div:last-child {grid-column: 2;}
+}
+
+@media (max-width: 640px) {
+  .newsletter form {flex-direction: column;}
+  .newsletter input {min-height: 50px;}
+  .footer-grid {grid-template-columns: 1fr 1fr; gap: 40px;}
+  .footer-brand {grid-column: 1 / -1;}
+  .footer-grid > div:last-child {grid-column: auto;}
+  .footer-bottom .container {flex-direction: column;}
+}
+
+.footer-logo.brand-image img {width: 140px;
+  max-height: 64px;}
+
+@media (min-width: 901px) {
+  .newsletter {padding-block: 36px;}
+  .newsletter span {font-size: 8.25px;}
+  .newsletter h3 {font-size: 21px;}
+  .newsletter form {min-width: 360px;}
+  .footer-grid {padding-block: 52.5px;}
+  .footer-logo.brand-image img {width: 105px; max-height: 48px;}
+  .footer-bottom {padding-block: 16.5px; font-size: 9px;}
+}

@@ -1,0 +1,54 @@
+/* Styles scoped to the AttractionsSection component. */
+
+.attractions-section {padding-top: 90px;}
+
+.attractions-grid {display: grid; grid-template-columns: repeat(3, 1fr); gap: 34px; margin-top: 62px;}
+
+.attraction-card {background: white; border-radius: 24px; overflow: hidden; border: 1px solid var(--line);}
+
+.attraction-image {height: 300px; position: relative; overflow: hidden;}
+
+.attraction-image img {width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease;}
+
+.attraction-card:hover img {transform: scale(1.05);}
+
+.badge-row {position: absolute; top: 18px; left: 18px; display: flex; gap: 8px;}
+
+.badge-row span {border-radius: 999px; padding: 7px 12px; background: #03c653; color: white; font-weight: 800; font-size: 12px;}
+
+.badge-row span:last-child {background: #2989ff;}
+
+.attraction-body {padding: 25px;}
+
+.attraction-body h3 {font-size: 21px; margin: 0 0 20px; min-height: 58px;}
+
+.attraction-body > span {display: block; text-transform: uppercase; color: #8f949c; font-size: 12px; letter-spacing: 1px;}
+
+.attraction-body > div {display: flex; align-items: center; justify-content: space-between; color: var(--gold); margin-top: 4px;}
+
+.attraction-body strong {font-size: 23px;}
+
+.attraction-body a {display: flex; align-items: center; gap: 6px; font-weight: 800;}
+
+.center-action {display: flex; justify-content: center; margin-top: 55px;}
+
+@media (max-width: 1250px) {
+  .attractions-grid {grid-template-columns: repeat(2, 1fr);}
+}
+
+@media (max-width: 640px) {
+  .attractions-grid {grid-template-columns: 1fr;}
+}
+
+@media (min-width: 901px) {
+  .attractions-section {padding-top: 67.5px;}
+  .attraction-card {border-radius: 18px;}
+  .attraction-image {height: 225px;}
+  .badge-row {top: 13.5px; left: 13.5px; gap: 6px;}
+  .badge-row span {padding: 5.25px 9px; font-size: 9px;}
+  .attraction-body {padding: 18.75px;}
+  .attraction-body h3 {min-height: 43.5px; font-size: 15.75px; margin-bottom: 15px;}
+  .attraction-body > span {font-size: 9px;}
+  .attraction-body strong {font-size: 17.25px;}
+  .center-action {margin-top: 41.25px;}
+}

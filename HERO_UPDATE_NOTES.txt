@@ -1,0 +1,7 @@
+Hero-only update:
+- Centered first-screen composition inspired by the provided reference.
+- Smaller premium title, controls and rating line.
+- Four locally bundled 3840×2160 WebP backgrounds.
+- Crossfade loop without background zoom, blur or layout movement.
+- Navbar logo, links, search and Book Now retain their original positions.
+- No lower-page section layout was changed.

@@ -1,0 +1,63 @@
+TRIPSCAPE IMAGE AUTO-MAPPING
+============================
+
+Keep the new files inside:
+client/public/images/
+
+The project detects the actual extension automatically and maps the files by filename prefix.
+You do not need to rename JPG/PNG/WEBP files.
+
+Hero
+- imgi_2_img-01       -> Main desert hero
+- imgi_12_img-01      -> Dubai city hero
+- imgi_10_img-02      -> Premium camp hero
+
+Top tours
+- imgi_3_img-02       -> Quad bike
+- imgi_4_img-02       -> Evening BBQ seating
+- imgi_5_img-04       -> VIP setup
+- imgi_10_img-02      -> Private seating
+- imgi_7_img-02       -> Premium gate
+- imgi_8_img-02       -> Camel trekking
+- imgi_9_img-02       -> Caravanserai dinner
+
+City tours
+- imgi_11_img-02      -> Dubai / Atlantis
+- imgi_12_img-01      -> Burj Khalifa
+- imgi_13_img-02      -> Abu Dhabi
+- imgi_14_img-01      -> Six Emirates
+
+Adventures
+- imgi_15_stock-06
+- imgi_15_stock-08
+- imgi_16_stock-10
+- imgi_17_stock-12
+- imgi_18_img-02
+- imgi_19_img-02
+
+Helicopters
+- imgi_20_img-01
+- imgi_21_img-02
+- imgi_22_img-03
+- imgi_23_img-04
+
+Attractions
+- imgi_24_img-01      -> Burj attraction
+- imgi_30_img-01      -> Museum of the Future
+- imgi_26_img-02      -> Aquarium
+- imgi_27_img-01      -> Sheikh Zayed Mosque
+
+Other sections
+- imgi_28_img-01      -> Promo banner
+- imgi_14_img-01      -> About primary collage
+- imgi_13_img-02      -> About secondary image
+- imgi_30_img-01      -> Blog 1
+- imgi_31_img-05      -> Blog 2
+- imgi_32_img-04      -> Blog 3
+- imgi_1_logo-gold    -> Gold logo
+- imgi_33_logo-white  -> White logo
+
+After adding images, run:
+npm run dev
+
+The prepare:images step runs automatically before Vite and generates client/src/generatedImages.js.
