@@ -29,6 +29,8 @@ function findByPrefixes(prefixes, fallback) {
 const map = {
   logoGold: findByPrefixes(['imgi_1_logo-gold', 'logo-gold'], '/images/logo-gold.svg'),
   logoWhite: findByPrefixes(['imgi_33_logo-white', 'logo-white'], '/images/logo-white.svg'),
+  navLogoGold: findByPrefixes(['nav-logo-gold'], '/images/nav-logo-gold.png'),
+  navLogoWhite: findByPrefixes(['nav-logo-white'], '/images/nav-logo-white.png'),
 
   heroDesert: findByPrefixes(['hero-desert', 'imgi_2_img-01'], '/images/hero-desert.webp'),
   heroCity: findByPrefixes(['hero-city', 'imgi_12_img-01'], '/images/hero-city.webp'),

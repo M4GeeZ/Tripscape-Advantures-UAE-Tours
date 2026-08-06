@@ -4,35 +4,49 @@ import Navbar from '../../components/Navbar/Navbar'
 import TourCard from '../../components/TourCard/TourCard'
 import Footer from '../../components/Footer/Footer'
 import WhatsAppFloat from '../../components/WhatsAppFloat/WhatsAppFloat'
+import CallFloat from '../../components/CallFloat/CallFloat'
 import { tourCatalog, tourFilterNames } from '../../data'
+import { searchTourCatalog } from '../../utils/siteSearch'
 import './Tours.css'
 
+const getSearchParams = () => new URLSearchParams(window.location.search)
+
 const getInitialCategory = () => {
-  const value = new URLSearchParams(window.location.search).get('category')
+  const value = getSearchParams().get('category')
   return tourFilterNames.includes(value) ? value : 'All'
 }
 
+const getInitialQuery = () => getSearchParams().get('query') || ''
+const getInitialDestination = () => getSearchParams().get('destination') || 'All'
+
 export default function Tours({ menuOpen, setMenuOpen }) {
   const [activeCategory, setActiveCategory] = useState(getInitialCategory)
-  const [query, setQuery] = useState('')
+  const [query, setQuery] = useState(getInitialQuery)
+  const [destination] = useState(getInitialDestination)
 
-  const visibleTours = useMemo(() => {
-    const normalized = query.trim().toLowerCase()
-    return tourCatalog.filter((tour) => {
-      const categoryMatch = activeCategory === 'All' || tour.category === activeCategory
-      const searchMatch = !normalized || [tour.title, tour.category, tour.location, tour.description]
-        .join(' ')
-        .toLowerCase()
-        .includes(normalized)
-      return categoryMatch && searchMatch
-    })
-  }, [activeCategory, query])
+  const visibleTours = useMemo(
+    () => searchTourCatalog(tourCatalog, query, {
+      category: activeCategory,
+      destination
+    }),
+    [activeCategory, query, destination]
+  )
+
+  const showingRecommendations = visibleTours.some((tour) => tour.searchMode === 'recommended')
 
   const selectCategory = (category) => {
     setActiveCategory(category)
     const url = new URL(window.location.href)
     if (category === 'All') url.searchParams.delete('category')
     else url.searchParams.set('category', category)
+    window.history.replaceState({}, '', `${url.pathname}${url.search}`)
+  }
+
+  const updateQuery = (value) => {
+    setQuery(value)
+    const url = new URL(window.location.href)
+    if (value.trim()) url.searchParams.set('query', value.trim())
+    else url.searchParams.delete('query')
     window.history.replaceState({}, '', `${url.pathname}${url.search}`)
   }
 
@@ -53,7 +67,7 @@ export default function Tours({ menuOpen, setMenuOpen }) {
               <Search size={20} />
               <input
                 value={query}
-                onChange={(event) => setQuery(event.target.value)}
+                onChange={(event) => updateQuery(event.target.value)}
                 placeholder="Search tours, destinations or experiences..."
                 aria-label="Search tours"
               />
@@ -83,31 +97,36 @@ export default function Tours({ menuOpen, setMenuOpen }) {
           <div className="container tours-catalog-inner">
             <div className="tours-results-heading">
               <div>
-                <span>{activeCategory === 'All' ? 'Every experience' : activeCategory}</span>
-                <h2>{activeCategory === 'All' ? 'Explore our hand-picked tours.' : `Discover ${activeCategory.toLowerCase()}.`}</h2>
+                <span>
+                  {showingRecommendations
+                    ? 'Closest recommendations'
+                    : activeCategory === 'All'
+                      ? 'Every experience'
+                      : activeCategory}
+                </span>
+                <h2>
+                  {showingRecommendations
+                    ? `Experiences selected for ${query.trim() ? `“${query.trim()}”` : 'your filters'}.`
+                    : activeCategory === 'All'
+                      ? 'Explore our hand-picked tours.'
+                      : `Discover ${activeCategory.toLowerCase()}.`}
+                </h2>
               </div>
-              <p>{visibleTours.length} carefully selected experience{visibleTours.length === 1 ? '' : 's'}</p>
+              <p>
+                {visibleTours.length} carefully selected experience{visibleTours.length === 1 ? '' : 's'}
+                {destination !== 'All' && !showingRecommendations ? ` in ${destination}` : ''}
+              </p>
             </div>
 
-            {visibleTours.length > 0 ? (
-              <div className="tours-card-grid">
-                {visibleTours.map((tour) => <TourCard key={tour.id} tour={tour} />)}
-              </div>
-            ) : (
-              <div className="tours-empty-state">
-                <Search size={30} />
-                <h3>No tours matched your search.</h3>
-                <p>Try another keyword or choose a different category.</p>
-                <button type="button" className="button button-gold compact" onClick={() => { setQuery(''); selectCategory('All') }}>
-                  Show all tours
-                </button>
-              </div>
-            )}
+            <div className="tours-card-grid">
+              {visibleTours.map((tour) => <TourCard key={tour.id} tour={tour} />)}
+            </div>
           </div>
         </section>
       </main>
 
       <Footer />
+      <CallFloat />
       <WhatsAppFloat />
     </div>
   )

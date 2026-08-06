@@ -3,6 +3,7 @@ import { Mail, MapPin, MessageCircle, Phone, Send } from 'lucide-react'
 import Navbar from '../../components/Navbar/Navbar'
 import Footer from '../../components/Footer/Footer'
 import WhatsAppFloat from '../../components/WhatsAppFloat/WhatsAppFloat'
+import CallFloat from '../../components/CallFloat/CallFloat'
 import { useLuxuryReveal } from '../../hooks/useLuxuryReveal'
 import './Contact.css'
 
@@ -87,6 +88,7 @@ export default function Contact({ menuOpen, setMenuOpen }) {
         </section>
       </main>
       <Footer />
+      <CallFloat />
       <WhatsAppFloat />
     </div>
   )

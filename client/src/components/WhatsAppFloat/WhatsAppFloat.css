@@ -1,14 +1,194 @@
-/* Styles scoped to the WhatsAppFloat component. */
+.whatsapp-float {
+  position: fixed;
+  right: 28px;
+  bottom: 28px;
+  z-index: 9999;
 
-.whatsapp-float {position: fixed; right: 34px; bottom: 28px; z-index: 100; width: 70px; height: 70px; border-radius: 50%; display: grid; place-items: center; color: white; background: #1ed760; border: 8px solid rgba(30,215,96,.18); box-shadow: 0 10px 30px rgba(0,0,0,.18); background-clip: padding-box;}
+  width: 64px;
+  height: 64px;
 
-.whatsapp-float svg {width: 28px; height: 28px;}
+  display: block;
+  overflow: visible;
 
-@media (max-width: 640px) {
-  .whatsapp-float {right: 18px; bottom: 18px; width: 58px; height: 58px; border-width: 6px;}
+  color: #ffffff;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+
+  text-decoration: none;
+  box-shadow: none;
+
+  transition:
+    width 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.3s ease;
 }
 
-@media (min-width: 901px) {
-  .whatsapp-float {width: 52.5px; height: 52.5px; border-width: 6px;}
-  .whatsapp-float svg {width: 21px; height: 21px;}
+/* Real WhatsApp round icon */
+.whatsapp-float__icon {
+  position: absolute;
+  top: 50%;
+  right: 0;
+
+  width: 58px;
+  height: 58px;
+
+  display: grid;
+  place-items: center;
+
+  color: #ffffff;
+  background: #25d366;
+  border-radius: 50%;
+
+  transform: translateY(-50%) translateX(0);
+
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.24),
+    0 6px 18px rgba(37, 211, 102, 0.3);
+
+  transition:
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.whatsapp-float__icon::before {
+  content: "";
+  position: absolute;
+  inset: -7px;
+
+  border-radius: 50%;
+  background: rgba(37, 211, 102, 0.17);
+  z-index: -1;
+
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+.whatsapp-float__icon svg {
+  width: 31px;
+  height: 31px;
+  display: block;
+}
+
+/* Simple transparent text */
+.whatsapp-float__text {
+  position: absolute;
+  top: 50%;
+  right: 2px;
+
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 750;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+
+  background: transparent;
+  border: none;
+  box-shadow: none;
+
+  opacity: 0;
+  visibility: hidden;
+
+  transform: translateY(-50%) translateX(14px);
+
+  text-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.6),
+    0 1px 2px rgba(0, 0, 0, 0.5);
+
+  transition:
+    opacity 0.3s ease,
+    visibility 0s linear 0.3s,
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Hover area expands invisibly */
+.whatsapp-float:hover,
+.whatsapp-float:focus-visible {
+  width: 185px;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* Only icon moves straight towards left */
+.whatsapp-float:hover .whatsapp-float__icon,
+.whatsapp-float:focus-visible .whatsapp-float__icon {
+  transform: translateY(-50%) translateX(-121px);
+
+  background: #20c65a;
+
+  box-shadow:
+    0 14px 30px rgba(0, 0, 0, 0.27),
+    0 7px 20px rgba(37, 211, 102, 0.35);
+}
+
+.whatsapp-float:hover .whatsapp-float__icon::before,
+.whatsapp-float:focus-visible .whatsapp-float__icon::before {
+  transform: scale(1.08);
+  opacity: 0.85;
+}
+
+/* Text simply fades in */
+.whatsapp-float:hover .whatsapp-float__text,
+.whatsapp-float:focus-visible .whatsapp-float__text {
+  opacity: 1;
+  visibility: visible;
+
+  transform: translateY(-50%) translateX(0);
+
+  transition:
+    opacity 0.35s ease 0.18s,
+    visibility 0s linear 0s,
+    transform 0.42s cubic-bezier(0.22, 1, 0.36, 1) 0.12s;
+}
+
+.whatsapp-float:focus-visible {
+  outline: none;
+}
+
+.whatsapp-float:active .whatsapp-float__icon {
+  transform: translateY(-50%) translateX(-121px) scale(0.95);
+}
+
+/* Mobile par simple round icon hi rahe */
+@media (max-width: 768px) {
+  .whatsapp-float {
+    right: 18px;
+    bottom: 18px;
+    width: 56px;
+    height: 56px;
+  }
+
+  .whatsapp-float__icon {
+    width: 54px;
+    height: 54px;
+  }
+
+  .whatsapp-float__icon svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .whatsapp-float:hover,
+  .whatsapp-float:focus-visible {
+    width: 56px;
+  }
+
+  .whatsapp-float:hover .whatsapp-float__icon,
+  .whatsapp-float:focus-visible .whatsapp-float__icon {
+    transform: translateY(-50%);
+  }
+
+  .whatsapp-float__text {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .whatsapp-float,
+  .whatsapp-float__icon,
+  .whatsapp-float__text {
+    transition-duration: 0.01ms !important;
+  }
 }

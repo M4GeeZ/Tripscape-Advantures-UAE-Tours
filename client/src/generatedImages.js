@@ -3,6 +3,8 @@
 export const images = {
   "logoGold": "/images/logo-gold.svg",
   "logoWhite": "/images/logo-white.svg",
+  "navLogoGold": "/images/nav-logo-gold.png",
+  "navLogoWhite": "/images/nav-logo-white.png",
   "heroDesert": "/images/hero-desert.webp",
   "heroCity": "/images/hero-city.webp",
   "heroCamp": "/images/hero-camp.webp",

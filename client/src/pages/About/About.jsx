@@ -3,6 +3,7 @@ import { ArrowRight, CheckCircle2 } from 'lucide-react'
 import Navbar from '../../components/Navbar/Navbar'
 import Footer from '../../components/Footer/Footer'
 import WhatsAppFloat from '../../components/WhatsAppFloat/WhatsAppFloat'
+import CallFloat from '../../components/CallFloat/CallFloat'
 import { useLuxuryReveal } from '../../hooks/useLuxuryReveal'
 import { images } from '../../generatedImages'
 import './About.css'
@@ -80,7 +81,9 @@ export default function About({ menuOpen, setMenuOpen }) {
         </section>
       </main>
       <Footer />
+      <CallFloat />
       <WhatsAppFloat />
+
     </div>
   )
 }

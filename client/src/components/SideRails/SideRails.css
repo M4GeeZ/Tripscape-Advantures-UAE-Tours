@@ -1,0 +1,336 @@
+.side-rail {
+  position: fixed;
+  top: 50%;
+  z-index: 900;
+
+  width: 54px;
+  height: 410px;
+  padding: 24px 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+
+  box-sizing: border-box;
+
+  /*
+    White color + difference blending:
+    - light background par black
+    - dark background par white
+  */
+  color: #ffffff;
+
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+
+  mix-blend-mode: difference;
+  isolation: auto;
+
+  transform: translateY(-50%);
+
+  transition:
+    color 0.3s ease,
+    transform 0.3s ease;
+}
+
+/* Koi glass/capsule background nahi */
+.side-rail::before {
+  display: none;
+}
+
+/* Screen edges ke bilkul qareeb */
+.side-rail--social {
+  left: 0;
+}
+
+.side-rail--enquire {
+  right: 0;
+}
+
+/*
+  Hover par difference mode band karna zaroori hai,
+  warna gold color background ke saath blend hokar
+  incorrect color show karta hai.
+*/
+.side-rail:hover,
+.side-rail:focus-within {
+  color: #d89a32;
+  mix-blend-mode: normal;
+}
+
+/* =========================================
+   TOP AND BOTTOM VERTICAL LINES
+========================================= */
+
+.side-rail__line {
+  width: 2px;
+  height: 90px;
+
+  display: block;
+  flex: 0 0 90px;
+
+  border-radius: 999px;
+
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.92) 50%,
+    transparent 100%
+  );
+
+  box-shadow: none;
+
+  transition:
+    background 0.35s ease,
+    box-shadow 0.35s ease,
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Rail hover par lines gold */
+.side-rail:hover .side-rail__line,
+.side-rail:focus-within .side-rail__line {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    #d89a32 50%,
+    transparent 100%
+  );
+
+  box-shadow: 0 0 12px rgba(216, 154, 50, 0.25);
+}
+
+/* =========================================
+   LEFT SOCIAL ICONS
+========================================= */
+
+.side-rail__socials {
+  width: 54px;
+  min-height: 145px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.side-rail__socials a {
+  position: relative;
+
+  width: 40px;
+  height: 40px;
+
+  display: grid;
+  place-items: center;
+  flex: 0 0 40px;
+
+  /*
+    Parent rail ka color inherit karega:
+    normal state mein auto black/white,
+    hover state mein gold.
+  */
+  color: inherit;
+
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  box-shadow: none;
+
+  text-decoration: none;
+
+  transition:
+    color 0.3s ease,
+    transform 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.3s ease;
+}
+
+.side-rail__socials a::before {
+  display: none;
+}
+
+.side-rail__socials a svg {
+  position: relative;
+  z-index: 1;
+
+  width: 22px;
+  height: 22px;
+
+  color: currentColor;
+  stroke: currentColor;
+
+  transition:
+    color 0.3s ease,
+    transform 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.3s ease;
+}
+
+/* Individual icon hover animation */
+.side-rail__socials a:hover {
+  color: #d89a32;
+  transform: scale(1.18);
+  filter: drop-shadow(0 3px 7px rgba(216, 154, 50, 0.3));
+}
+
+.side-rail__socials a:hover svg {
+  transform: rotate(-7deg);
+}
+
+/* =========================================
+   RIGHT ENQUIRE NOW
+========================================= */
+
+.side-rail__enquire-link {
+  width: 54px;
+  min-height: 145px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  color: inherit;
+  background: transparent;
+
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.22em;
+
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+
+  text-shadow: none;
+
+  transition:
+    color 0.3s ease,
+    transform 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+    text-shadow 0.3s ease;
+}
+
+.side-rail__enquire-icon {
+  width: 18px;
+  height: 18px;
+
+  flex-shrink: 0;
+
+  color: currentColor;
+  stroke: currentColor;
+
+  transition:
+    color 0.3s ease,
+    transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Enquire text hover */
+.side-rail__enquire-link:hover {
+  color: #d89a32;
+
+  transform: translateX(-2px);
+
+  text-shadow:
+    0 0 10px rgba(216, 154, 50, 0.26),
+    0 2px 7px rgba(0, 0, 0, 0.15);
+}
+
+.side-rail__enquire-link:hover .side-rail__enquire-icon {
+  transform: translateY(-3px) rotate(45deg);
+}
+
+/* =========================================
+   KEYBOARD ACCESSIBILITY
+========================================= */
+
+.side-rail a:focus-visible {
+  color: #d89a32;
+
+  border-radius: 5px;
+  outline: 2px solid #d89a32;
+  outline-offset: 3px;
+}
+
+/* Focus hone par lines bhi gold */
+.side-rail:focus-within .side-rail__line {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    #d89a32 50%,
+    transparent 100%
+  );
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 1440px) {
+  .side-rail {
+    width: 50px;
+    height: 390px;
+  }
+
+  .side-rail--social {
+    left: 0;
+  }
+
+  .side-rail--enquire {
+    right: 0;
+  }
+
+  .side-rail__line {
+    height: 84px;
+    flex-basis: 84px;
+  }
+
+  .side-rail__socials {
+    width: 50px;
+  }
+
+  .side-rail__socials a {
+    width: 38px;
+    height: 38px;
+    flex-basis: 38px;
+  }
+
+  .side-rail__socials a svg {
+    width: 21px;
+    height: 21px;
+  }
+
+  .side-rail__enquire-link {
+    width: 50px;
+    font-size: 11px;
+  }
+}
+
+/* Tablet/mobile par hide */
+@media (max-width: 1100px) {
+  .side-rail {
+    display: none;
+  }
+}
+
+/* Print mein hide */
+@media print {
+  .side-rail {
+    display: none !important;
+  }
+}
+
+/* Reduced-motion accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .side-rail,
+  .side-rail *,
+  .side-rail::before {
+    transition-duration: 0.01ms !important;
+  }
+}

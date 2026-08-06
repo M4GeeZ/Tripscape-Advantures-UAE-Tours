@@ -21,7 +21,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import SupportCta from "../../components/SupportCta/SupportCta";
 import Footer from "../../components/Footer/Footer";
 import WhatsAppFloat from "../../components/WhatsAppFloat/WhatsAppFloat";
-
+import CallFloat from '../../components/CallFloat/CallFloat'
 import { useLuxuryReveal } from "../../hooks/useLuxuryReveal";
 import { images } from "../../generatedImages";
 
@@ -368,7 +368,7 @@ export default function Services({ menuOpen, setMenuOpen }) {
       </main>
 
       <Footer />
-
+      <CallFloat />
       <WhatsAppFloat />
     </div>
   );

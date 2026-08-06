@@ -4,6 +4,7 @@ import Navbar from '../../components/Navbar/Navbar'
 import PageHero from '../../components/PageHero/PageHero'
 import Footer from '../../components/Footer/Footer'
 import WhatsAppFloat from '../../components/WhatsAppFloat/WhatsAppFloat'
+import CallFloat from '../../components/CallFloat/CallFloat'
 import { useLuxuryReveal } from '../../hooks/useLuxuryReveal'
 import { images } from '../../generatedImages'
 import './Blog.css'
@@ -89,6 +90,7 @@ export default function Blog({ menuOpen, setMenuOpen }) {
         </section>
       </main>
       <Footer />
+      <CallFloat />
       <WhatsAppFloat />
     </div>
   )

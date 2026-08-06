@@ -41,7 +41,10 @@ export const cities = [
   { image: images.cityDubai, title: 'Dubai City Tour', price: 'From AED 0' },
   { image: images.cityBurj, title: 'Dubai City Tour with Burj Khalifa Visit', price: 'From AED 0' },
   { image: images.cityAbuDhabi, title: 'Abu Dhabi City Tour', price: 'From AED 0' },
-  { image: images.citySix, title: 'Six Emirates Tour', price: 'From AED 0' }
+  { image: images.citySix, title: 'Six Emirates Tour', price: 'From AED 0' },
+
+  { image: images.cityDubai, title: 'Old Dubai Heritage Tour', price: 'From AED 0' },
+  { image: images.cityAbuDhabi, title: 'Abu Dhabi Mosque & Corniche Tour', price: 'From AED 0' }
 ]
 
 export const adventures = [
@@ -58,14 +61,19 @@ export const helicopters = [
   { image: images.heliMarina, tier: 'Standard', title: 'Palm Tour', duration: '17 Min', price: 'AED 945', unit: 'Per Person', copy: 'Balanced route covering Palm highlights and coastal views.' },
   { image: images.heliVision, tier: 'Standard', title: 'Vision Tour', duration: '22 Min', price: 'AED 1,299', unit: 'Per Person', copy: 'Longer scenic flight with a fuller Dubai overview.' },
   { image: images.heliPrivate, tier: 'Premium safari', title: 'VIP Private Flight', duration: '17 Min', price: 'AED 4,725', unit: 'Per Flight', copy: 'Private setup for couples, VIP arrivals, and small groups.' },
-  { image: images.heliPremium, tier: 'Premium safari', title: 'Premium Safari Flight', duration: '40 Min', price: 'AED 11,200', unit: 'Per Flight', copy: 'Our most complete premium category with the strongest private experience.' }
+  { image: images.heliPremium, tier: 'Premium safari', title: 'Premium Safari Flight', duration: '40 Min', price: 'AED 11,200', unit: 'Per Flight', copy: 'Our most complete premium category with the strongest private experience.' },
+
+  { image: images.heliPalm, tier: 'Helicopter package', title: 'Dubai Skyline Flight', duration: '25 Min', price: 'AED 1,650', unit: 'Per Person', copy: 'An extended helicopter route covering the Palm, Marina and downtown landmarks.' }
 ]
 
 export const attractions = [
   { image: images.attractionBurj, title: 'Burj Khalifa — At the Top', price: 'AED 149' },
   { image: images.attractionMuseum, title: 'Museum of the Future', price: 'AED 149' },
   { image: images.attractionAquarium, title: 'Dubai Aquarium & Underwater Zoo', price: 'AED 99' },
-  { image: images.attractionMosque, title: 'Sheikh Zayed Grand Mosque — Guided Tour', price: 'AED 0' }
+  { image: images.attractionMosque, title: 'Sheikh Zayed Grand Mosque — Guided Tour', price: 'AED 0' },
+
+  { image: images.attractionBurj, title: 'Dubai Frame Entry Ticket', price: 'AED 69' },
+  { image: images.attractionMuseum, title: 'AYA Universe Dubai', price: 'AED 135' }
 ]
 
 export const reviews = [

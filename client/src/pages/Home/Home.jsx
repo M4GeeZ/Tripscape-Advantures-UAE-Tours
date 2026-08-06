@@ -14,6 +14,7 @@ import BlogSection from '../../components/BlogSection/BlogSection'
 import SupportCta from '../../components/SupportCta/SupportCta'
 import Footer from '../../components/Footer/Footer'
 import WhatsAppFloat from '../../components/WhatsAppFloat/WhatsAppFloat'
+import CallFloat from '../../components/CallFloat/CallFloat'
 import './Home.css'
 
 export default function Home({ menuOpen, setMenuOpen }) {
@@ -36,6 +37,7 @@ export default function Home({ menuOpen, setMenuOpen }) {
         <SupportCta />
       </main>
       <Footer />
+      <CallFloat />
       <WhatsAppFloat />
     </div>
   )

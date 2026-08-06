@@ -1,39 +1,160 @@
-import { ArrowLeft, ArrowRight, Clock, Star } from 'lucide-react'
-import { useRef } from 'react'
+import { ArrowRight, Check, Clock, Star } from 'lucide-react'
 import { tours } from '../../data'
+import { images } from '../../generatedImages'
 import SectionHeading from '../SectionHeading/SectionHeading'
 import './TourCarousel.css'
 
+const fallbackTour = {
+  image: images.adventureEvening,
+  tag: 'Desert adventure',
+  meta: 'Family',
+  title: 'Family Desert Safari & Quad Experience',
+  price: 'Contact for price'
+}
+
+const featuredImages = [
+  '/images/top-experiences/morning-desert-safari-quad-bike.png',
+  '/images/top-experiences/evening-desert-safari-bbq-dinner.png',
+  '/images/top-experiences/desert-safari-vip-setup.png',
+  '/images/top-experiences/vip-desert-safari-private-seating.png'
+]
+
+function getTourServices(title = '', index = 0) {
+  const value = title.toLowerCase()
+
+  if (index === 0 || value.includes('morning')) {
+    return [
+      'Morning hotel pickup',
+      'Dune bashing and photo stop',
+      'Guided quad bike experience'
+    ]
+  }
+
+  if (index === 1 || value.includes('evening') || value.includes('bbq')) {
+    return [
+      'Sunset dune drive',
+      'BBQ buffet dinner',
+      'Live cultural entertainment'
+    ]
+  }
+
+  if (index === 2 || value.includes('vip setup')) {
+    return [
+      'Reserved VIP seating',
+      'Premium table service',
+      'Priority camp experience'
+    ]
+  }
+
+  if (index === 3 || value.includes('private seating')) {
+    return [
+      'Private majlis seating',
+      'Dedicated service team',
+      'Premium dinner experience'
+    ]
+  }
+
+  if (value.includes('camel')) {
+    return [
+      'Guided camel experience',
+      'Scenic desert photo stops',
+      'Professional tour support'
+    ]
+  }
+
+  if (value.includes('dinner') || value.includes('caravan')) {
+    return [
+      'Desert dinner experience',
+      'Evening entertainment',
+      'Convenient return transfer'
+    ]
+  }
+
+  if (value.includes('quad') || value.includes('buggy')) {
+    return [
+      'Guided desert adventure',
+      'Safety briefing included',
+      'Professional support team'
+    ]
+  }
+
+  return [
+    'Licensed local guides',
+    'Hotel pickup options',
+    'Instant booking support'
+  ]
+}
+
 export default function TourCarousel() {
-  const trackRef = useRef(null)
-  const scroll = (direction) => trackRef.current?.scrollBy({ left: direction * 420, behavior: 'smooth' })
+  const baseTours =
+    tours.length >= 8
+      ? tours.slice(0, 8)
+      : [...tours, fallbackTour].slice(0, 8)
+
+  const displayedTours = baseTours.map((tour, index) => ({
+    ...tour,
+    image: index < featuredImages.length ? featuredImages[index] : tour.image,
+    services: getTourServices(tour.title, index)
+  }))
 
   return (
-    <section id="tours" className="section white-section overflow-hidden">
+    <section id="tours" className="section white-section">
       <div className="container">
         <div className="heading-row">
-          <SectionHeading eyebrow="Top experiences" title="Top-rated tours, hand-picked." copy="Our most-booked experiences this month — verified guides, instant confirmations, free WhatsApp re-scheduling." />
-          <div className="round-controls">
-            <button onClick={() => scroll(-1)}><ArrowLeft /></button>
-            <button onClick={() => scroll(1)}><ArrowRight /></button>
-          </div>
+          <SectionHeading
+            eyebrow="Top experiences"
+            title="Top-rated tours, hand-picked."
+            copy="Our most-booked experiences this month — verified guides, instant confirmations, free WhatsApp re-scheduling."
+          />
         </div>
-      </div>
-      <div ref={trackRef} className="horizontal-track tour-track">
-        {tours.map((tour) => (
-          <article className="tour-card" key={tour.title} data-reveal>
-            <div className="tour-image-wrap">
-              <img src={tour.image} alt={tour.title} loading="lazy" />
-              <span className="card-tag">{tour.tag}</span>
-              <span className="card-meta"><Clock size={15} />{tour.meta}</span>
-            </div>
-            <div className="tour-card-body">
-              <div className="rating"><Star size={16} fill="currentColor" /> 4.9 · 0 reviews</div>
-              <h3>{tour.title}</h3>
-              <div className="tour-card-footer"><strong>{tour.price}</strong><a href="#contact">View <ArrowRight size={16} /></a></div>
-            </div>
-          </article>
-        ))}
+
+        <div className="tour-grid">
+          {displayedTours.map((tour, index) => (
+            <article
+              className="tour-card"
+              key={`${tour.title}-${index}`}
+              data-reveal
+            >
+              <div className="tour-image-wrap">
+                <img src={tour.image} alt={tour.title} loading="lazy" />
+
+                <span className="card-tag">{tour.tag}</span>
+
+                <span className="card-meta">
+                  <Clock size={15} />
+                  {tour.meta}
+                </span>
+              </div>
+
+              <div className="tour-card-body">
+                <div className="rating">
+                  <Star size={16} fill="currentColor" />
+                  4.9 · 0 reviews
+                </div>
+
+                <h3>{tour.title}</h3>
+
+                <ul className="tour-service-points" aria-label={`${tour.title} highlights`}>
+                  {tour.services.map((service) => (
+                    <li key={service}>
+                      <Check size={14} strokeWidth={2.4} />
+                      <span>{service}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="tour-card-footer">
+                  <strong>{tour.price}</strong>
+
+                  <a href="#contact">
+                    View
+                    <ArrowRight size={16} />
+                  </a>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   )
