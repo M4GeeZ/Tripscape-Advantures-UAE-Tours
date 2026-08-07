@@ -45,10 +45,12 @@ const map = {
   tourCaravan: findByPrefixes(['imgi_9_img-02'], '/images/tour-private.webp'),
   tourPrivate: findByPrefixes(['imgi_10_img-02'], '/images/tour-private.webp'),
 
-  cityDubai: findByPrefixes(['imgi_11_img-02'], '/images/city-dubai.webp'),
-  cityBurj: findByPrefixes(['imgi_12_img-01'], '/images/city-burj.webp'),
-  cityAbuDhabi: findByPrefixes(['imgi_13_img-02'], '/images/city-abudhabi.webp'),
-  citySix: findByPrefixes(['imgi_14_img-01'], '/images/city-six.webp'),
+  cityDubai: findByPrefixes(['city-01-dubai-burj-al-arab'], '/images/city-01-dubai-burj-al-arab.webp'),
+  cityBurj: findByPrefixes(['city-02-dubai-burj-khalifa'], '/images/city-02-dubai-burj-khalifa.webp'),
+  cityAbuDhabi: findByPrefixes(['city-03-abu-dhabi'], '/images/city-03-abu-dhabi.webp'),
+  citySix: findByPrefixes(['city-04-six-emirates'], '/images/city-04-six-emirates.webp'),
+  cityOldDubai: findByPrefixes(['city-05-old-dubai'], '/images/city-05-old-dubai.webp'),
+  cityCorniche: findByPrefixes(['city-06-mosque-corniche'], '/images/city-06-mosque-corniche.webp'),
 
   adventureBuggy: findByPrefixes(['imgi_15_stock-06'], '/images/adv-buggy.webp'),
   adventureDunes: findByPrefixes(['imgi_15_stock-08'], '/images/adv-dunes.webp'),

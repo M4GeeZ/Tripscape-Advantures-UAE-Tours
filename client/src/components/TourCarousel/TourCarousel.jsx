@@ -16,7 +16,11 @@ const featuredImages = [
   '/images/top-experiences/morning-desert-safari-quad-bike.png',
   '/images/top-experiences/evening-desert-safari-bbq-dinner.png',
   '/images/top-experiences/desert-safari-vip-setup.png',
-  '/images/top-experiences/vip-desert-safari-private-seating.png'
+  '/images/top-experiences/vip-desert-safari-private-seating.png',
+  '/images/top-experiences/vip-premium-desert-safari-bbq-dinner.png',
+  '/images/top-experiences/sunrise-camel-trekking.png',
+  '/images/top-experiences/desert-safari-dinner-caravanserai.png',
+  '/images/top-experiences/family-desert-safari-quad-experience.png'
 ]
 
 function getTourServices(title = '', index = 0) {

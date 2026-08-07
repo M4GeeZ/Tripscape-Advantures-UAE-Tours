@@ -43,8 +43,8 @@ export const cities = [
   { image: images.cityAbuDhabi, title: 'Abu Dhabi City Tour', price: 'From AED 0' },
   { image: images.citySix, title: 'Six Emirates Tour', price: 'From AED 0' },
 
-  { image: images.cityDubai, title: 'Old Dubai Heritage Tour', price: 'From AED 0' },
-  { image: images.cityAbuDhabi, title: 'Abu Dhabi Mosque & Corniche Tour', price: 'From AED 0' }
+  { image: images.cityOldDubai, title: 'Old Dubai Heritage Tour', price: 'From AED 0' },
+  { image: images.cityCorniche, title: 'Abu Dhabi Mosque & Corniche Tour', price: 'From AED 0' }
 ]
 
 export const adventures = [
@@ -72,8 +72,8 @@ export const attractions = [
   { image: images.attractionAquarium, title: 'Dubai Aquarium & Underwater Zoo', price: 'AED 99' },
   { image: images.attractionMosque, title: 'Sheikh Zayed Grand Mosque — Guided Tour', price: 'AED 0' },
 
-  { image: images.attractionBurj, title: 'Dubai Frame Entry Ticket', price: 'AED 69' },
-  { image: images.attractionMuseum, title: 'AYA Universe Dubai', price: 'AED 135' }
+  { image: images.attractionFrame, title: 'Dubai Frame Entry Ticket', price: 'AED 69' },
+  { image: images.attractionAya, title: 'AYA Universe Dubai', price: 'AED 135' }
 ]
 
 export const reviews = [
