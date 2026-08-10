@@ -21,35 +21,28 @@
   grid-column: 1;
 }
 
-/* A softly blurred copy fills the card, while the real image stays fully visible. */
+/* The image itself now fills the card edge-to-edge. */
 .city-card::before {
-  content: '';
-  position: absolute;
-  inset: -18px;
-  z-index: 0;
-  background-image: var(--city-image);
-  background-size: cover;
-  background-position: center;
-  filter: blur(18px);
-  opacity: .72;
-  transform: scale(1.08);
+  display: none;
 }
 
 .city-image-shell {
   position: absolute;
   inset: 0;
   z-index: 1;
-  display: grid;
-  place-items: center;
   overflow: hidden;
-  background: rgba(8, 18, 31, .12);
+  background: var(--navy);
 }
 
 .city-card img {
+  position: absolute;
+  inset: 0;
+  display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  object-position: center;
+  max-width: none;
+  object-fit: cover;
+  object-position: center center;
   transition: transform .7s ease;
 }
 
