@@ -1,27 +1,86 @@
 import { useMemo, useRef, useState } from 'react'
-import { ArrowUpRight, Clock3 } from 'lucide-react'
+import { Clock3 } from 'lucide-react'
 import Navbar from '../../components/Navbar/Navbar'
 import PageHero from '../../components/PageHero/PageHero'
 import Footer from '../../components/Footer/Footer'
 import WhatsAppFloat from '../../components/WhatsAppFloat/WhatsAppFloat'
 import CallFloat from '../../components/CallFloat/CallFloat'
 import { useLuxuryReveal } from '../../hooks/useLuxuryReveal'
-import { images } from '../../generatedImages'
 import './Blog.css'
 
 const filters = ['All', 'Tips', 'Guides', 'Reviews', 'News', 'Destinations']
 
 const articles = [
-  { category: 'Tips', image: images.blogOne, title: 'Dubai in Summer: How to Plan a Comfortable Trip', copy: 'A practical guide to indoor attractions, tour timings and transport during Dubai summer.', time: '4 min read' },
-  { category: 'Reviews', image: images.blogTwo, title: 'Traveller Review: Why Families Choose a Private Desert Safari', copy: 'What families value most about private vehicles, flexible timings and dedicated guides.', time: '4 min read' },
-  { category: 'Destinations', image: images.blogThree, title: 'Abu Dhabi Cultural Day: Mosque, Louvre and Corniche', copy: 'A realistic one-day route covering Abu Dhabi’s essential cultural landmarks.', time: '5 min read' },
-  { category: 'Guides', image: images.tourVip, title: 'The Best Desert Safari in Dubai 2025 — Complete Guide', copy: 'Everything you need to know before booking a desert safari in Dubai — from choosing the right experience.', time: '6 min read' },
-  { category: 'News', image: images.citySix, title: 'Tripscape Adds Faster WhatsApp Booking Support', copy: 'Guests can now get itinerary, availability and pickup assistance through one support channel.', time: '3 min read' },
-  { category: 'Guides', image: images.attractionBurj, title: 'Burj Khalifa Tickets — At the Top vs Sky vs Lounge 152', copy: 'A complete comparison of all Burj Khalifa ticket types so you can choose the right experience.', time: '5 min read' },
-  { category: 'Guides', image: images.aboutSecondary, title: 'Abu Dhabi Day Trip from Dubai — Everything You Need to Know', copy: 'Planning a day trip from Dubai to Abu Dhabi? Here is exactly what to see, how to get there and how to plan.', time: '7 min read' },
-  { category: 'Tips', image: images.attractionAquarium, title: 'Dubai with Kids — 10 Best Family Activities in 2025', copy: 'Travelling to Dubai with children? Here are the best family-friendly activities that kids and parents will love.', time: '8 min read' },
-  { category: 'Tips', image: images.adventureDrive, title: 'What to Wear on a Desert Safari in Dubai', copy: 'Packing for a desert safari? Here is exactly what to wear and what to avoid for a comfortable adventure.', time: '4 min read' },
-  { category: 'Destinations', image: images.heliMarina, title: 'Dubai Marina — Complete Visitor Guide 2025', copy: 'The Dubai Marina is one of the most vibrant neighbourhoods in the city. Here is everything you need to know.', time: '6 min read' }
+  {
+    category: 'Tips',
+    image: '/images/city-02-dubai-burj-khalifa.webp',
+    title: 'Dubai in Summer: How to Plan a Comfortable Trip',
+    copy: 'A practical guide to indoor attractions, tour timings and transport during Dubai summer.',
+    time: '4 min read'
+  },
+  {
+    category: 'Reviews',
+    image: '/images/top-experiences/family-desert-safari-quad-experience.png',
+    title: 'Traveller Review: Why Families Choose a Private Desert Safari',
+    copy: 'What families value most about private vehicles, flexible timings and dedicated guides.',
+    time: '4 min read'
+  },
+  {
+    category: 'Destinations',
+    image: '/images/city-06-mosque-corniche.webp',
+    title: 'Abu Dhabi Cultural Day: Mosque, Louvre and Corniche',
+    copy: 'A realistic one-day route covering Abu Dhabi’s essential cultural landmarks.',
+    time: '5 min read'
+  },
+  {
+    category: 'Guides',
+    image: '/images/adv-dune-drive.webp',
+    title: 'The Best Desert Safari in Dubai 2025 — Complete Guide',
+    copy: 'Everything you need to know before booking a desert safari in Dubai — from choosing the right experience.',
+    time: '6 min read'
+  },
+  {
+    category: 'News',
+    image: '/images/services/18-airport-transfer.webp',
+    title: 'Tripscape Adds Faster WhatsApp Booking Support',
+    copy: 'Guests can now get itinerary, availability and pickup assistance through one support channel.',
+    time: '3 min read'
+  },
+  {
+    category: 'Guides',
+    image: '/images/attraction-card-01.jpg',
+    title: 'Burj Khalifa Tickets — At the Top vs Sky vs Lounge 152',
+    copy: 'A complete comparison of all Burj Khalifa ticket types so you can choose the right experience.',
+    time: '5 min read'
+  },
+  {
+    category: 'Guides',
+    image: '/images/city-03-abu-dhabi.webp',
+    title: 'Abu Dhabi Day Trip from Dubai — Everything You Need to Know',
+    copy: 'Planning a day trip from Dubai to Abu Dhabi? Here is exactly what to see, how to get there and how to plan.',
+    time: '7 min read'
+  },
+  {
+    category: 'Tips',
+    image: '/images/attraction-card-03.jpg',
+    title: 'Dubai with Kids — 10 Best Family Activities in 2025',
+    copy: 'Travelling to Dubai with children? Here are the best family-friendly activities that kids and parents will love.',
+    time: '8 min read'
+  },
+  {
+    category: 'Tips',
+    image: '/images/services/06-sunrise-camel-ride.webp',
+    title: 'What to Wear on a Desert Safari in Dubai',
+    copy: 'Packing for a desert safari? Here is exactly what to wear and what to avoid for a comfortable adventure.',
+    time: '4 min read'
+  },
+  {
+    category: 'Destinations',
+    image: '/images/services/11-dhow-cruise.webp',
+    title: 'Dubai Marina — Complete Visitor Guide 2025',
+    copy: 'The Dubai Marina is one of the most vibrant neighbourhoods in the city. Here is everything you need to know.',
+    time: '6 min read'
+  }
 ]
 
 export default function Blog({ menuOpen, setMenuOpen }) {
@@ -72,8 +131,13 @@ export default function Blog({ menuOpen, setMenuOpen }) {
                 data-reveal-delay={(index % 3) * .07}
               >
                 <a href="#" className="blog-lux-image-wrap" aria-label={article.title}>
-                  <img src={article.image} alt="" />
-                  <span className="blog-lux-arrow"><ArrowUpRight size={18} /></span>
+                  <img
+                    src={article.image}
+                    alt={article.title}
+                    loading={index < 3 ? 'eager' : 'lazy'}
+                    decoding="async"
+                    draggable="false"
+                  />
                 </a>
                 <div className="blog-lux-body">
                   <span className="blog-lux-tag">{article.category}</span>

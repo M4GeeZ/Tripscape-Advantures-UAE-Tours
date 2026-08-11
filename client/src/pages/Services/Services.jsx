@@ -23,131 +23,196 @@ import Footer from "../../components/Footer/Footer";
 import WhatsAppFloat from "../../components/WhatsAppFloat/WhatsAppFloat";
 import CallFloat from '../../components/CallFloat/CallFloat'
 import { useLuxuryReveal } from "../../hooks/useLuxuryReveal";
-import { images } from "../../generatedImages";
+import { tourCatalog } from "../../data";
 
 import "./Services.css";
 
-const services = [
+const featuredServices = [
   {
     title: "VIP Premium Desert Safari with BBQ",
     icon: Crown,
-    image: images.tourPrivate,
+    image: "/images/services/01-vip-premium-safari.webp",
   },
   {
     title: "Sunrise Camel Trekking",
     icon: Sun,
-    image: images.tourCamel,
+    image: "/images/services/02-sunrise-camel-trekking.webp",
   },
   {
     title: "Morning Safari with Quad Bike",
     icon: Bike,
-    image: images.tourQuad,
+    image: "/images/services/03-morning-quad-bike.webp",
   },
   {
     title: "Evening Desert Safari with BBQ Dinner",
     icon: Utensils,
-    image: images.tourCamp,
+    image: "/images/services/04-evening-safari-bbq.webp",
   },
   {
     title: "Royal Desert Safari with Dinner at Desert Fortress",
     icon: Crown,
-    image: images.tourGate,
+    image: "/images/services/05-royal-desert-fortress.webp",
   },
   {
     title: "Sunrise View Safari with Camel Ride",
     icon: Sun,
-    image: images.heroCamel,
+    image: "/images/services/06-sunrise-camel-ride.webp",
   },
   {
     title: "VIP Desert Safari with BBQ (Table Service)",
     icon: Sparkles,
-    image: images.tourVip,
+    image: "/images/services/07-vip-table-service.webp",
   },
   {
     title: "Desert Safari with Dinner at Caravanserai",
     icon: Utensils,
-    image: images.tourCaravan,
+    image: "/images/services/08-caravanserai-dinner.webp",
   },
   {
     title: "Single and Double Quad bike",
     icon: Bike,
-    image: images.adventureDouble,
+    image: "/images/services/09-single-double-quad.webp",
   },
   {
     title: "Dune Buggy Tour",
     icon: Mountain,
-    image: images.adventureBuggy,
+    image: "/images/services/10-dune-buggy.webp",
   },
   {
     title: "Dhow Cruise Marina with Dinner",
     icon: Ship,
-    image: images.heliMarina,
+    image: "/images/services/11-dhow-cruise.webp",
   },
   {
     title: "Dubai Marina Cruise with Royal Dinner",
     icon: Ship,
-    image: images.cityDubai,
+    image: "/images/services/12-marina-royal-cruise.webp",
   },
   {
     title: "City Tours",
     icon: Building2,
-    image: images.cityBurj,
+    image: "/images/services/13-city-tours.webp",
   },
   {
     title: "Helicopter Sightseeing Tour",
     icon: Plane,
-    image: images.heliPalm,
+    image: "/images/services/14-helicopter-sightseeing.webp",
   },
   {
     title: "Extreme Hot Air Balloon Ride",
     icon: Compass,
-    image: images.adventureDunes,
+    image: "/images/services/15-hot-air-balloon-landscape.webp",
   },
   {
     title: "Luxury Yacht",
     icon: Waves,
-    image: images.heliMarina,
+    image: "/images/services/16-luxury-yacht.webp",
   },
   {
     title: "Scuba Diving Experience",
     icon: Waves,
-    image: images.attractionAquarium,
+    image: "/images/services/17-scuba-diving.webp",
   },
   {
     title: "Private Airport Transfer",
     icon: Car,
-    image: images.heroCity,
+    image: "/images/services/18-airport-transfer.webp",
   },
   {
     title: "Attraction and Excursion Tickets and many more...",
     icon: Ticket,
-    image: images.attractionMuseum,
+    image: "/images/services/19-attraction-tickets.webp",
   },
 ];
 
+const extraServiceIds = [
+  1, 3, 4, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+  21, 22, 23, 24, 26, 27, 28, 29, 30, 31, 32, 33, 34,
+  35, 36, 37, 41, 42,
+];
+
+const getServiceIcon = ({ category = "", title = "" }) => {
+  const value = `${category} ${title}`.toLowerCase();
+
+  if (value.includes("quad") || value.includes("bike")) return Bike;
+  if (value.includes("buggy")) return Mountain;
+  if (value.includes("camel") || value.includes("sunrise")) return Sun;
+  if (value.includes("dinner") || value.includes("bbq") || value.includes("bedouin")) return Utensils;
+  if (value.includes("city tour") || value.includes("emirates tour")) return Map;
+  if (value.includes("burj") || value.includes("frame") || value.includes("museum")) return Building2;
+  if (value.includes("aquarium") || value.includes("water") || value.includes("dolphin")) return Waves;
+  if (value.includes("ferrari") || value.includes("warner") || value.includes("img") || value.includes("aya") || value.includes("garden") || value.includes("village")) return Ticket;
+  if (value.includes("vip") || value.includes("premium") || value.includes("royal")) return Crown;
+
+  return Compass;
+};
+
+const extraServices = tourCatalog
+  .filter((tour) => extraServiceIds.includes(tour.id))
+  .map((tour) => ({
+    title: tour.title,
+    icon: getServiceIcon(tour),
+    image: tour.image,
+  }));
+
+const services = [...featuredServices, ...extraServices];
+
 export default function Services({ menuOpen, setMenuOpen }) {
   const pageRef = useRef(null);
+  const cardFrameRef = useRef(new WeakMap());
 
   useLuxuryReveal(pageRef);
 
   const handleCardMove = (event) => {
+    if (typeof window !== "undefined" && window.matchMedia("(hover: none)").matches) {
+      return;
+    }
+
     const card = event.currentTarget;
-    const bounds = card.getBoundingClientRect();
+    const frameMap = cardFrameRef.current;
+    const previousFrame = frameMap.get(card);
 
-    const pointerX = (event.clientX - bounds.left) / bounds.width;
-    const pointerY = (event.clientY - bounds.top) / bounds.height;
+    if (previousFrame) {
+      cancelAnimationFrame(previousFrame);
+    }
 
-    const rotateX = (0.5 - pointerY) * 4;
-    const rotateY = (pointerX - 0.5) * 6;
+    const clientX = event.clientX;
+    const clientY = event.clientY;
 
-    card.style.setProperty("--rotate-x", `${rotateX}deg`);
-    card.style.setProperty("--rotate-y", `${rotateY}deg`);
-    card.style.setProperty("--mouse-x", `${pointerX * 100}%`);
-    card.style.setProperty("--mouse-y", `${pointerY * 100}%`);
+    const frameId = requestAnimationFrame(() => {
+      const bounds = card.getBoundingClientRect();
+
+      if (!bounds.width || !bounds.height) {
+        frameMap.delete(card);
+        return;
+      }
+
+      const pointerX = (clientX - bounds.left) / bounds.width;
+      const pointerY = (clientY - bounds.top) / bounds.height;
+
+      const rotateX = (0.5 - pointerY) * 4;
+      const rotateY = (pointerX - 0.5) * 6;
+
+      card.style.setProperty("--rotate-x", `${rotateX}deg`);
+      card.style.setProperty("--rotate-y", `${rotateY}deg`);
+      card.style.setProperty("--mouse-x", `${pointerX * 100}%`);
+      card.style.setProperty("--mouse-y", `${pointerY * 100}%`);
+
+      frameMap.delete(card);
+    });
+
+    frameMap.set(card, frameId);
   };
 
   const handleCardLeave = (event) => {
     const card = event.currentTarget;
+    const frameMap = cardFrameRef.current;
+    const previousFrame = frameMap.get(card);
+
+    if (previousFrame) {
+      cancelAnimationFrame(previousFrame);
+      frameMap.delete(card);
+    }
 
     card.style.setProperty("--rotate-x", "0deg");
     card.style.setProperty("--rotate-y", "0deg");
@@ -167,7 +232,7 @@ export default function Services({ menuOpen, setMenuOpen }) {
         <section
           className="services-hero"
           style={{
-            "--services-hero-image": `url("${images.tourCamp}")`,
+            "--services-hero-image": 'url("/images/services/services-hero-dubai-camels.webp")',
           }}
         >
           <div className="services-hero__image" aria-hidden="true" />
@@ -290,7 +355,10 @@ export default function Services({ menuOpen, setMenuOpen }) {
                       className="service-premium-card__image"
                       src={service.image}
                       alt=""
-                      loading="lazy"
+                      loading={index < 6 ? "eager" : "lazy"}
+                      decoding="async"
+                      fetchPriority={index < 3 ? "high" : "auto"}
+                      draggable="false"
                       aria-hidden="true"
                     />
 

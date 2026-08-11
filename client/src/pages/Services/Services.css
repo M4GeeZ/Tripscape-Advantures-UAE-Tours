@@ -54,9 +54,9 @@
   z-index: -4;
   background-image: var(--services-hero-image);
   background-size: cover;
-  background-position: center;
+  background-position: center 58%;
   background-repeat: no-repeat;
-  filter: saturate(0.8) contrast(1.08);
+  filter: saturate(0.92) contrast(1.04);
   transform: scale(1.035);
   animation: servicesHeroImage 16s ease-in-out infinite alternate;
 }
@@ -404,13 +404,8 @@
   isolation: isolate;
   border: 1px solid rgba(17, 27, 43, 0.09);
   border-radius: 25px;
-  color: var(--services-text);
-  background:
-    linear-gradient(
-      145deg,
-      #ffffff,
-      #f8f3ea
-    );
+  color: var(--services-gold);
+  background: var(--services-navy);
   box-shadow:
     0 12px 34px rgba(17, 27, 43, 0.07),
     0 2px 8px rgba(17, 27, 43, 0.03);
@@ -452,12 +447,12 @@
   position: absolute;
   inset: 0;
   z-index: 5;
-  border: 1px solid rgba(255, 255, 255, 0.48);
+  border: 1px solid rgba(201, 138, 46, 0.16);
   border-radius: inherit;
   pointer-events: none;
 }
 
-/* Full-quality visible card image */
+/* Show each service photo in its original colours with no tint/filter. */
 .service-premium-card__image {
   position: absolute;
   inset: 0;
@@ -480,28 +475,9 @@
     filter 0.5s ease;
 }
 
-/* Soft overlay only for text readability */
+/* No white wash: keep the complete card photograph visible. */
 .service-premium-card__wash {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-
-  background:
-    linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0.96) 0%,
-      rgba(255, 255, 255, 0.84) 34%,
-      rgba(255, 255, 255, 0.42) 68%,
-      rgba(255, 255, 255, 0.12) 100%
-    ),
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.08) 0%,
-      rgba(247, 242, 233, 0.28) 100%
-    );
-
-  transition: opacity 0.5s ease;
+  display: none;
 }
 
 /* Keep content above image */
@@ -511,29 +487,16 @@
   z-index: 4;
 }
 
-/* Image becomes even clearer on hover */
+/* Keep the original photograph colours unchanged on hover. */
 .service-premium-card:hover .service-premium-card__image {
   opacity: 1;
-  filter: saturate(1.08) contrast(1.04);
-  transform: scale(1.07);
+  filter: none;
+  transform: scale(1.045);
 }
 
-.service-premium-card:hover .service-premium-card__wash {
-  opacity: 0.76;
-}
-
+/* Remove the previous white pointer glare. */
 .service-premium-card__pointer-light {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  opacity: 0;
-  pointer-events: none;
-  background: radial-gradient(
-    370px circle at var(--mouse-x) var(--mouse-y),
-    rgba(255, 255, 255, 0.84),
-    transparent 43%
-  );
-  transition: opacity 0.35s ease;
+  display: none;
 }
 
 .service-premium-card__top,
@@ -550,7 +513,8 @@
 }
 
 .service-premium-card__number {
-  color: rgba(17, 27, 43, 0.33);
+  color: var(--services-white);
+  opacity: 0.96;
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.18em;
@@ -562,10 +526,10 @@
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  border: 1px solid rgba(201, 138, 46, 0.23);
+  border: 1px solid var(--services-gold);
   border-radius: 16px;
-  color: var(--services-gold);
-  background: rgba(255, 255, 255, 0.76);
+  color: var(--services-white);
+  background: var(--services-gold);
   box-shadow: 0 9px 21px rgba(17, 27, 43, 0.055);
   transition:
     color 0.35s ease,
@@ -577,11 +541,12 @@
 .service-premium-card__content h3 {
   max-width: 355px;
   margin: 0 0 34px;
-  color: var(--services-text);
+  color: var(--services-white);
   font-size: clamp(20px, 1.55vw, 26px);
   font-weight: 680;
   line-height: 1.24;
   letter-spacing: -0.027em;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.48);
 }
 
 .service-premium-card__bottom {
@@ -590,12 +555,13 @@
   justify-content: space-between;
   gap: 20px;
   padding-top: 18px;
-  border-top: 1px solid rgba(17, 27, 43, 0.09);
-  color: var(--services-muted);
+  border-top: 1px solid rgba(255, 255, 255, 0.38);
+  color: var(--services-white);
   font-size: 12px;
   font-weight: 750;
   letter-spacing: 0.05em;
   text-transform: uppercase;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.42);
 }
 
 .service-premium-card__arrow {
@@ -632,16 +598,14 @@
 
 .service-premium-card:hover
 .service-premium-card__image {
-  opacity: 0.4;
-  filter:
-    saturate(1.03)
-    contrast(1.07);
-  transform: scale(1.11);
+  opacity: 1;
+  filter: none;
+  transform: scale(1.045);
 }
 
 .service-premium-card:hover
 .service-premium-card__wash {
-  opacity: 0.91;
+  opacity: 0.68;
 }
 
 .service-premium-card:hover
@@ -890,12 +854,12 @@
   }
 
   .service-premium-card__image {
-    opacity: 0.21;
+    opacity: 1;
   }
 
   .service-premium-card:hover
   .service-premium-card__image {
-    opacity: 0.31;
+    opacity: 1;
   }
 
   .services-ending__inner {
