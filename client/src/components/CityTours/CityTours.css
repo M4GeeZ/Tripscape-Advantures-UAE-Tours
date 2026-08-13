@@ -136,3 +136,9 @@
     font-size: 14.25px;
   }
 }
+
+.city-card-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}

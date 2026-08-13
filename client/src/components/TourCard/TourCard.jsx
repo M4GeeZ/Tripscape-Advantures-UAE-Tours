@@ -1,11 +1,18 @@
 import { ArrowRight, MapPin, Star } from 'lucide-react'
+import { getTourDetailHref } from '../../tourDetails'
 import './TourCard.css'
 
 export default function TourCard({ tour }) {
   const hasFixedPrice = tour.price !== 'Contact for price'
+  const detailHref = getTourDetailHref(tour.category || 'Tours', tour.title)
 
   return (
-    <article className="tour-card-reference" data-reveal>
+    <a
+      className="tour-card-reference tour-card-reference--link"
+      data-reveal
+      href={detailHref}
+      aria-label={`View ${tour.title}`}
+    >
       <div className="tour-card-image-wrap">
         <img src={tour.image} alt={tour.title} className="tour-card-image" loading="lazy" />
       </div>
@@ -34,11 +41,11 @@ export default function TourCard({ tour }) {
             </div>
           </div>
 
-          <a href="/contact" aria-label={`Book ${tour.title}`}>
-            Book <ArrowRight size={16} />
-          </a>
+          <span className="tour-card-reference__action">
+            View <ArrowRight size={16} />
+          </span>
         </div>
       </div>
-    </article>
+    </a>
   )
 }

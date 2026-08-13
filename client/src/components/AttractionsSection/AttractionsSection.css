@@ -59,3 +59,17 @@
   .attraction-body strong {font-size: 17.25px;}
   .center-action {margin-top: 41.25px;}
 }
+
+.attraction-card-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.attraction-book {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--gold);
+  font-weight: 700;
+}

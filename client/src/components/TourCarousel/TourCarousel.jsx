@@ -2,6 +2,7 @@ import { ArrowRight, Check, Clock, Star } from 'lucide-react'
 import { tours } from '../../data'
 import { images } from '../../generatedImages'
 import SectionHeading from '../SectionHeading/SectionHeading'
+import { getTourDetailHref } from '../../tourDetails'
 import './TourCarousel.css'
 
 const fallbackTour = {
@@ -114,10 +115,12 @@ export default function TourCarousel() {
 
         <div className="tour-grid">
           {displayedTours.map((tour, index) => (
-            <article
-              className="tour-card"
+            <a
+              className="tour-card tour-card-link"
               key={`${tour.title}-${index}`}
               data-reveal
+              href={getTourDetailHref('Desert Safari', tour.title)}
+              aria-label={`View ${tour.title}`}
             >
               <div className="tour-image-wrap">
                 <img src={tour.image} alt={tour.title} loading="lazy" />
@@ -150,13 +153,13 @@ export default function TourCarousel() {
                 <div className="tour-card-footer">
                   <strong>{tour.price}</strong>
 
-                  <a href="#contact">
+                  <span className="tour-card-view">
                     View
                     <ArrowRight size={16} />
-                  </a>
+                  </span>
                 </div>
               </div>
-            </article>
+            </a>
           ))}
         </div>
       </div>

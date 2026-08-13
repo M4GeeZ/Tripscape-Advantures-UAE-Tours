@@ -105,3 +105,16 @@
   .adventure-content h3 {font-size: 21px; margin-bottom: 15px;}
   .adventure-content a {font-size: 13.5px; gap: 7.5px;}
 }
+
+.adventure-card-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.adventure-content > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: inherit;
+}

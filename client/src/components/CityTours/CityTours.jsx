@@ -1,6 +1,7 @@
 import { Clock } from 'lucide-react'
 import { cities } from '../../data'
 import SectionHeading from '../SectionHeading/SectionHeading'
+import { getTourDetailHref } from '../../tourDetails'
 import './CityTours.css'
 
 export default function CityTours() {
@@ -16,10 +17,12 @@ export default function CityTours() {
 
         <div className="city-grid">
           {cities.map((city) => (
-            <article
-              className="city-card"
+            <a
+              className="city-card city-card-link"
               key={city.title}
               data-reveal
+              href={getTourDetailHref('City Tours', city.title)}
+              aria-label={`View ${city.title}`}
               style={{ '--city-image': `url("${city.image}")` }}
             >
               <div className="city-image-shell">
@@ -31,7 +34,7 @@ export default function CityTours() {
                 <h3>{city.title}</h3>
                 <p>{city.price}</p>
               </div>
-            </article>
+            </a>
           ))}
         </div>
       </div>

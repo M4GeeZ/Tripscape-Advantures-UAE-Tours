@@ -76,12 +76,12 @@ export const attractions = [
 ]
 
 export const reviews = [
-  { name: 'Simon P.', place: 'United Kingdom', text: 'Amazing experience! The dune bashing was incredible and the BBQ was delicious.' },
-  { name: 'Priya S.', place: 'India', text: 'Sheikh Zayed Mosque at sunset was unforgettable. Driver was punctual and very kind.' },
-  { name: 'James O’Connor', place: 'Ireland', text: 'Best operator in Dubai. WhatsApp replies in under a minute and fair pricing.' },
-  { name: 'Sophie Laurent', place: 'France', text: 'Pure adrenaline then calm under the stars. A beautiful evening.' },
-  { name: 'Daniel W.', place: 'Germany', text: 'Smooth, professional, and exactly on time. Will book again.' },
-  { name: 'Cara N.', place: 'Australia', text: 'Great safari and a patient guide. Perfect for first-time visitors.' }
+  { name: 'Simon P.', place: 'United Kingdom', source: 'Google', text: 'Amazing experience! The dune bashing was incredible and the BBQ was delicious. Highly recommend Tripscape!' },
+  { name: 'Priya S.', place: 'India', source: 'Google', text: 'Sheikh Zayed Mosque at sunset was unforgettable. Driver was punctual and very kind to our kids.' },
+  { name: 'James O’Connor', place: 'Ireland', source: 'Google', text: 'Best operator in Dubai. WhatsApp replies in under a minute, fair pricing.' },
+  { name: 'Sophie Laurent', place: 'France', source: 'Google', text: 'Dune buggy + BBQ combo. Pure adrenaline then calm under the stars. 10/10!' },
+  { name: 'Daniel W.', place: 'Germany', source: 'TripAdvisor', text: 'Smooth, professional, showed up 10 minutes early. Will book again.' },
+  { name: 'Cara N.', place: 'Australia', source: 'Google', text: 'Great Desert Safari! Guide was patient with us nervous first-timers.' }
 ]
 
 export const blogs = [

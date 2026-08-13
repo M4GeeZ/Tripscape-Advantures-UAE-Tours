@@ -1,5 +1,6 @@
 import { ArrowUpRight } from 'lucide-react'
 import { tourCategories } from '../../data'
+import { tourCategoryPaths } from '../../tourCategoryPages'
 import './ToursMegaMenu.css'
 
 export default function ToursMegaMenu({ open, onMouseEnter, onMouseLeave }) {
@@ -25,7 +26,7 @@ export default function ToursMegaMenu({ open, onMouseEnter, onMouseLeave }) {
           {tourCategories.map((category) => (
             <a
               key={category.name}
-              href={`/tours?category=${encodeURIComponent(category.name)}`}
+              href={tourCategoryPaths[category.name] || '/tours'}
               className="tours-mega-card"
               style={{ backgroundImage: `url(${category.image})` }}
             >
