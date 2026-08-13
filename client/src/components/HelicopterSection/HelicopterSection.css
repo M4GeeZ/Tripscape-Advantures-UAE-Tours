@@ -123,3 +123,47 @@
     padding-bottom: 30px;
   }
 }
+
+/* =========================================================
+   STANDARD HELICOPTER DESCRIPTION - DESKTOP/TABLET
+   First 3 dark cards only
+========================================================= */
+
+@media (min-width: 641px) {
+
+  .heli-card:not(.premium) .heli-mobile-copy {
+    position: relative;
+    display: block;
+
+    margin: 24px 0 0;
+    padding: 18px 0 0;
+
+    max-width: 92%;
+
+    color: rgba(255, 255, 255, 0.84);
+
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.65;
+    letter-spacing: 0.01em;
+
+    opacity: 1;
+  }
+
+  /* Premium gold line above description */
+  .heli-card:not(.premium) .heli-mobile-copy::before {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 48px;
+    height: 2px;
+
+    background: var(--gold);
+    border-radius: 100px;
+
+    opacity: 0.95;
+  }
+}
