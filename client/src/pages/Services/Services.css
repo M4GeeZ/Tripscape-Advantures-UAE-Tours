@@ -399,8 +399,10 @@
   same, while off-screen cards can skip expensive rendering work.
 */
 .service-premium-card-reveal {
+  position: relative;
   min-width: 0;
   min-height: 285px;
+  overflow: visible;
   opacity: 0;
   filter: blur(7px);
   transform: translate3d(0, 38px, 0);
@@ -418,19 +420,8 @@
   transition-delay: var(--reveal-delay, 0ms);
 }
 
-@supports (content-visibility: auto) {
-  .service-premium-card-reveal {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 285px;
-  }
-}
-
+/* Keep the wrapper paint-visible so hover lift/shadow is never clipped. */
 .service-premium-card {
-  --rotate-x: 0deg;
-  --rotate-y: 0deg;
-  --mouse-x: 50%;
-  --mouse-y: 50%;
-
   position: relative;
   width: 100%;
   height: 100%;
@@ -449,12 +440,7 @@
     0 12px 34px rgba(17, 27, 43, 0.07),
     0 2px 8px rgba(17, 27, 43, 0.03);
   text-decoration: none;
-  transform:
-    perspective(1050px)
-    rotateX(var(--rotate-x))
-    rotateY(var(--rotate-y))
-    translateY(0);
-  transform-style: preserve-3d;
+  transform: translateY(0);
   will-change: auto;
   transition:
     transform 0.2s ease,
@@ -544,7 +530,6 @@
 .service-premium-card__content {
   position: relative;
   z-index: 4;
-  transform: translateZ(24px);
 }
 
 .service-premium-card__top {
@@ -632,11 +617,7 @@
 
 .service-premium-card:hover {
   border-color: rgba(201, 138, 46, 0.48);
-  transform:
-    perspective(1050px)
-    rotateX(var(--rotate-x))
-    rotateY(var(--rotate-y))
-    translateY(-9px);
+  transform: translateY(-6px);
   box-shadow:
     0 30px 62px rgba(17, 27, 43, 0.16),
     0 9px 22px rgba(201, 138, 46, 0.09);
@@ -897,12 +878,6 @@
 
   .service-premium-card-reveal {
     min-height: 245px;
-  }
-
-  @supports (content-visibility: auto) {
-    .service-premium-card-reveal {
-      contain-intrinsic-size: auto 245px;
-    }
   }
 
   .service-premium-card {

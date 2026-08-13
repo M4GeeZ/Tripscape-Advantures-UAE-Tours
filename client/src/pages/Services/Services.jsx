@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 import {
   ArrowUpRight,
   Bike,
@@ -157,7 +157,7 @@ const extraServices = tourCatalog
 
 const services = [...featuredServices, ...extraServices];
 
-const ServiceCard = memo(function ServiceCard({ service, index, onMove, onLeave }) {
+const ServiceCard = memo(function ServiceCard({ service, index }) {
   const Icon = service.icon;
 
   return (
@@ -169,8 +169,6 @@ const ServiceCard = memo(function ServiceCard({ service, index, onMove, onLeave 
       <a
         href="/contact"
         className="service-premium-card"
-        onMouseMove={onMove}
-        onMouseLeave={onLeave}
       >
         <img
           className="service-premium-card__image"
@@ -223,26 +221,8 @@ export default function Services({ menuOpen, setMenuOpen }) {
   const pageRef = useRef(null);
   const heroRef = useRef(null);
   const cardsGridRef = useRef(null);
-  const cardFrameRef = useRef(new WeakMap());
-  const canHoverRef = useRef(false);
 
   useLuxuryReveal(pageRef);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return undefined;
-
-    const hoverQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
-    const syncHoverCapability = () => {
-      canHoverRef.current = hoverQuery.matches;
-    };
-
-    syncHoverCapability();
-    hoverQuery.addEventListener?.("change", syncHoverCapability);
-
-    return () => {
-      hoverQuery.removeEventListener?.("change", syncHoverCapability);
-    };
-  }, []);
 
   useEffect(() => {
     const grid = cardsGridRef.current;
@@ -304,61 +284,6 @@ export default function Services({ menuOpen, setMenuOpen }) {
 
     observer.observe(hero);
     return () => observer.disconnect();
-  }, []);
-
-  const handleCardMove = useCallback((event) => {
-    if (!canHoverRef.current) return;
-
-    const card = event.currentTarget;
-    const frameMap = cardFrameRef.current;
-    const previousFrame = frameMap.get(card);
-
-    if (previousFrame) {
-      cancelAnimationFrame(previousFrame);
-    }
-
-    const clientX = event.clientX;
-    const clientY = event.clientY;
-
-    const frameId = requestAnimationFrame(() => {
-      const bounds = card.getBoundingClientRect();
-
-      if (!bounds.width || !bounds.height) {
-        frameMap.delete(card);
-        return;
-      }
-
-      const pointerX = (clientX - bounds.left) / bounds.width;
-      const pointerY = (clientY - bounds.top) / bounds.height;
-
-      const rotateX = (0.5 - pointerY) * 4;
-      const rotateY = (pointerX - 0.5) * 6;
-
-      card.style.setProperty("--rotate-x", `${rotateX}deg`);
-      card.style.setProperty("--rotate-y", `${rotateY}deg`);
-      card.style.setProperty("--mouse-x", `${pointerX * 100}%`);
-      card.style.setProperty("--mouse-y", `${pointerY * 100}%`);
-
-      frameMap.delete(card);
-    });
-
-    frameMap.set(card, frameId);
-  }, []);
-
-  const handleCardLeave = useCallback((event) => {
-    const card = event.currentTarget;
-    const frameMap = cardFrameRef.current;
-    const previousFrame = frameMap.get(card);
-
-    if (previousFrame) {
-      cancelAnimationFrame(previousFrame);
-      frameMap.delete(card);
-    }
-
-    card.style.setProperty("--rotate-x", "0deg");
-    card.style.setProperty("--rotate-y", "0deg");
-    card.style.setProperty("--mouse-x", "50%");
-    card.style.setProperty("--mouse-y", "50%");
   }, []);
 
   return (
@@ -485,8 +410,6 @@ export default function Services({ menuOpen, setMenuOpen }) {
                   key={`${service.title}-${index}`}
                   service={service}
                   index={index}
-                  onMove={handleCardMove}
-                  onLeave={handleCardLeave}
                 />
               ))}
             </div>

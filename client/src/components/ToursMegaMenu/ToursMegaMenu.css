@@ -146,3 +146,160 @@
 @media (max-width: 900px) {
   .tours-mega-menu { display: none; }
 }
+
+
+/* =========================================================
+   MOBILE TOURS MEGA MENU
+   Desktop mega menu above remains unchanged.
+========================================================= */
+
+.tours-mega-mobile-back {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .tours-mega-menu {
+    position: fixed;
+    inset: 76px 10px 10px;
+    width: auto;
+    z-index: 116;
+    display: block;
+    overflow-y: auto;
+    color: var(--ink);
+    background: rgba(255, 255, 255, 0.992);
+    border: 1px solid rgba(16, 27, 43, 0.08);
+    border-radius: 22px;
+    box-shadow: 0 28px 70px rgba(5, 17, 29, 0.3);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(14px) scale(0.985);
+    transform-origin: top center;
+    pointer-events: none;
+    overscroll-behavior: contain;
+    transition:
+      opacity 0.24s ease,
+      transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 0.24s ease;
+  }
+
+  .tours-mega-menu.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+
+  .tours-mega-inner {
+    width: 100%;
+    padding: 16px 14px 20px;
+  }
+
+  .tours-mega-mobile-back {
+    min-height: 39px;
+    margin-bottom: 15px;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--ink);
+    background: #f7f4ed;
+    border: 1px solid rgba(16, 27, 43, 0.09);
+    border-radius: 999px;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .tours-mega-mobile-back svg {
+    color: var(--gold);
+  }
+
+  .tours-mega-heading {
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+
+  .tours-mega-heading span {
+    margin-bottom: 5px;
+    font-size: 9px;
+    letter-spacing: 2px;
+  }
+
+  .tours-mega-heading h2 {
+    font-size: clamp(23px, 7vw, 31px);
+    line-height: 1.05;
+  }
+
+  .tours-mega-all {
+    flex: 0 0 auto;
+    padding-top: 3px;
+    font-size: 11px;
+  }
+
+  .tours-mega-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .tours-mega-card {
+    min-height: 142px;
+    border-radius: 15px;
+  }
+
+  .tours-mega-card-content {
+    left: 13px;
+    right: 34px;
+    bottom: 12px;
+  }
+
+  .tours-mega-card strong {
+    font-size: 13px;
+  }
+
+  .tours-mega-card small {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: 9px;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .tours-mega-card-arrow {
+    right: 12px;
+    bottom: 13px;
+  }
+}
+
+@media (max-width: 520px) {
+  .tours-mega-menu {
+    inset: 70px 8px 8px;
+    border-radius: 19px;
+  }
+
+  .tours-mega-inner {
+    padding: 14px 10px 16px;
+  }
+
+  .tours-mega-heading {
+    display: grid;
+    gap: 8px;
+  }
+
+  .tours-mega-all {
+    width: fit-content;
+  }
+
+  .tours-mega-grid {
+    grid-template-columns: 1fr;
+    gap: 9px;
+  }
+
+  .tours-mega-card {
+    min-height: 118px;
+  }
+
+  .tours-mega-card strong {
+    font-size: 14px;
+  }
+}

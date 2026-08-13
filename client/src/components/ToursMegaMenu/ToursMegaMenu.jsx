@@ -1,9 +1,9 @@
-import { ArrowUpRight } from 'lucide-react'
+import { ArrowLeft, ArrowUpRight } from 'lucide-react'
 import { tourCategories } from '../../data'
 import { tourCategoryPaths } from '../../tourCategoryPages'
 import './ToursMegaMenu.css'
 
-export default function ToursMegaMenu({ open, onMouseEnter, onMouseLeave }) {
+export default function ToursMegaMenu({ open, onMouseEnter, onMouseLeave, onClose }) {
   return (
     <div
       className={`tours-mega-menu ${open ? 'is-open' : ''}`}
@@ -12,6 +12,16 @@ export default function ToursMegaMenu({ open, onMouseEnter, onMouseLeave }) {
       onMouseLeave={onMouseLeave}
     >
       <div className="container tours-mega-inner">
+        <button
+          type="button"
+          className="tours-mega-mobile-back"
+          onClick={onClose}
+          aria-label="Back to mobile navigation"
+        >
+          <ArrowLeft size={18} />
+          <span>Back to menu</span>
+        </button>
+
         <div className="tours-mega-heading">
           <div>
             <span>Explore the UAE</span>

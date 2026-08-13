@@ -74,6 +74,21 @@ export default function Navbar({
 
   useEffect(() => setActiveResult(-1), [searchQuery])
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined
+    if (!window.matchMedia('(max-width: 900px)').matches) return undefined
+
+    const previousOverflow = document.body.style.overflow
+
+    if (menuOpen || toursOpen || searchOpen) {
+      document.body.style.overflow = 'hidden'
+    }
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+    }
+  }, [menuOpen, toursOpen, searchOpen])
+
   const openTours = () => {
     window.clearTimeout(closeTimer.current)
     setSearchOpen(false)
@@ -85,10 +100,35 @@ export default function Navbar({
     closeTimer.current = window.setTimeout(() => setToursOpen(false), 120)
   }
 
-  const closeMobileMenu = () => setMenuOpen?.(false)
+  const closeMobileMenu = () => {
+    setMenuOpen?.(false)
+    setToursOpen(false)
+  }
+
+  const handleMobileToursToggle = (event) => {
+    event.preventDefault()
+    event.stopPropagation()
+    setSearchOpen(false)
+    setToursOpen((value) => !value)
+  }
+
+  const toggleMobileMenu = () => {
+    const nextOpen = !menuOpen
+    setMenuOpen?.(nextOpen)
+    setSearchOpen(false)
+    setToursOpen(false)
+  }
 
   const toggleSearch = () => {
     setToursOpen(false)
+
+    const isMobile = typeof window !== 'undefined'
+      && window.matchMedia('(max-width: 900px)').matches
+
+    if (isMobile) {
+      setMenuOpen?.(false)
+    }
+
     setSearchOpen((value) => !value)
   }
 
@@ -162,6 +202,15 @@ export default function Navbar({
         </a>
 
         <nav className={`nav-links ${menuOpen ? 'is-open' : ''}`}>
+          <a
+            href="/"
+            className="mobile-menu-brand"
+            aria-label="Tripscape Adventures home"
+            onClick={closeMobileMenu}
+          >
+            <img src={images.navLogoWhite} alt="Tripscape Adventures" />
+          </a>
+
           <a href="/" onClick={closeMobileMenu}>Home</a>
 
           <div
@@ -169,15 +218,58 @@ export default function Navbar({
             onMouseEnter={openTours}
             onMouseLeave={scheduleClose}
           >
-            <a href="/tours" onFocus={openTours} onClick={closeMobileMenu} aria-expanded={toursOpen}>
+            {/* Desktop: keep the original Tours link/chevron behavior unchanged */}
+            <a
+              href="/tours"
+              className="nav-tours-desktop-link"
+              onFocus={openTours}
+              onClick={closeMobileMenu}
+              aria-expanded={toursOpen}
+              aria-haspopup="true"
+            >
               <span>Tours</span>
               <ChevronDown className="nav-tours-chevron" size={14} />
             </a>
+
+            {/* Mobile: text navigates to /tours, only the round arrow opens the menu */}
+            <div className="nav-tours-mobile-row">
+              <a
+                href="/tours"
+                className="nav-tours-mobile-link"
+                onClick={closeMobileMenu}
+              >
+                Tours
+              </a>
+              <button
+                type="button"
+                className="nav-tours-mobile-toggle"
+                onClick={handleMobileToursToggle}
+                aria-label={toursOpen ? 'Close Tours menu' : 'Open Tours menu'}
+                aria-expanded={toursOpen}
+                aria-haspopup="true"
+              >
+                <ChevronDown className="nav-tours-mobile-chevron" />
+              </button>
+            </div>
           </div>
 
           {regularLinks.slice(1).map((link) => (
             <a key={link.label} href={link.href} onClick={closeMobileMenu}>{link.label}</a>
           ))}
+
+          <a
+            className="mobile-menu-whatsapp"
+            href="https://wa.me/971549930684"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Chat on WhatsApp at +971 54 993 0684"
+          >
+            <WhatsAppIcon className="mobile-menu-whatsapp__icon" />
+            <span>
+              <small>WhatsApp</small>
+              <strong>+971 54 993 0684</strong>
+            </span>
+          </a>
         </nav>
 
         <div className="nav-actions">
@@ -207,7 +299,7 @@ export default function Navbar({
           <button
             type="button"
             className="icon-btn menu-btn"
-            onClick={() => setMenuOpen?.(!menuOpen)}
+            onClick={toggleMobileMenu}
             aria-label="Toggle menu"
             aria-expanded={Boolean(menuOpen)}
           >
@@ -254,6 +346,7 @@ export default function Navbar({
         open={toursOpen}
         onMouseEnter={openTours}
         onMouseLeave={scheduleClose}
+        onClose={() => setToursOpen(false)}
       />
     </header>
   )
