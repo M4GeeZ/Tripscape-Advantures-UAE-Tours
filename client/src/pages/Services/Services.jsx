@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { memo, useCallback, useEffect, useRef } from "react";
 import {
   ArrowUpRight,
   Bike,
@@ -157,16 +157,157 @@ const extraServices = tourCatalog
 
 const services = [...featuredServices, ...extraServices];
 
+const ServiceCard = memo(function ServiceCard({ service, index, onMove, onLeave }) {
+  const Icon = service.icon;
+
+  return (
+    <div
+      className="service-premium-card-reveal"
+      data-service-card-reveal
+      style={{ "--reveal-delay": `${(index % 6) * 60}ms` }}
+    >
+      <a
+        href="/contact"
+        className="service-premium-card"
+        onMouseMove={onMove}
+        onMouseLeave={onLeave}
+      >
+        <img
+          className="service-premium-card__image"
+          src={service.image}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          fetchPriority={index < 3 ? "auto" : "low"}
+          draggable="false"
+          aria-hidden="true"
+        />
+
+        <span
+          className="service-premium-card__wash"
+          aria-hidden="true"
+        />
+
+        <span
+          className="service-premium-card__pointer-light"
+          aria-hidden="true"
+        />
+
+        <div className="service-premium-card__top">
+          <span className="service-premium-card__number">
+            {String(index + 1).padStart(2, "0")}
+          </span>
+
+          <span className="service-premium-card__icon">
+            <Icon size={21} strokeWidth={1.7} />
+          </span>
+        </div>
+
+        <div className="service-premium-card__content">
+          <h3>{service.title}</h3>
+
+          <div className="service-premium-card__bottom">
+            <span>Discover experience</span>
+
+            <span className="service-premium-card__arrow">
+              <ArrowUpRight size={18} />
+            </span>
+          </div>
+        </div>
+      </a>
+    </div>
+  );
+});
+
 export default function Services({ menuOpen, setMenuOpen }) {
   const pageRef = useRef(null);
+  const heroRef = useRef(null);
+  const cardsGridRef = useRef(null);
   const cardFrameRef = useRef(new WeakMap());
+  const canHoverRef = useRef(false);
 
   useLuxuryReveal(pageRef);
 
-  const handleCardMove = (event) => {
-    if (typeof window !== "undefined" && window.matchMedia("(hover: none)").matches) {
-      return;
+  useEffect(() => {
+    if (typeof window === "undefined") return undefined;
+
+    const hoverQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const syncHoverCapability = () => {
+      canHoverRef.current = hoverQuery.matches;
+    };
+
+    syncHoverCapability();
+    hoverQuery.addEventListener?.("change", syncHoverCapability);
+
+    return () => {
+      hoverQuery.removeEventListener?.("change", syncHoverCapability);
+    };
+  }, []);
+
+  useEffect(() => {
+    const grid = cardsGridRef.current;
+    if (!grid) return undefined;
+
+    const cards = Array.from(
+      grid.querySelectorAll("[data-service-card-reveal]")
+    );
+
+    if (!cards.length) return undefined;
+
+    if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
+      cards.forEach((card) => card.classList.add("is-visible"));
+      return undefined;
     }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const triggerLine =
+            entry.rootBounds?.bottom ?? window.innerHeight * 0.88;
+
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            return;
+          }
+
+          // Keep cards visible after scrolling past them. Only reset when
+          // scrolling back above the same 88% reveal line used previously.
+          if (entry.boundingClientRect.top >= triggerLine) {
+            entry.target.classList.remove("is-visible");
+          }
+        });
+      },
+      {
+        root: null,
+        rootMargin: "0px 0px -12% 0px",
+        threshold: 0.01,
+      }
+    );
+
+    cards.forEach((card) => observer.observe(card));
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const hero = heroRef.current;
+    if (!hero || typeof window === "undefined" || !("IntersectionObserver" in window)) {
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        hero.classList.toggle("services-hero--paused", !entry.isIntersecting);
+      },
+      { rootMargin: "160px 0px", threshold: 0 }
+    );
+
+    observer.observe(hero);
+    return () => observer.disconnect();
+  }, []);
+
+  const handleCardMove = useCallback((event) => {
+    if (!canHoverRef.current) return;
 
     const card = event.currentTarget;
     const frameMap = cardFrameRef.current;
@@ -202,9 +343,9 @@ export default function Services({ menuOpen, setMenuOpen }) {
     });
 
     frameMap.set(card, frameId);
-  };
+  }, []);
 
-  const handleCardLeave = (event) => {
+  const handleCardLeave = useCallback((event) => {
     const card = event.currentTarget;
     const frameMap = cardFrameRef.current;
     const previousFrame = frameMap.get(card);
@@ -218,7 +359,7 @@ export default function Services({ menuOpen, setMenuOpen }) {
     card.style.setProperty("--rotate-y", "0deg");
     card.style.setProperty("--mouse-x", "50%");
     card.style.setProperty("--mouse-y", "50%");
-  };
+  }, []);
 
   return (
     <div ref={pageRef} className="services-page">
@@ -230,6 +371,7 @@ export default function Services({ menuOpen, setMenuOpen }) {
 
       <main>
         <section
+          ref={heroRef}
           className="services-hero"
           style={{
             "--services-hero-image": 'url("/images/services/services-hero-dubai-camels.webp")',
@@ -337,65 +479,16 @@ export default function Services({ menuOpen, setMenuOpen }) {
               </p>
             </header>
 
-            <div className="services-grid">
-              {services.map((service, index) => {
-                const Icon = service.icon;
-
-                return (
-                  <a
-                    href="/contact"
-                    key={service.title}
-                    className="service-premium-card"
-                    data-lux-reveal
-                    data-reveal-delay={(index % 6) * 0.06}
-                    onMouseMove={handleCardMove}
-                    onMouseLeave={handleCardLeave}
-                  >
-                    <img
-                      className="service-premium-card__image"
-                      src={service.image}
-                      alt=""
-                      loading={index < 6 ? "eager" : "lazy"}
-                      decoding="async"
-                      fetchPriority={index < 3 ? "high" : "auto"}
-                      draggable="false"
-                      aria-hidden="true"
-                    />
-
-                    <span
-                      className="service-premium-card__wash"
-                      aria-hidden="true"
-                    />
-
-                    <span
-                      className="service-premium-card__pointer-light"
-                      aria-hidden="true"
-                    />
-
-                    <div className="service-premium-card__top">
-                      <span className="service-premium-card__number">
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
-
-                      <span className="service-premium-card__icon">
-                        <Icon size={21} strokeWidth={1.7} />
-                      </span>
-                    </div>
-
-                    <div className="service-premium-card__content">
-                      <h3>{service.title}</h3>
-
-                      <div className="service-premium-card__bottom">
-                        <span>Discover experience</span>
-
-                        <span className="service-premium-card__arrow">
-                          <ArrowUpRight size={18} />
-                        </span>
-                      </div>
-                    </div>
-                  </a>
-                );
-              })}
+            <div ref={cardsGridRef} className="services-grid">
+              {services.map((service, index) => (
+                <ServiceCard
+                  key={`${service.title}-${index}`}
+                  service={service}
+                  index={index}
+                  onMove={handleCardMove}
+                  onLeave={handleCardLeave}
+                />
+              ))}
             </div>
           </div>
         </section>
