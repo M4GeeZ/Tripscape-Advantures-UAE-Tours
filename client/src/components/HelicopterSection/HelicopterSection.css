@@ -1,14 +1,39 @@
-.mini-eyebrow {color: var(--gold); text-transform: uppercase; letter-spacing: 3px; font-weight: 800; font-size: 13px;}
+.mini-eyebrow {
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-weight: 800;
+  font-size: 13px;
+}
 
-.helicopter-grid {display: grid; grid-template-columns: repeat(3, 1fr); gap: 34px; margin-top: 62px; align-items: stretch;}
+.helicopter-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 34px;
+  margin-top: 62px;
+  align-items: stretch;
+}
 
-.heli-card {background: var(--navy); color: white; border-radius: 28px; overflow: hidden; box-shadow: var(--shadow);}
+.heli-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--navy);
+  color: white;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
 
-.heli-card.premium {background: white; color: var(--ink);}
+.heli-card.premium {
+  background: white;
+  color: var(--ink);
+}
 
 .heli-image {
-  height: 330px;
   position: relative;
+  flex: 0 0 330px;
+  height: 330px;
   overflow: hidden;
   background: transparent;
 }
@@ -29,141 +54,199 @@
   transition: transform .6s ease;
 }
 
-.heli-card:hover img {transform: scale(1.05);}
-
-.heli-image > span {position: absolute; z-index: 2; left: 22px; top: 22px; border-radius: 999px; padding: 10px 17px; background: rgba(255,255,255,.24); backdrop-filter: blur(12px); color: #ff9c19; text-transform: uppercase; letter-spacing: 2px; font-weight: 800;}
-
-.heli-card.premium .heli-image > span {background: #ff7200; color: white;}
-
-.heli-body {padding: 32px;}
-
-.heli-title-row {display: flex; justify-content: space-between; gap: 25px; margin-top: 18px;}
-
-.heli-title-row h3 {font-size: 30px; line-height: 1.2; margin: 0 0 8px;}
-
-.heli-title-row p {margin: 0; color: inherit; opacity: .78;}
-
-.heli-price {text-align: right; color: var(--gold); display: flex; flex-direction: column;}
-
-.heli-price strong {font-size: 25px;}
-
-.heli-price span {color: inherit; opacity: .85;}
-
-.heli-body > p {color: inherit; opacity: .82; font-size: 17px; line-height: 1.7;}
-
-@media (max-width: 1250px) {
-  .helicopter-grid {grid-template-columns: repeat(2, 1fr);}
+.heli-card:hover img {
+  transform: scale(1.05);
 }
 
-@media (max-width: 640px) {
-  .helicopter-grid {grid-template-columns: 1fr;}
-  .heli-image {height: 260px;}
+.heli-image > span {
+  position: absolute;
+  z-index: 2;
+  top: 22px;
+  left: 22px;
+  padding: 10px 17px;
+  color: #ff9c19;
+  background: rgba(255,255,255,.24);
+  border-radius: 999px;
+  backdrop-filter: blur(12px);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 800;
 }
 
-@media (min-width: 901px) {
-  .mini-eyebrow {letter-spacing: 2.25px; font-size: 9.75px;}
-  .heli-card {border-radius: 21px;}
-  .heli-image {height: 248px;}
-  .heli-image > span {left: 16.5px; top: 16.5px; padding: 7.5px 12.75px; letter-spacing: 1.5px; font-size: 12px;}
-  .heli-body {padding: 24px;}
-  .heli-title-row {gap: 18.75px; margin-top: 13.5px;}
-  .heli-title-row h3 {font-size: 22.5px; margin-bottom: 6px;}
-  .heli-price strong {font-size: 18.75px;}
-  .heli-body > p {font-size: 12.75px;}
+.heli-card.premium .heli-image > span {
+  color: white;
+  background: #ff7200;
+}
+
+.heli-body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  padding: 32px;
+}
+
+.heli-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 25px;
+  margin-top: 18px;
+}
+
+.heli-title-copy {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.heli-title-row h3 {
+  margin: 0 0 8px;
+  font-size: 30px;
+  line-height: 1.2;
+}
+
+.heli-title-row p {
+  margin: 0;
+  color: inherit;
+  opacity: .78;
+}
+
+/* Keep title + duration readable on the first 3 dark cards. */
+.heli-card:not(.premium) .heli-title-row h3,
+.heli-card:not(.premium) .heli-title-row p {
+  color: #fff;
+}
+
+.heli-price {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  color: var(--gold);
+  white-space: nowrap;
+}
+
+.heli-price strong {
+  font-size: 25px;
+}
+
+.heli-price span {
+  color: inherit;
+  opacity: .85;
+}
+
+.heli-description {
+  margin: 18px 0 0;
+  color: inherit;
+  opacity: .82;
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+/* Standard cards use the same clean body flow as the premium cards. */
+.heli-card:not(.premium) .heli-description {
+  position: relative;
+  margin-top: 18px;
+  padding-top: 14px;
+  color: rgba(255, 255, 255, .88);
+  opacity: 1;
+}
+
+.heli-card:not(.premium) .heli-description::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 46px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--gold);
 }
 
 .heli-card-link {
-  display: block;
   color: inherit;
   text-decoration: none;
 }
 
-
-/* =========================================================
-   MOBILE STANDARD HELICOPTER CARD COPY
-   Only the first 3 dark cards are affected.
-   Desktop/tablet design remains unchanged.
-========================================================= */
-
-.heli-mobile-copy {
-  display: none;
+@media (max-width: 1250px) {
+  .helicopter-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 640px) {
-  .heli-card:not(.premium) .heli-description {
-    display: none;
+  .helicopter-grid {
+    grid-template-columns: 1fr;
   }
 
-  .heli-card:not(.premium) .heli-mobile-copy {
-    position: relative;
-    display: block;
-    margin: 24px 0 0;
-    padding: 18px 2px 0;
-    color: rgba(255, 255, 255, 0.88);
-    font-size: 15px;
-    font-weight: 500;
-    line-height: 1.65;
-    letter-spacing: 0.01em;
-    opacity: 1;
+  .heli-image {
+    flex-basis: 260px;
+    height: 260px;
   }
 
-  .heli-card:not(.premium) .heli-mobile-copy::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 54px;
-    height: 2px;
-    border-radius: 999px;
-    background: var(--gold);
-    opacity: 0.9;
-  }
-
-  .heli-card:not(.premium) .heli-body {
+  .heli-body {
     padding-bottom: 30px;
+  }
+
+  .heli-description {
+    margin-top: 18px;
   }
 }
 
-/* =========================================================
-   STANDARD HELICOPTER DESCRIPTION - DESKTOP/TABLET
-   First 3 dark cards only
-========================================================= */
-
-@media (min-width: 641px) {
-
-  .heli-card:not(.premium) .heli-mobile-copy {
-    position: relative;
-    display: block;
-
-    margin: 24px 0 0;
-    padding: 18px 0 0;
-
-    max-width: 92%;
-
-    color: rgba(255, 255, 255, 0.84);
-
-    font-size: 13px;
-    font-weight: 500;
-    line-height: 1.65;
-    letter-spacing: 0.01em;
-
-    opacity: 1;
+@media (min-width: 901px) {
+  .mini-eyebrow {
+    letter-spacing: 2.25px;
+    font-size: 9.75px;
   }
 
-  /* Premium gold line above description */
-  .heli-card:not(.premium) .heli-mobile-copy::before {
-    content: "";
+  .heli-card {
+    border-radius: 21px;
+  }
 
-    position: absolute;
-    top: 0;
-    left: 0;
+  /* Same image proportion for all six cards. */
+  .heli-image {
+    flex-basis: 248px;
+    height: 248px;
+  }
 
-    width: 48px;
-    height: 2px;
+  .heli-image > span {
+    top: 16.5px;
+    left: 16.5px;
+    padding: 7.5px 12.75px;
+    letter-spacing: 1.5px;
+    font-size: 12px;
+  }
 
-    background: var(--gold);
-    border-radius: 100px;
+  /* Same body spacing/alignment for standard and premium cards. */
+  .heli-body {
+    padding: 24px;
+  }
 
-    opacity: 0.95;
+  .heli-title-row {
+    gap: 18.75px;
+    margin-top: 13.5px;
+  }
+
+  .heli-title-row h3 {
+    margin-bottom: 6px;
+    font-size: 22.5px;
+  }
+
+  .heli-price strong {
+    font-size: 18.75px;
+  }
+
+  .heli-description {
+    margin-top: 14px;
+    font-size: 12.75px;
+    line-height: 1.55;
+  }
+
+  .heli-card:not(.premium) .heli-description {
+    margin-top: 14px;
+    padding-top: 12px;
+  }
+
+  .heli-card:not(.premium) .heli-description::before {
+    width: 34px;
   }
 }
