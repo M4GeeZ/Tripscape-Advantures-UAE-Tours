@@ -1,0 +1,32 @@
+/* Styles scoped to the TrustStrip component. */
+
+.trust-strip {background: var(--cream); padding: 92px 0 100px;}
+
+.trust-grid {display: grid; grid-template-columns: repeat(4, 1fr); gap: 46px;}
+
+.trust-item {display: flex; align-items: flex-start; gap: 22px;}
+
+.trust-icon {width: 72px; aspect-ratio: 1; flex: 0 0 auto; border-radius: 18px; display: grid; place-items: center; background: white; color: var(--gold); box-shadow: 0 8px 24px rgba(16,27,43,.08);}
+
+.trust-item h3 {margin: 4px 0 9px; font-size: 21px;}
+
+.trust-item p {margin: 0; color: var(--muted); line-height: 1.55; font-size: 16px;}
+
+@media (max-width: 1250px) {
+  .trust-grid {grid-template-columns: repeat(2, 1fr);}
+}
+
+@media (max-width: 640px) {
+  .trust-strip {padding: 70px 0;}
+  .trust-grid {grid-template-columns: 1fr; gap: 30px;}
+  .trust-icon {width: 58px; border-radius: 14px;}
+}
+
+@media (min-width: 901px) {
+  .trust-strip {padding-block: 69px 75px;}
+  .trust-item {gap: 16.5px;}
+  .trust-icon {width: 54px; border-radius: 13.5px;}
+  .trust-icon svg {width: 18px; height: 18px;}
+  .trust-item h3 {margin-block: 3px 6.75px; font-size: 15.75px;}
+  .trust-item p {font-size: 12px;}
+}

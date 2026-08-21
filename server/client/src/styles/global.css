@@ -1,0 +1,107 @@
+/* Global design tokens, reset and reusable layout/button utilities only.
+   Every section/component keeps its own styles beside its JSX file. */
+
+:root {--navy: #101b2b;
+  --navy-soft: #172338;
+  --gold: #c98b2e;
+  --gold-light: #f2c571;
+  --cream: #f7f1e8;
+  --paper: #ffffff;
+  --ink: #111b2b;
+  --muted: #626a74;
+  --line: rgba(17, 27, 43, 0.1);
+  --container: 1780px;
+  --radius-lg: 28px;
+  --radius-md: 20px;
+  --shadow: 0 20px 60px rgba(16, 27, 43, 0.12);}
+
+* {box-sizing: border-box;}
+
+html {scroll-behavior: auto; background: var(--paper);}
+
+body {margin: 0; font-family: "Manrope", sans-serif; color: var(--ink); background: var(--paper); overflow-x: hidden;}
+
+a {color: inherit; text-decoration: none;}
+
+button,
+input,
+select,
+textarea {font: inherit;}
+
+button {cursor: pointer;}
+
+img {display: block; max-width: 100%;}
+
+.site-shell {min-height: 100vh;}
+
+.container {width: min(var(--container), calc(100% - 88px)); margin-inline: auto;}
+
+.section {padding: 112px 0;}
+
+.white-section {background: #fff;}
+
+.cream-section {background: var(--cream);}
+
+.dark-section {background: var(--navy); color: white;}
+
+.overflow-hidden {overflow: hidden;}
+
+.brand {display: inline-flex; align-items: center; gap: 8px; width: fit-content;}
+
+.brand-mark {font-size: 28px; color: white; transform: rotate(-15deg);}
+
+.brand-text {font-weight: 800; letter-spacing: -1px; font-size: 21px; line-height: .9; display: flex; flex-direction: column;}
+
+.brand-text small {font-size: 8px; letter-spacing: 3px; margin-top: 6px; text-align: center;}
+
+.button {border: 0; border-radius: 14px; min-height: 58px; padding: 0 30px; display: inline-flex; align-items: center; justify-content: center; gap: 12px; font-weight: 800; transition: transform .25s ease, box-shadow .25s ease, background .25s ease;}
+
+.button:hover {transform: translateY(-2px); box-shadow: 0 14px 30px rgba(16, 27, 43, .2);}
+
+.button-gold {background: var(--gold); color: white;}
+
+.button-outline {border: 2px solid rgba(255,255,255,.75); color: white; background: rgba(255,255,255,.08); backdrop-filter: blur(10px);}
+
+.button.compact {min-height: 44px; padding: 0 20px; font-size: 14px; border-radius: 10px;}
+
+[data-reveal] {will-change: transform, opacity;}
+
+@media (max-width: 1250px) {
+  .container {width: min(var(--container), calc(100% - 48px));}
+}
+
+@media (max-width: 900px) {
+  .section {padding: 84px 0;}
+}
+
+@media (max-width: 640px) {
+  .container {width: calc(100% - 30px);}
+  .section {padding: 70px 0;}
+  .brand-text {font-size: 17px;}
+  .button {min-height: 54px;}
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important;}
+}
+
+.brand-image {display: inline-flex;
+  align-items: center;
+  min-width: 132px;}
+
+.brand-image img {display: block;
+  width: clamp(118px, 9.5vw, 158px);
+  height: auto;
+  max-height: 56px;
+  object-fit: contain;}
+
+@media (min-width: 901px) {
+  body {font-size: 12px;}
+  .section {padding-block: 84px;}
+  .brand-image {min-width: 99px;}
+  .brand-image img {width: clamp(88.5px, 7.125vw, 118.5px); max-height: 42px;}
+  .button {min-height: 43.5px; padding-inline: 22.5px; gap: 9px; border-radius: 10.5px; font-size: 12px;}
+  .button.compact {min-height: 33px; padding-inline: 15px; font-size: 10.5px; border-radius: 7.5px;}
+}

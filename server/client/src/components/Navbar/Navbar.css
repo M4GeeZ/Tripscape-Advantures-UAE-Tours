@@ -1,0 +1,1075 @@
+.site-header {
+  left: 0;
+  width: 100%;
+  z-index: 70;
+  transition:
+    background 0.28s ease,
+    color 0.28s ease,
+    box-shadow 0.28s ease;
+}
+
+.site-header-overlay {
+  position: absolute;
+  top: 0;
+  color: white;
+}
+
+.site-header-light {
+  position: sticky;
+  top: 0;
+  color: var(--ink);
+  background: white;
+  box-shadow: 0 1px 0 rgba(16, 27, 43, 0.08);
+}
+
+.site-header-overlay.mega-open {
+  color: var(--ink);
+  background: white;
+  box-shadow: 0 1px 0 rgba(16, 27, 43, 0.08);
+}
+
+/* =========================================
+   TOP BAR
+========================================= */
+
+.nav-topbar {
+  color: rgba(255, 255, 255, 0.82);
+  background: var(--navy);
+}
+
+.nav-topbar-inner {
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.nav-topbar-contact,
+.nav-topbar-socials {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.nav-topbar-contact a,
+.nav-topbar-socials a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: inherit;
+  font-size: 9px;
+  text-decoration: none;
+}
+
+.nav-topbar-socials a {
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.nav-topbar-socials a:hover {
+  color: var(--gold-light);
+  transform: translateY(-1px);
+}
+
+.nav-topbar-whatsapp {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: inherit;
+  text-decoration: none;
+  transition:
+    color 0.3s ease,
+    transform 0.3s ease;
+}
+
+.nav-topbar-whatsapp-icon {
+  width: 14px;
+  height: 14px;
+  display: block;
+  flex-shrink: 0;
+  color: currentColor;
+  transition:
+    color 0.3s ease,
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.3s ease;
+}
+
+.nav-topbar-whatsapp:hover {
+  color: #25d366;
+  transform: translateY(-1px);
+}
+
+.nav-topbar-whatsapp:hover .nav-topbar-whatsapp-icon {
+  color: #25d366;
+  transform: rotate(-7deg) scale(1.14);
+  filter: drop-shadow(
+    0 3px 6px rgba(37, 211, 102, 0.35)
+  );
+}
+
+.nav-topbar-whatsapp:focus-visible {
+  color: #25d366;
+  border-radius: 3px;
+  outline: 1px solid #25d366;
+  outline-offset: 4px;
+}
+
+/* =========================================
+   MAIN NAVBAR
+========================================= */
+
+.nav-wrap {
+  position: relative;
+  width: 100%;
+  min-height: 88px;
+  padding: 0 46px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 38px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.nav-links > a,
+.nav-tours-item > a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding-block: 12px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.nav-links > a::after,
+.nav-tours-item > a::after {
+  content: "";
+  position: absolute;
+  right: 100%;
+  bottom: 4px;
+  left: 0;
+  height: 2px;
+  background: var(--gold);
+  transition: right 0.3s ease;
+}
+
+.nav-links > a:hover::after,
+.nav-tours-item:hover > a::after,
+.nav-tours-item.is-active > a::after {
+  right: 0;
+}
+
+.nav-tours-chevron {
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.2s ease;
+}
+
+.nav-tours-item.is-active .nav-tours-chevron {
+  color: var(--gold);
+  transform: rotate(180deg);
+}
+
+/* =========================================
+   LOGO
+========================================= */
+
+.site-header .brand-image {
+  min-width: 146px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.site-header .brand-image img {
+  width: clamp(136px, 8.4vw, 158px);
+  max-height: 58px;
+  display: block;
+  object-fit: contain;
+  object-position: left center;
+  transition: opacity 0.25s ease;
+}
+
+/* =========================================
+   ACTIONS
+========================================= */
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 18px;
+}
+
+.icon-btn {
+  display: grid;
+  place-items: center;
+  padding: 8px;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+}
+
+.nav-search {
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.nav-search:hover {
+  color: var(--gold);
+  transform: scale(1.06);
+}
+
+.menu-btn {
+  display: none;
+}
+
+.nav-book {
+  min-width: 106px;
+}
+
+/* =========================================
+   MAIN WHATSAPP NUMBER
+========================================= */
+
+.nav-whatsapp {
+  position: relative;
+  min-height: 46px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 2px;
+  padding-left: 22px;
+  border-left: 1px solid currentColor;
+  color: inherit;
+  font-size: 12px;
+  font-weight: 750;
+  line-height: 1;
+  letter-spacing: 0.015em;
+  text-decoration: none;
+  white-space: nowrap;
+  opacity: 0.94;
+  transition:
+    color 0.3s ease,
+    opacity 0.3s ease,
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nav-whatsapp-icon {
+  width: 19px;
+  height: 19px;
+  display: block;
+  flex: 0 0 19px;
+  color: currentColor;
+  overflow: visible;
+  transition:
+    color 0.3s ease,
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.3s ease;
+}
+
+.nav-whatsapp-number {
+  position: relative;
+  display: inline-block;
+}
+
+.nav-whatsapp-number::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -6px;
+  left: 0;
+  height: 1px;
+  background: #25d366;
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform 0.35s
+    cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nav-whatsapp:hover {
+  color: #25d366;
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+.nav-whatsapp:hover .nav-whatsapp-icon {
+  color: #25d366;
+  transform: rotate(-8deg) scale(1.14);
+  filter: drop-shadow(
+    0 4px 8px rgba(37, 211, 102, 0.35)
+  );
+}
+
+.nav-whatsapp:hover .nav-whatsapp-number::after {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+.nav-whatsapp:focus-visible {
+  color: #25d366;
+  border-radius: 4px;
+  outline: 2px solid #25d366;
+  outline-offset: 5px;
+}
+
+.site-header-light .nav-whatsapp,
+.site-header-overlay.mega-open .nav-whatsapp {
+  border-left-color: rgba(16, 27, 43, 0.18);
+}
+
+.site-header-overlay:not(.mega-open) .nav-whatsapp {
+  border-left-color: rgba(255, 255, 255, 0.34);
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 1250px) {
+  .nav-wrap {
+    padding-inline: 28px;
+  }
+
+  .nav-links {
+    gap: 25px;
+  }
+}
+
+@media (max-width: 1180px) {
+  .nav-whatsapp {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .site-header-light {
+    position: relative;
+  }
+
+  .nav-topbar {
+    display: none;
+  }
+
+  .nav-wrap {
+    min-height: 76px;
+    grid-template-columns: 1fr auto;
+  }
+
+  .nav-links {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    min-height: 100vh;
+    padding: 120px 34px 50px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 13px;
+    color: white;
+    background: rgba(16, 27, 43, 0.99);
+    font-size: 24px;
+    transform: translateY(-110%);
+    transition: transform 0.45s ease;
+  }
+
+  .nav-links.is-open {
+    transform: translateY(0);
+  }
+
+  .nav-tours-item > a {
+    gap: 9px;
+  }
+
+  .nav-actions {
+    grid-column: 2;
+  }
+
+  .nav-search,
+  .nav-book,
+  .nav-whatsapp {
+    display: none;
+  }
+
+  .menu-btn {
+    position: relative;
+    z-index: 100;
+    display: grid;
+  }
+
+  .site-header-light .menu-btn {
+    color: var(--ink);
+  }
+
+  .site-header-light
+    .nav-links.is-open
+    ~ .nav-actions
+    .menu-btn,
+  .site-header-overlay .menu-btn {
+    color: white;
+  }
+
+  .site-header .brand-image {
+    min-width: 112px;
+  }
+
+  .site-header .brand-image img {
+    width: 112px;
+    max-height: 45px;
+  }
+}
+
+@media (max-width: 640px) {
+  .nav-wrap {
+    min-height: 70px;
+    padding-inline: 18px;
+  }
+}
+
+@media (min-width: 901px) {
+  .nav-links {
+    position: relative;
+    left: -80px;
+  }
+}
+/* =========================================
+   OPERATIONAL GLOBAL NAVBAR SEARCH
+========================================= */
+
+.site-header-overlay.search-open {
+  color: var(--ink);
+  background: #fff;
+  box-shadow: 0 1px 0 rgba(16, 27, 43, 0.08);
+}
+
+.nav-search.is-active { color: var(--gold); }
+
+.nav-search-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 88;
+  padding: 18px 28px 28px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.985);
+  border-top: 1px solid rgba(16, 27, 43, 0.07);
+  box-shadow: 0 28px 70px rgba(7, 18, 31, 0.22);
+  animation: navSearchPanelIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.nav-search-panel__inner {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+}
+
+.nav-global-search {
+  min-height: 58px;
+  padding: 7px 8px 7px 18px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 12px;
+  color: var(--ink);
+  background: #f7f4ed;
+  border: 1px solid rgba(16, 27, 43, 0.12);
+  border-radius: 17px;
+}
+
+.nav-global-search > svg { color: var(--gold); }
+
+.nav-global-search input {
+  width: 100%;
+  min-width: 0;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  outline: 0;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 650;
+}
+
+.nav-global-search input::placeholder { color: #9298a1; }
+
+.nav-global-search > button:not(.nav-global-search__submit) {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  color: #7c838d;
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.nav-global-search > button:not(.nav-global-search__submit):hover {
+  color: var(--ink);
+  background: rgba(16, 27, 43, 0.07);
+}
+
+.nav-global-search__submit {
+  min-width: 112px;
+  min-height: 44px;
+}
+
+.nav-search-results {
+  margin-top: 12px;
+  box-shadow: none;
+}
+
+@keyframes navSearchPanelIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 900px) {
+  .nav-search-panel { display: none; }
+}
+
+@media (max-width: 640px) {
+  .nav-search-panel { padding-inline: 12px; }
+  .nav-global-search { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .nav-global-search__submit { grid-column: 1 / -1; width: 100%; }
+}
+
+
+/* =========================================================
+   MOBILE NAVBAR UPGRADE
+   Keeps desktop unchanged. Adds mobile Book Now, search,
+   WhatsApp contact, stronger Tours chevron and polished menu.
+========================================================= */
+
+/* Mobile-only elements must stay hidden on desktop.
+   Higher specificity is intentional so .nav-links > a cannot override this. */
+.nav-links > .mobile-menu-brand,
+.nav-links > .mobile-menu-whatsapp,
+.nav-tours-mobile-row {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .site-header {
+    overflow: visible;
+  }
+
+  .nav-wrap {
+    z-index: 96;
+    padding-inline: 18px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+  }
+
+  /* Keep the CTA visible on mobile */
+  .nav-book {
+    display: inline-flex;
+    min-width: 104px;
+    min-height: 46px;
+    padding-inline: 20px;
+    border-radius: 15px;
+    font-size: 13px;
+    justify-content: center;
+  }
+
+  .nav-actions {
+    position: relative;
+    gap: 10px;
+  }
+
+  /* Search sits directly below the hamburger */
+  .nav-search {
+    position: absolute;
+    top: calc(100% + 15px);
+    right: 0;
+    z-index: 122;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    color: white;
+    background: rgba(10, 23, 39, 0.93);
+    border: 1px solid rgba(255, 255, 255, 0.26);
+    border-radius: 50%;
+    box-shadow: 0 10px 26px rgba(6, 18, 31, 0.24);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .site-header-light .nav-search,
+  .site-header.search-open .nav-search,
+  .site-header.mega-open .nav-search {
+    color: var(--ink);
+    background: rgba(255, 255, 255, 0.96);
+    border-color: rgba(16, 27, 43, 0.12);
+  }
+
+  .nav-search:hover,
+  .nav-search:active {
+    color: var(--gold);
+    transform: scale(1.04);
+  }
+
+  .menu-btn {
+    z-index: 125;
+    width: 42px;
+    height: 42px;
+    padding: 7px;
+    border-radius: 12px;
+  }
+
+  .menu-btn svg {
+    width: 27px;
+    height: 27px;
+    stroke-width: 2.2;
+  }
+
+  /* Full-screen mobile menu */
+  .nav-links {
+    z-index: 110;
+    min-height: 100dvh;
+    height: 100dvh;
+    padding: 126px 34px 44px;
+    gap: 12px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background:
+      radial-gradient(circle at 50% 4%, rgba(201, 138, 46, 0.12), transparent 26%),
+      rgba(12, 25, 42, 0.992);
+    transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Same Tripscape logo, centered inside the open mobile menu */
+  .nav-links .mobile-menu-brand {
+    position: absolute;
+    top: 26px;
+    left: 50%;
+    width: 150px;
+    min-width: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateX(-50%);
+  }
+
+  .nav-links .mobile-menu-brand::after {
+    display: none;
+  }
+
+  .nav-links .mobile-menu-brand img {
+    width: 146px;
+    max-height: 58px;
+    display: block;
+    object-fit: contain;
+  }
+
+  .nav-links > a:not(.mobile-menu-brand):not(.mobile-menu-whatsapp),
+  .nav-tours-item > a {
+    min-height: 50px;
+    padding-block: 9px;
+    font-size: 24px;
+    line-height: 1.15;
+  }
+
+  .nav-tours-item {
+    width: 100%;
+  }
+
+  /* Desktop Tours control is hidden only on mobile. */
+  .nav-tours-item > .nav-tours-desktop-link {
+    display: none;
+  }
+
+  /* Mobile Tours row: text navigates, round button opens mega menu. */
+  .nav-tours-mobile-row {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    min-height: 50px;
+  }
+
+  .nav-tours-mobile-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 50px;
+    padding: 9px 0;
+    color: inherit;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.15;
+    text-decoration: none;
+  }
+
+  .nav-tours-mobile-toggle {
+    width: 32px;
+    height: 32px;
+    margin-left: 16px;
+    padding: 0;
+    display: inline-grid;
+    place-items: center;
+    flex: 0 0 32px;
+    color: #f1b64f;
+    background: rgba(241, 182, 79, 0.1);
+    border: 1px solid rgba(241, 182, 79, 0.45);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+  }
+
+  .nav-tours-mobile-chevron {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2.5;
+    transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .nav-tours-item.is-active .nav-tours-mobile-toggle {
+    color: #fff;
+    background: var(--gold);
+    border-color: var(--gold);
+  }
+
+  .nav-tours-item.is-active .nav-tours-mobile-chevron {
+    transform: rotate(180deg);
+  }
+
+  /* Make Tours arrow clearly visible on mobile */
+  .nav-tours-chevron {
+    width: 23px;
+    height: 23px;
+    padding: 3px;
+    color: #f1b64f;
+    background: rgba(241, 182, 79, 0.1);
+    border: 1px solid rgba(241, 182, 79, 0.4);
+    border-radius: 50%;
+    stroke-width: 2.5;
+    flex: 0 0 23px;
+  }
+
+  .nav-tours-item.is-active .nav-tours-chevron {
+    color: #fff;
+    background: var(--gold);
+    border-color: var(--gold);
+  }
+
+  /* Mobile WhatsApp contact mirrors desktop navbar functionality */
+  .nav-links .mobile-menu-whatsapp {
+    width: min(310px, 100%);
+    min-height: 58px;
+    margin-top: 16px;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: white;
+    background: rgba(255, 255, 255, 0.065);
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 16px;
+    text-decoration: none;
+  }
+
+  .nav-links .mobile-menu-whatsapp::after {
+    display: none;
+  }
+
+  .mobile-menu-whatsapp__icon {
+    width: 26px;
+    height: 26px;
+    flex: 0 0 26px;
+    color: #25d366;
+  }
+
+  .mobile-menu-whatsapp > span {
+    display: grid;
+    gap: 3px;
+  }
+
+  .mobile-menu-whatsapp small {
+    color: rgba(255, 255, 255, 0.58);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .mobile-menu-whatsapp strong {
+    color: white;
+    font-size: 14px;
+    letter-spacing: 0.01em;
+  }
+
+  /* Search panel is now functional on mobile too */
+  .nav-search-panel {
+    position: fixed;
+    top: 76px;
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
+    z-index: 118;
+    display: block;
+    padding: 58px 14px 16px;
+    overflow-y: auto;
+    color: var(--ink);
+    background: rgba(255, 255, 255, 0.985);
+    border: 1px solid rgba(16, 27, 43, 0.08);
+    border-radius: 22px;
+    box-shadow: 0 28px 70px rgba(7, 18, 31, 0.26);
+    overscroll-behavior: contain;
+  }
+
+  .nav-search-panel__inner {
+    width: 100%;
+  }
+
+  .nav-global-search {
+    min-height: 58px;
+    padding: 7px 8px 7px 14px;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 9px;
+    border-radius: 16px;
+  }
+
+  .nav-global-search input {
+    font-size: 14px;
+  }
+
+  .nav-global-search__submit {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-height: 46px;
+    margin-top: 2px;
+  }
+
+  .nav-search-results {
+    margin-top: 10px;
+  }
+
+  /* When menu is open, keep hamburger + search controls readable */
+  .nav-links.is-open ~ .nav-actions .menu-btn,
+  .nav-links.is-open ~ .nav-actions .nav-search {
+    color: white;
+  }
+
+  .nav-links.is-open ~ .nav-actions .nav-search {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.18);
+  }
+
+  /* Hide main Book Now behind the full-screen menu */
+  .nav-links.is-open ~ .nav-actions .nav-book {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .nav-wrap {
+    min-height: 70px;
+    padding-inline: 16px;
+    gap: 8px;
+  }
+
+  .site-header .brand-image {
+    min-width: 104px;
+  }
+
+  .site-header .brand-image img {
+    width: 104px;
+    max-height: 42px;
+  }
+
+  .nav-book {
+    min-width: 88px;
+    min-height: 36px;
+    height: 36px;
+    padding: 0 12px;
+    border-radius: 10px;
+    font-size: 12px;
+  }
+
+  .menu-btn {
+    width: 38px;
+    height: 38px;
+    padding: 6px;
+  }
+
+  .menu-btn svg {
+    width: 25px;
+    height: 25px;
+  }
+
+  .nav-search {
+    top: calc(100% + 12px);
+    width: 39px;
+    height: 39px;
+  }
+
+  .nav-search svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .nav-links {
+    padding: 116px 28px 34px;
+  }
+
+  .nav-links .mobile-menu-brand {
+    top: 24px;
+    width: 142px;
+  }
+
+  .nav-links .mobile-menu-brand img {
+    width: 138px;
+  }
+
+  .nav-links > a:not(.mobile-menu-brand):not(.mobile-menu-whatsapp),
+  .nav-tours-item > a {
+    min-height: 47px;
+    font-size: 22px;
+  }
+
+  .nav-tours-chevron {
+    width: 22px;
+    height: 22px;
+    flex-basis: 22px;
+  }
+
+  .nav-tours-mobile-link {
+    min-height: 47px;
+    font-size: 22px;
+  }
+
+  .nav-tours-mobile-toggle {
+    width: 31px;
+    height: 31px;
+    flex-basis: 31px;
+    margin-left: 17px;
+  }
+
+  .nav-tours-mobile-chevron {
+    width: 19px;
+    height: 19px;
+  }
+
+  .nav-search-panel {
+    top: 70px;
+    right: 8px;
+    bottom: 8px;
+    left: 8px;
+    padding: 56px 10px 12px;
+    border-radius: 19px;
+  }
+
+  .nav-global-search {
+    padding: 8px 8px 8px 12px;
+  }
+
+  .nav-global-search > svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .nav-global-search input {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 390px) {
+  .nav-wrap {
+    padding-inline: 12px;
+  }
+
+  .site-header .brand-image {
+    min-width: 94px;
+  }
+
+  .site-header .brand-image img {
+    width: 94px;
+  }
+
+  .nav-actions {
+    gap: 6px;
+  }
+
+  .nav-book {
+    min-width: 84px;
+    min-height: 34px;
+    height: 34px;
+    padding: 0 10px;
+    border-radius: 10px;
+    font-size: 11px;
+  }
+
+  .menu-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .nav-search {
+    right: 0;
+    width: 37px;
+    height: 37px;
+  }
+
+  .nav-links {
+    padding-inline: 24px;
+  }
+}
+
+/* Mobile search-open navbar alignment: Logo | Book Now | Close */
+@media (max-width: 900px) {
+  .nav-actions.search-is-open .nav-search {
+    position: static !important;
+    order: 3;
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+    padding: 0 !important;
+    display: inline-grid !important;
+    place-items: center !important;
+    color: #fff !important;
+    background: var(--gold) !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+
+  .nav-actions.search-is-open .nav-book {
+    order: 2;
+  }
+
+  .nav-actions.search-is-open .menu-btn {
+    display: none !important;
+  }
+
+  .nav-actions.search-is-open .nav-search svg {
+    width: 22px;
+    height: 22px;
+    stroke: currentColor;
+  }
+}
+
+@media (max-width: 640px) {
+  .nav-actions.search-is-open {
+    gap: 8px;
+  }
+  .nav-actions.search-is-open .nav-search {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
+  }
+}

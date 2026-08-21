@@ -1,0 +1,26 @@
+/* Styles scoped to the SectionHeading component. */
+
+.section-heading {max-width: 1000px;}
+
+.section-heading > span {color: var(--gold); text-transform: uppercase; letter-spacing: 3px; font-weight: 800; font-size: 13px;}
+
+.section-heading h2 {font-size: clamp(46px, 4.5vw, 78px); line-height: 1.05; letter-spacing: -3.5px; margin: 18px 0 22px;}
+
+.section-heading p {font-size: 20px; line-height: 1.65; color: var(--muted); margin: 0; max-width: 970px;}
+
+.section-heading.centered {text-align: center; margin-inline: auto;}
+
+.section-heading.centered p {margin-inline: auto;}
+
+.section-heading.light p {color: rgba(255,255,255,.75);}
+
+@media (max-width: 640px) {
+  .section-heading h2 {font-size: 43px; letter-spacing: -2px;}
+  .section-heading p {font-size: 17px;}
+}
+
+@media (min-width: 901px) {
+  .section-heading > span {letter-spacing: 2.25px; font-size: 9.75px;}
+  .section-heading h2 {font-size: clamp(34.5px, 3.375vw, 58.5px); letter-spacing: -2.625px; margin-block: 13.5px 16.5px;}
+  .section-heading p {font-size: 15px;}
+}

@@ -1,0 +1,41 @@
+/* Styles scoped to the SupportCta component. */
+
+.support-section {background: white; padding: 70px 0;}
+
+.support-card {background: var(--navy-soft); color: white; border-radius: 22px; padding: 38px; display: grid; grid-template-columns: 1.6fr repeat(3, 1fr); gap: 14px; align-items: stretch;}
+
+.support-card > div > span {color: var(--gold-light); text-transform: uppercase; letter-spacing: 2px; font-size: 12px; font-weight: 800;}
+
+.support-card h2 {font-size: 30px; line-height: 1.15; margin: 9px 0;}
+
+.support-card p {color: rgba(255,255,255,.68); margin: 0;}
+
+.support-card > a {border: 1px solid rgba(255,255,255,.15); border-radius: 14px; padding: 22px; display: flex; gap: 14px; align-items: center; background: rgba(255,255,255,.05); transition: .25s;}
+
+.support-card > a:hover {background: rgba(255,255,255,.1); transform: translateY(-3px);}
+
+.support-card > a:first-of-type svg {color: #1ed760;}
+
+.support-card > a:nth-of-type(2) svg {color: var(--gold-light);}
+
+.support-card > a span {display: flex; flex-direction: column; font-weight: 700; font-size: 14px;}
+
+.support-card small {color: rgba(255,255,255,.55); text-transform: uppercase; font-size: 9px; letter-spacing: 1px; margin-bottom: 5px;}
+
+@media (max-width: 1250px) {
+  .support-card {grid-template-columns: 1fr 1fr;}
+}
+
+@media (max-width: 640px) {
+  .support-card {grid-template-columns: 1fr; padding: 24px;}
+}
+
+@media (min-width: 901px) {
+  .support-section {padding-block: 52.5px;}
+  .support-card {border-radius: 16.5px; padding: 28.5px; gap: 10.5px;}
+  .support-card > div > span {font-size: 9px;}
+  .support-card h2 {font-size: 22.5px;}
+  .support-card > a {border-radius: 10.5px; padding: 16.5px; gap: 10.5px;}
+  .support-card > a span {font-size: 10.5px;}
+  .support-card small {font-size: 7px;}
+}
