@@ -27,3 +27,108 @@ export function getCardDescription(category, title, fallback = '') {
 
   return description
 }
+
+const categoryFallbackPoints = {
+  'desert-safari': [
+    'Hotel pickup and drop-off support',
+    'Dune bashing and desert driving experience',
+    'Camel ride and desert photo opportunities',
+    'Sandboarding or selected desert activities',
+    'Refreshments during the experience',
+    'Professional desert safari guide',
+    'WhatsApp booking and timing assistance'
+  ],
+  'desert-adventures': [
+    'Safety briefing before the activity',
+    'Required helmet and safety equipment',
+    'Guided desert riding experience',
+    'Professional activity support',
+    'Desert photo opportunities',
+    'Selected riding duration or package',
+    'WhatsApp booking and timing assistance'
+  ],
+  'city-tours': [
+    'Comfortable air-conditioned transport',
+    'Professional local tour guide',
+    'Major landmark photo stops',
+    'Planned sightseeing route and timings',
+    'Pickup support on selected packages',
+    'Local guidance throughout the tour',
+    'WhatsApp booking and timing assistance'
+  ],
+  attractions: [
+    'Digital booking confirmation',
+    'Clear attraction entry instructions',
+    'Selected attraction admission or ticket',
+    'Visit timing and access guidance',
+    'Mobile-friendly booking details',
+    'Guest support before your visit',
+    'WhatsApp booking assistance'
+  ],
+  cruises: [
+    'Scenic waterfront cruise route',
+    'Clear departure and boarding details',
+    'Guest support before boarding',
+    'Comfortable sightseeing experience',
+    'Selected meal service when included',
+    'Booking and timing assistance',
+    'WhatsApp guest support'
+  ],
+  'water-activities': [
+    'Professional safety briefing',
+    'Required activity equipment',
+    'On-site guest assistance',
+    'Selected water activity session',
+    'Clear check-in and timing guidance',
+    'Safety support throughout the activity',
+    'WhatsApp booking assistance'
+  ],
+  'aerial-experiences': [
+    'Pre-flight safety briefing',
+    'Scenic aerial sightseeing route',
+    'Professional boarding assistance',
+    'Selected flight duration or package',
+    'Clear check-in instructions',
+    'Guest support before departure',
+    'WhatsApp booking and timing assistance'
+  ],
+  packages: [
+    'Curated UAE travel experience',
+    'Clear pickup and timing details',
+    'Guest assistance throughout the package',
+    'Selected service or activity arrangement',
+    'Practical booking guidance',
+    'Simple confirmation process',
+    'WhatsApp booking assistance'
+  ]
+}
+
+function cleanPoint(value = '') {
+  return String(value)
+    .replace(/^[•✓✔\-–—]+\s*/, '')
+    .replace(/\s+/g, ' ')
+    .replace(/[.;,:]+$/, '')
+    .trim()
+}
+
+function pointsFromText(text = '') {
+  return String(text)
+    .split(/(?<=[.!?])\s+|\s+[–—]\s+|;\s+/)
+    .map(cleanPoint)
+    .filter((point) => point.length >= 18)
+}
+
+export function getCardPoints(category, title, fallback = '', limit = 7) {
+  const categorySlug = categoryToSlug(category)
+  const detail = getTourDetail(categorySlug, slugify(title))
+
+  const detailPoints = Array.isArray(detail?.included)
+    ? detail.included.map(cleanPoint).filter(Boolean)
+    : []
+
+  const fallbackPoints = pointsFromText(fallback)
+  const categoryPoints = categoryFallbackPoints[categorySlug] || categoryFallbackPoints.packages
+  const pointLimit = Math.max(5, Math.min(Number(limit) || 7, 7))
+
+  return [...new Set([...detailPoints, ...fallbackPoints, ...categoryPoints])].slice(0, pointLimit)
+}

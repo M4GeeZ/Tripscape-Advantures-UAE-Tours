@@ -4,7 +4,7 @@ import { images } from '../../generatedImages'
 import SectionHeading from '../SectionHeading/SectionHeading'
 import ExperienceCardActions from '../ExperienceCardActions/ExperienceCardActions'
 import { getTourDetailHref } from '../../tourDetails'
-import { getCardDescription } from '../../utils/cardContent'
+import { getCardPoints } from '../../utils/cardContent'
 import './TourCarousel.css'
 
 const fallbackTour = {
@@ -48,7 +48,7 @@ export default function TourCarousel() {
         <div className="tour-grid">
           {displayedTours.map((tour, index) => {
             const detailHref = getTourDetailHref('Desert Safari', tour.title)
-            const description = getCardDescription('Desert Safari', tour.title)
+            const points = getCardPoints('Desert Safari', tour.title, '', 5)
 
             return (
               <article className="tour-card" key={`${tour.title}-${index}`} data-reveal>
@@ -63,7 +63,9 @@ export default function TourCarousel() {
                 <div className="tour-card-body">
                   <div className="rating"><Star size={16} fill="currentColor" /> 4.9 · 0 reviews</div>
                   <h3><a href={detailHref}>{tour.title}</a></h3>
-                  <p className="experience-card-description">{description}</p>
+                  <ul className="experience-card-points">
+                    {points.map((point) => <li key={point}>{point}</li>)}
+                  </ul>
 
                   <div className="tour-card-price-line">
                     <strong>{tour.price}</strong>

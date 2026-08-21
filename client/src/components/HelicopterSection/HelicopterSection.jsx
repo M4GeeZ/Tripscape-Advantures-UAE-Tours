@@ -2,7 +2,7 @@ import { helicopters } from '../../data'
 import SectionHeading from '../SectionHeading/SectionHeading'
 import ExperienceCardActions from '../ExperienceCardActions/ExperienceCardActions'
 import { getTourDetailHref } from '../../tourDetails'
-import { getCardDescription } from '../../utils/cardContent'
+import { getCardPoints } from '../../utils/cardContent'
 import './HelicopterSection.css'
 
 export default function HelicopterSection() {
@@ -18,7 +18,7 @@ export default function HelicopterSection() {
         <div className="helicopter-grid">
           {helicopters.map((item, index) => {
             const detailHref = getTourDetailHref('Aerial Experiences', item.title)
-            const description = getCardDescription('Aerial Experiences', item.title, item.copy)
+            const points = getCardPoints('Aerial Experiences', item.title, item.copy, 5)
 
             return (
               <article className={`heli-card ${index > 2 ? 'premium' : ''}`} key={item.title} data-reveal>
@@ -36,7 +36,9 @@ export default function HelicopterSection() {
                     </div>
                     <div className="heli-price"><strong>{item.price}</strong><span>{item.unit}</span></div>
                   </div>
-                  <p className={`experience-card-description ${index > 2 ? '' : 'experience-card-description--light'}`}>{description}</p>
+                  <ul className={`experience-card-points ${index > 2 ? '' : 'experience-card-points--light'}`}>
+                    {points.map((point) => <li key={point}>{point}</li>)}
+                  </ul>
                   <ExperienceCardActions title={item.title} detailHref={detailHref} />
                 </div>
               </article>

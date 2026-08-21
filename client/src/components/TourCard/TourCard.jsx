@@ -1,14 +1,14 @@
 import { MapPin, Star } from 'lucide-react'
 import ExperienceCardActions from '../ExperienceCardActions/ExperienceCardActions'
 import { getTourDetailHref } from '../../tourDetails'
-import { getCardDescription } from '../../utils/cardContent'
+import { getCardPoints } from '../../utils/cardContent'
 import './TourCard.css'
 
 export default function TourCard({ tour }) {
   const hasFixedPrice = tour.price !== 'Contact for price'
   const category = tour.category || 'Tours'
   const detailHref = getTourDetailHref(category, tour.title)
-  const description = getCardDescription(category, tour.title, tour.description)
+  const points = getCardPoints(category, tour.title, tour.description, 7)
 
   return (
     <article className="tour-card-reference" data-reveal>
@@ -31,7 +31,9 @@ export default function TourCard({ tour }) {
           <span>{tour.location}</span>
         </div>
 
-        <p className="experience-card-description">{description}</p>
+        <ul className="experience-card-points">
+          {points.map((point) => <li key={point}>{point}</li>)}
+        </ul>
 
         <div className="tour-card-divider" />
 

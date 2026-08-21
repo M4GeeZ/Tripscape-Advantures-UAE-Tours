@@ -26,7 +26,7 @@ import ExperienceCardActions from '../../components/ExperienceCardActions/Experi
 import { useLuxuryReveal } from "../../hooks/useLuxuryReveal";
 import { tourCatalog } from "../../data";
 import { getTourDetailHref } from "../../tourDetails";
-import { getCardDescription } from "../../utils/cardContent";
+import { getCardPoints } from "../../utils/cardContent";
 
 import "./Services.css";
 
@@ -184,7 +184,7 @@ const ServiceCard = memo(function ServiceCard({ service, index }) {
   const Icon = service.icon;
   const category = service.category || "Packages";
   const detailHref = getTourDetailHref(category, service.title);
-  const description = getCardDescription(category, service.title);
+  const points = getCardPoints(category, service.title, '', 5);
 
   return (
     <div
@@ -215,7 +215,9 @@ const ServiceCard = memo(function ServiceCard({ service, index }) {
 
         <div className="service-premium-card__content">
           <h3><a href={detailHref}>{service.title}</a></h3>
-          <p className="experience-card-description experience-card-description--light">{description}</p>
+          <ul className="experience-card-points experience-card-points--light">
+            {points.map((point) => <li key={point}>{point}</li>)}
+          </ul>
           <ExperienceCardActions title={service.title} detailHref={detailHref} />
         </div>
       </article>

@@ -2,7 +2,7 @@ import { adventures } from '../../data'
 import SectionHeading from '../SectionHeading/SectionHeading'
 import ExperienceCardActions from '../ExperienceCardActions/ExperienceCardActions'
 import { getTourDetailHref } from '../../tourDetails'
-import { getCardDescription } from '../../utils/cardContent'
+import { getCardPoints } from '../../utils/cardContent'
 import './AdventureSection.css'
 
 export default function AdventureSection() {
@@ -13,7 +13,7 @@ export default function AdventureSection() {
         <div className="adventure-grid">
           {adventures.map((item) => {
             const detailHref = getTourDetailHref('Desert Adventures', item.title)
-            const description = getCardDescription('Desert Adventures', item.title)
+            const points = getCardPoints('Desert Adventures', item.title, '', 5)
 
             return (
               <article className="adventure-card" key={item.title} data-reveal style={{ '--adventure-image': `url(${item.image})` }}>
@@ -24,7 +24,9 @@ export default function AdventureSection() {
                 <div className="adventure-content">
                   <h3><a href={detailHref}>{item.title}</a></h3>
                   <span className="adventure-price">{item.price}</span>
-                  <p className="experience-card-description experience-card-description--light">{description}</p>
+                  <ul className="experience-card-points experience-card-points--light">
+                    {points.map((point) => <li key={point}>{point}</li>)}
+                  </ul>
                   <ExperienceCardActions title={item.title} detailHref={detailHref} />
                 </div>
               </article>

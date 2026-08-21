@@ -116,7 +116,7 @@ export const tourCategories = [
   { name: 'Desert Safari', description: 'Classic, VIP and overnight desert experiences', image: '/images/hero-desert.webp' },
   { name: 'Desert Adventures', description: 'Quad bikes, buggies and self-drive thrills', image: images.adventureDrive },
   { name: 'City Tours', description: 'Guided Dubai, Abu Dhabi and UAE sightseeing', image: images.cityBurj },
-  { name: 'Attractions', description: "Tickets for the UAE's .......... landmarks", image: '/images/attraction-card-01.jpg' },
+  { name: 'Attractions', description: "Tickets for the UAE's most popular landmarks", image: '/images/attraction-card-01.jpg' },
   { name: 'Cruises', description: 'Marina cruising and waterfront dining experiences', image: '/images/city-dubai.webp' },
   { name: 'Water Activities', description: 'Yachts, underwater and coastal adventures', image: images.attractionAquarium },
   { name: 'Aerial Experiences', description: 'Helicopter flights and skyline experiences', image: '/images/heli-card-02.jpg' },

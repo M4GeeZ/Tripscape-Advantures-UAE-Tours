@@ -10,14 +10,14 @@ import ExperienceCardActions from '../../components/ExperienceCardActions/Experi
 import { useLuxuryReveal } from '../../hooks/useLuxuryReveal'
 import { tourCategoryPages } from '../../tourCategoryPages'
 import { getTourDetailHref } from '../../tourDetails'
-import { getCardDescription } from '../../utils/cardContent'
+import { getCardPoints } from '../../utils/cardContent'
 import './TourCategory.css'
 
 function CategoryTourCard({ tour, page }) {
   const category = tour.category || page.detailCategory || page.name
   const hasFixedPrice = tour.price && tour.price !== 'Contact for price'
   const detailHref = getTourDetailHref(category, tour.title)
-  const description = getCardDescription(category, tour.title, tour.description)
+  const points = getCardPoints(category, tour.title, tour.description, 7)
 
   return (
     <article className="category-tour-card" data-lux-reveal>
@@ -32,7 +32,9 @@ function CategoryTourCard({ tour, page }) {
       <div className="category-tour-card__body">
         <div className="category-tour-card__rating"><Star size={14} fill="currentColor" /><span>{tour.rating || '4.9'} · {tour.reviews ?? 0} reviews</span></div>
         <h3><a href={detailHref}>{tour.title}</a></h3>
-        <p className="experience-card-description">{description}</p>
+        <ul className="experience-card-points">
+          {points.map((point) => <li key={point}>{point}</li>)}
+        </ul>
 
         <div className="category-tour-card__bottom">
           <div className="category-tour-card__price">

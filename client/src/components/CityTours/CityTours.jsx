@@ -3,7 +3,7 @@ import { cities } from '../../data'
 import SectionHeading from '../SectionHeading/SectionHeading'
 import ExperienceCardActions from '../ExperienceCardActions/ExperienceCardActions'
 import { getTourDetailHref } from '../../tourDetails'
-import { getCardDescription } from '../../utils/cardContent'
+import { getCardPoints } from '../../utils/cardContent'
 import './CityTours.css'
 
 export default function CityTours() {
@@ -20,7 +20,7 @@ export default function CityTours() {
         <div className="city-grid">
           {cities.map((city) => {
             const detailHref = getTourDetailHref('City Tours', city.title)
-            const description = getCardDescription('City Tours', city.title)
+            const points = getCardPoints('City Tours', city.title, '', 5)
 
             return (
               <article className="city-card" key={city.title} data-reveal style={{ '--city-image': `url("${city.image}")` }}>
@@ -32,7 +32,9 @@ export default function CityTours() {
                   <span><Clock size={16} /> Guided tour</span>
                   <h3><a href={detailHref}>{city.title}</a></h3>
                   <p className="city-price">{city.price}</p>
-                  <p className="experience-card-description experience-card-description--light">{description}</p>
+                  <ul className="experience-card-points experience-card-points--light">
+                    {points.map((point) => <li key={point}>{point}</li>)}
+                  </ul>
                   <ExperienceCardActions title={city.title} detailHref={detailHref} />
                 </div>
               </article>
