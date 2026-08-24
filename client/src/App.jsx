@@ -5,6 +5,8 @@ import Home from "./pages/Home/Home";
 import Tours from "./pages/Tours/Tours";
 import TourCategory from "./pages/TourCategory/TourCategory";
 import TourDetail from "./pages/TourDetail/TourDetail";
+import CampaignLanding from "./pages/CampaignLanding/CampaignLanding";
+import DesertEJet from "./pages/DesertEJet/DesertEJet";
 import Services from "./pages/Services/Services";
 import About from "./pages/About/About";
 import Blog from "./pages/Blog/Blog";
@@ -29,6 +31,22 @@ export default function App() {
   };
 
   const renderPage = () => {
+    const campaignRoutes = {
+      "/tours/desert-safari": "desert-safari",
+      "/tours/evening-desert-safari": "evening-desert-safari",
+      "/tours/quad-bike": "quad-bike",
+      "/tours/dune-buggy": "dune-buggy",
+      "/tours/private-desert-setup": "private-desert-setup",
+    };
+
+    if (campaignRoutes[normalizedPath]) {
+      return <CampaignLanding {...pageProps} slug={campaignRoutes[normalizedPath]} />;
+    }
+
+    if (normalizedPath === "/tours/desert-adventures/desert-e-jet-water-go-kart-dubai") {
+      return <DesertEJet {...pageProps} />;
+    }
+
     const blogDetailMatch = normalizedPath.match(/^\/blog\/([^/]+)$/);
 
     if (blogDetailMatch) {

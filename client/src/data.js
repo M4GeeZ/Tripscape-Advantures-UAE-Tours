@@ -53,7 +53,8 @@ export const adventures = [
   { image: images.adventureQuad, title: 'Evening Buggy Tour with Dinner', price: 'From AED 800' },
   { image: images.adventureEvening, title: 'Evening Quad Bike with Dinner', price: 'From AED 450' },
   { image: images.adventureDrive, title: 'Dune Buggy Experience', price: 'From AED 0' },
-  { image: images.adventureDouble, title: 'Single and Double Quad Bike', price: 'From AED 0' }
+  { image: images.adventureDouble, title: 'Single and Double Quad Bike', price: 'From AED 0' },
+  { image: '/images/desert-ejet/ejet-track-1.jpg', title: 'Desert E-Jet Water Go Kart Dubai', price: 'From AED 250' }
 ]
 
 export const helicopters = [
@@ -146,6 +147,7 @@ export const tourCatalog = [
   { id: 18, category: 'Desert Adventures', image: '/images/adv-evening.webp', title: 'Evening Quad Bike with Dinner', description: 'Evening Quad Bike with Dinner experience in the UAE.', duration: '30 minutes', location: 'Dubai, UAE', price: 'AED 450', unit: '/person', rating: '4.9', reviews: 0 },
   { id: 19, category: 'Desert Adventures', image: '/images/adv-dune-drive.webp', title: 'Dune Buggy Tour', description: 'Dune Buggy Tour experience in the UAE.', duration: '', location: 'Dubai, UAE', price: 'Contact for price', unit: '', rating: '4.9', reviews: 0 },
   { id: 20, category: 'Desert Adventures', image: '/images/adv-double.webp', title: 'Single and Double Quad Bike', description: 'Single and Double Quad Bike experience in the UAE.', duration: '', location: 'Dubai, UAE', price: 'Contact for price', unit: '', rating: '4.9', reviews: 0 },
+  { id: 51, category: 'Desert Adventures', image: '/images/desert-ejet/ejet-track-1.jpg', title: 'Desert E-Jet Water Go Kart Dubai', description: 'Race across a desert lagoon in a water go-kart with beginner-friendly controls, mandatory safety gear and staff supervision.', duration: '10 or 15 laps', location: 'Dubai, UAE', price: 'AED 250', unit: '/ride', rating: '4.9', reviews: 0 },
   { id: 21, category: 'City Tours', image: '/images/city-01-dubai-burj-al-arab.webp', title: 'Dubai City Tour', description: 'Dubai City Tour experience in the UAE.', duration: '', location: 'Dubai, UAE', price: 'Contact for price', unit: '', rating: '4.9', reviews: 0 },
   { id: 22, category: 'City Tours', image: '/images/city-02-dubai-burj-khalifa.webp', title: 'Dubai City Tour with Burj Khalifa Visit', description: 'Dubai City Tour with Burj Khalifa Visit experience in the UAE.', duration: '', location: 'Dubai, UAE', price: 'Contact for price', unit: '', rating: '4.9', reviews: 0 },
   { id: 23, category: 'City Tours', image: '/images/city-03-abu-dhabi.webp', title: 'Abu Dhabi City Tour', description: 'Abu Dhabi City Tour experience in the UAE.', duration: '', location: 'Dubai, UAE', price: 'Contact for price', unit: '', rating: '4.9', reviews: 0 },

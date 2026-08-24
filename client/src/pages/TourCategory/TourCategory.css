@@ -797,3 +797,51 @@
   .campaign-booking-notes { margin-top: 26px; padding: 22px 20px; border-radius: 16px; }
   .campaign-booking-notes__head > strong { font-size: 18px; }
 }
+
+/* =========================================================
+   RESPONSIVE CARD CONTENT FIX
+   Prevents feature points/dividers from crowding or overlapping and keeps
+   dual CTAs consistent at every viewport width. Detail pages are untouched.
+========================================================= */
+.category-tour-card__body {
+  min-height: 0;
+}
+
+.category-tour-card .experience-card-points {
+  margin-bottom: 20px;
+}
+
+.category-tour-card__bottom {
+  width: 100%;
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid rgba(16, 27, 43, .09);
+}
+
+.category-tour-card .experience-card-actions {
+  flex: 0 0 auto;
+}
+
+@media (min-width: 1101px) {
+  .category-tour-card__body {
+    padding-bottom: 26px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .category-tour-card__body {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .category-tour-card__body {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .category-tour-card__body {
+    min-height: 0;
+  }
+}

@@ -253,3 +253,25 @@
 @media (max-width: 640px) {
   .tour-card-body { min-height: 390px; }
 }
+
+/* Keep feature lists, separator, price and CTAs visually separated on all
+   desktop/tablet/mobile widths. */
+.tour-card-body {
+  min-height: 0;
+}
+
+.tour-card .experience-card-points {
+  margin-bottom: 18px;
+}
+
+.tour-card-price-line {
+  flex: 0 0 auto;
+  margin-top: auto;
+  padding-top: 18px;
+}
+
+@media (max-width: 640px) {
+  .tour-card-body {
+    min-height: 0;
+  }
+}

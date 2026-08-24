@@ -1,33 +1,36 @@
 .experience-card-actions {
   width: 100%;
   margin-top: auto;
-  padding-top: 18px;
+  padding-top: 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: clamp(16px, 1.8vw, 26px);
 }
 
 .experience-card-action {
-  width: 136px;
-  max-width: calc(50% - 12px);
-  min-height: 46px;
-  padding: 0 15px;
+  width: clamp(124px, 43%, 158px);
+  max-width: none;
+  min-width: 0;
+  height: 50px;
+  min-height: 50px;
+  padding: 0 14px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 9px;
-  flex: 0 1 136px;
+  flex: 0 1 158px;
   color: #fff;
   background: var(--gold);
   border: 1px solid var(--gold);
   border-radius: 12px;
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 800;
   line-height: 1;
   text-align: center;
   text-decoration: none;
   white-space: nowrap;
+  box-sizing: border-box;
   transition: transform .22s ease, box-shadow .22s ease, filter .22s ease;
 }
 
@@ -39,6 +42,19 @@
   margin-left: auto;
 }
 
+/* Keep button text consistent even inside card layouts that style all spans. */
+.experience-card-action > span {
+  display: inline !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: inherit !important;
+  font: inherit !important;
+  line-height: 1 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  white-space: nowrap !important;
+}
+
 .experience-card-action:hover {
   color: #fff;
   transform: translateY(-2px);
@@ -47,7 +63,9 @@
 }
 
 .experience-card-action svg {
-  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
 }
 
 .experience-card-description {
@@ -65,46 +83,25 @@
   color: rgba(255, 255, 255, .84);
 }
 
-@media (max-width: 640px) {
-  .experience-card-actions {
-    gap: 16px;
-    padding-top: 14px;
-  }
-
-  .experience-card-action {
-    width: 124px;
-    max-width: calc(50% - 8px);
-    min-height: 42px;
-    padding-inline: 11px;
-    flex-basis: 124px;
-    font-size: 10.75px;
-    border-radius: 10px;
-  }
-
-  .experience-card-description {
-    font-size: 11px;
-    line-height: 1.55;
-  }
-}
-
 /* Card summaries are shown as concise feature points across all tour/service cards. */
 .experience-card-points {
   width: 100%;
-  min-height: 92px;
-  margin: 12px 0 0;
+  min-height: 0;
+  margin: 14px 0 4px;
   padding: 0;
   display: grid;
   align-content: start;
-  gap: 8px;
+  gap: 9px;
   color: var(--muted);
   list-style: none;
 }
 
 .experience-card-points li {
   position: relative;
-  padding-left: 17px;
+  padding-left: 18px;
   font-size: 11.5px;
-  line-height: 1.42;
+  line-height: 1.48;
+  overflow-wrap: anywhere;
 }
 
 .experience-card-points li::before {
@@ -115,21 +112,69 @@
   color: var(--gold);
   font-size: 11px;
   font-weight: 900;
-  line-height: 1.42;
+  line-height: 1.48;
 }
 
 .experience-card-points--light {
   color: rgba(255, 255, 255, .86);
 }
 
-@media (max-width: 640px) {
+@media (max-width: 1200px) {
+  .experience-card-actions {
+    gap: 16px;
+  }
+
+  .experience-card-action {
+    width: clamp(118px, 44%, 150px);
+    height: 48px;
+    min-height: 48px;
+    padding-inline: 12px;
+    font-size: 11.5px;
+  }
+}
+
+@media (max-width: 760px) {
+  .experience-card-actions {
+    gap: 18px;
+    padding-top: 18px;
+  }
+
+  .experience-card-action {
+    width: min(46%, 154px);
+    height: 46px;
+    min-height: 46px;
+    padding-inline: 12px;
+    font-size: 11.5px;
+    border-radius: 11px;
+  }
+
   .experience-card-points {
-    min-height: 86px;
-    gap: 7px;
+    margin-top: 13px;
+    gap: 8px;
   }
 
   .experience-card-points li {
-    font-size: 11px;
-    line-height: 1.4;
+    font-size: 11.25px;
+    line-height: 1.45;
+  }
+}
+
+@media (max-width: 420px) {
+  .experience-card-actions {
+    gap: 12px;
+  }
+
+  .experience-card-action {
+    width: calc(50% - 6px);
+    height: 44px;
+    min-height: 44px;
+    padding-inline: 9px;
+    font-size: 10.75px;
+  }
+
+  .experience-card-action svg {
+    width: 16px;
+    height: 16px;
+    flex-basis: 16px;
   }
 }

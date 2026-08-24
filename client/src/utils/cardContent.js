@@ -28,6 +28,19 @@ export function getCardDescription(category, title, fallback = '') {
   return description
 }
 
+
+const specialCardPoints = {
+  'Desert E-Jet Water Go Kart Dubai': [
+    'Water go-kart racing on a desert lagoon',
+    'Quick orientation on controls and safety',
+    'Life jacket and helmet provided',
+    'Beginner-friendly controls with staff supervision',
+    '10-lap and 15-lap ride options',
+    'Suitable for groups, families and friends',
+    'Transfer support available'
+  ]
+}
+
 const categoryFallbackPoints = {
   'desert-safari': [
     'Hotel pickup and drop-off support',
@@ -119,6 +132,9 @@ function pointsFromText(text = '') {
 }
 
 export function getCardPoints(category, title, fallback = '', limit = 7) {
+  const pointLimit = Math.max(5, Math.min(Number(limit) || 7, 7))
+  if (specialCardPoints[title]) return specialCardPoints[title].slice(0, pointLimit)
+
   const categorySlug = categoryToSlug(category)
   const detail = getTourDetail(categorySlug, slugify(title))
 
@@ -128,7 +144,6 @@ export function getCardPoints(category, title, fallback = '', limit = 7) {
 
   const fallbackPoints = pointsFromText(fallback)
   const categoryPoints = categoryFallbackPoints[categorySlug] || categoryFallbackPoints.packages
-  const pointLimit = Math.max(5, Math.min(Number(limit) || 7, 7))
 
   return [...new Set([...detailPoints, ...fallbackPoints, ...categoryPoints])].slice(0, pointLimit)
 }

@@ -201,3 +201,35 @@
 @media (max-width: 700px) {
   .tour-card-body { min-height: 390px; }
 }
+
+/* Responsive rich-card spacing: content can grow naturally without the
+   separator or CTA area colliding with feature points. */
+.tour-card-reference {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+}
+
+.tour-card-body {
+  flex: 1;
+  min-height: 0;
+}
+
+.tour-card-body .experience-card-points {
+  margin-bottom: 18px;
+}
+
+.tour-card-divider {
+  flex: 0 0 1px;
+  margin: 2px 0 17px;
+}
+
+.tour-card-price-row {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 700px) {
+  .tour-card-body {
+    min-height: 0;
+  }
+}
