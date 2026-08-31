@@ -4,6 +4,10 @@ import Navbar from '../../components/Navbar/Navbar'
 import Footer from '../../components/Footer/Footer'
 import WhatsAppFloat from '../../components/WhatsAppFloat/WhatsAppFloat'
 import CallFloat from '../../components/CallFloat/CallFloat'
+<<<<<<< HEAD
+=======
+import CountryCodeSelect from '../../components/CountryCodeSelect/CountryCodeSelect'
+>>>>>>> 777843e (updated web with client reviews)
 import { useLuxuryReveal } from '../../hooks/useLuxuryReveal'
 import './DesertEJet.css'
 
@@ -23,7 +27,13 @@ function tomorrow() {
 
 export default function DesertEJet({ menuOpen, setMenuOpen }) {
   const pageRef = useRef(null)
+<<<<<<< HEAD
   const [form, setForm] = useState({ package: packages[0].name, date: tomorrow(), riders: '1', name: '', phone: '', transfer: 'Required', notes: '' })
+=======
+  const [form, setForm] = useState({ package: packages[0].name, date: tomorrow(), riders: '1', age: '', name: '', email: '', countryCode: '+971', phone: '', hasWhatsApp: true, transfer: 'Required', notes: '' })
+  const [status, setStatus] = useState({ type: '', message: '' })
+  const [submitting, setSubmitting] = useState(false)
+>>>>>>> 777843e (updated web with client reviews)
   useLuxuryReveal(pageRef)
 
   useEffect(() => {
@@ -39,7 +49,15 @@ export default function DesertEJet({ menuOpen, setMenuOpen }) {
   }, [])
 
   const selected = packages.find((item) => item.name === form.package) || packages[0]
+<<<<<<< HEAD
   const update = (event) => setForm((current) => ({ ...current, [event.target.name]: event.target.value }))
+=======
+  const update = (event) => {
+    const { name, value, type, checked } = event.target
+    setForm((current) => ({ ...current, [name]: type === 'checkbox' ? checked : value }))
+  }
+  const fullPhone = `${form.countryCode} ${form.phone}`.trim()
+>>>>>>> 777843e (updated web with client reviews)
   const whatsappHref = useMemo(() => {
     const message = [
       'Hi Tripscape, I want to book Desert E-Jet Water Go Kart Dubai.',
@@ -49,6 +67,7 @@ export default function DesertEJet({ menuOpen, setMenuOpen }) {
       `Estimated activity price: AED ${selected.price * Number(form.riders || 1)}`,
       `Transfers: ${form.transfer}`,
       `Name: ${form.name || '-'}`,
+<<<<<<< HEAD
       `Phone: ${form.phone || '-'}`,
       `Notes: ${form.notes || '-'}`
     ].join('\n')
@@ -58,6 +77,61 @@ export default function DesertEJet({ menuOpen, setMenuOpen }) {
   const submit = (event) => {
     event.preventDefault()
     window.open(whatsappHref, '_blank', 'noopener,noreferrer')
+=======
+      `Age: ${form.age || '-'}`,
+      `Email: ${form.email || '-'}`,
+      `Country code: ${form.countryCode || '-'}`,
+      `Phone: ${form.phone ? fullPhone : '-'}`,
+      `Notes: ${form.notes || '-'}`
+    ].join('\n')
+    return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(message)}`
+  }, [form, fullPhone, selected])
+
+  const submit = async (event) => {
+    event.preventDefault()
+    setStatus({ type: '', message: '' })
+    setSubmitting(true)
+    const whatsappWindow = form.hasWhatsApp ? window.open('', '_blank') : null
+
+    try {
+      const response = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tourTitle: `Desert E-Jet Water Go Kart Dubai - ${form.package}`,
+          price: `AED ${selected.price * Number(form.riders || 1)} estimated`,
+          name: form.name,
+          age: form.age,
+          adults: form.riders,
+          children: '0',
+          email: form.email,
+          countryCode: form.countryCode,
+          phone: form.phone,
+          travelDate: form.date,
+          hasWhatsApp: form.hasWhatsApp,
+        }),
+      })
+
+      const data = await response.json().catch(() => ({}))
+      if (!response.ok) throw new Error(data.message || 'Unable to send booking enquiry right now.')
+
+      setStatus({
+        type: 'success',
+        message: form.hasWhatsApp
+          ? (data.whatsappConfirmation === 'sent'
+            ? `Enquiry ${data.bookingReference || ''} sent. Email and WhatsApp confirmation sent.`
+            : `Enquiry ${data.bookingReference || ''} sent. Email confirmation sent; WhatsApp is opening for your message.`)
+          : `Enquiry ${data.bookingReference || ''} sent by email. Please check your inbox.`,
+      })
+
+      if (form.hasWhatsApp && whatsappWindow) whatsappWindow.location.href = whatsappHref
+    } catch (error) {
+      if (whatsappWindow) whatsappWindow.close()
+      setStatus({ type: 'error', message: error.message || 'Something went wrong. Please try again.' })
+    } finally {
+      setSubmitting(false)
+    }
+>>>>>>> 777843e (updated web with client reviews)
   }
 
   return (
@@ -127,17 +201,33 @@ export default function DesertEJet({ menuOpen, setMenuOpen }) {
 
         <section className="ejet-booking" id="ejet-book">
           <div className="container ejet-booking__grid">
+<<<<<<< HEAD
             <div data-lux-reveal><span className="ejet-eyebrow">BOOK DESERT E-JET</span><h2>Send your ride request.</h2><p>Choose your laps and date. Your request opens in WhatsApp so the booking team can confirm availability and transfer details.</p><div className="ejet-rating"><Star size={17} fill="currentColor"/> Adventure booking support</div></div>
+=======
+            <div data-lux-reveal><span className="ejet-eyebrow">BOOK DESERT E-JET</span><h2>Send your ride request.</h2><p>Choose your laps and date. Your enquiry is emailed for confirmation and WhatsApp opens when you select WhatsApp support.</p><div className="ejet-rating"><Star size={17} fill="currentColor"/> Adventure booking support</div></div>
+>>>>>>> 777843e (updated web with client reviews)
             <form onSubmit={submit} className="ejet-form" data-lux-reveal>
               <label><span>Package</span><select name="package" value={form.package} onChange={update}>{packages.map((item)=><option key={item.name}>{item.name}</option>)}</select></label>
               <label><span>Date</span><input type="date" name="date" value={form.date} onChange={update} required/></label>
               <label><span>Riders</span><input type="number" min="1" name="riders" value={form.riders} onChange={update} required/></label>
               <label><span>Transfers</span><select name="transfer" value={form.transfer} onChange={update}><option>Required</option><option>Not required</option><option>Please advise</option></select></label>
               <label><span>Name</span><input name="name" value={form.name} onChange={update} required placeholder="Your name"/></label>
+<<<<<<< HEAD
               <label><span>Phone / WhatsApp</span><input name="phone" value={form.phone} onChange={update} required placeholder="+971 ..."/></label>
               <label className="ejet-form__full"><span>Notes</span><textarea name="notes" value={form.notes} onChange={update} rows="3" placeholder="Group size or questions"/></label>
               <div className="ejet-form__total"><span>Estimated activity price</span><strong>AED {selected.price * Number(form.riders || 1)}</strong></div>
               <button type="submit"><MessageCircle size={18}/> Send on WhatsApp</button>
+=======
+              <label><span>Age</span><input type="number" min="1" max="100" name="age" value={form.age} onChange={update} required placeholder="Age"/></label>
+              <label className="ejet-form__full"><span>Email</span><input type="email" name="email" value={form.email} onChange={update} required placeholder="you@example.com"/></label>
+              <div className="ejet-country-field"><span>Country code</span><CountryCodeSelect value={form.countryCode} onChange={(countryCode) => setForm((current) => ({ ...current, countryCode }))} /></div>
+              <label><span>Phone number</span><input name="phone" value={form.phone} onChange={update} required placeholder="50 123 4567"/></label>
+              <label className="ejet-form__full ejet-whatsapp-check"><input type="checkbox" name="hasWhatsApp" checked={form.hasWhatsApp} onChange={update}/><span>This phone number has WhatsApp</span></label>
+              <label className="ejet-form__full"><span>Notes</span><textarea name="notes" value={form.notes} onChange={update} rows="3" placeholder="Group size or questions"/></label>
+              <div className="ejet-form__total"><span>Estimated activity price</span><strong>AED {selected.price * Number(form.riders || 1)}</strong></div>
+              {status.message && <div className={`ejet-form-status is-${status.type}`}>{status.message}</div>}
+              <button type="submit" disabled={submitting}><MessageCircle size={18}/> {submitting ? 'Sending...' : 'Book Enquiry Now'}</button>
+>>>>>>> 777843e (updated web with client reviews)
               <a href={`tel:${PHONE}`}><Phone size={17}/> Call +971 54 993 0684</a>
             </form>
           </div>

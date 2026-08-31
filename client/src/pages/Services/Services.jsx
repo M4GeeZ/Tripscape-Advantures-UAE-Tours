@@ -135,7 +135,7 @@ const featuredServices = [
   },
   {
     title: "Private Airport Transfer",
-    category: "Packages",
+    category: "Dubai Packages Tour",
     icon: Car,
     image: "/images/services/18-airport-transfer.webp",
   },
@@ -182,7 +182,7 @@ const services = [...featuredServices, ...extraServices];
 
 const ServiceCard = memo(function ServiceCard({ service, index }) {
   const Icon = service.icon;
-  const category = service.category || "Packages";
+  const category = service.category || "Dubai Packages Tour";
   const detailHref = getTourDetailHref(category, service.title);
   const points = getCardPoints(category, service.title, '', 5);
 

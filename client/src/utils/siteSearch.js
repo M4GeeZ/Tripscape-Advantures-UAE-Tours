@@ -156,7 +156,7 @@ const CATEGORY_KEYWORDS = {
   Cruises: 'cruise dhow boat yacht marina dinner sunset water waterfront',
   'Water Activities': 'water aqua aquaventure jet ski beach swimming family sea ocean',
   'Aerial Experiences': 'helicopter flight aerial skyline sky private luxury palm marina',
-  Packages: 'package holiday itinerary bundle deal days trip family couple hotel transfer'
+  'Dubai Packages Tour': 'package holiday itinerary bundle deal days trip family couple hotel transfer'
 }
 
 const SYNONYM_GROUPS = [
@@ -194,7 +194,7 @@ function getDestination(location = '') {
 const tourEntries = tourCatalog.map((tour) => ({
   ...tour,
   id: `tour-${tour.id}`,
-  kind: tour.category === 'Packages' ? 'Package' : 'Tour',
+  kind: tour.category === 'Dubai Packages Tour' ? 'Package' : 'Tour',
   destination: getDestination(tour.location),
   href: `/tours?query=${encodeURIComponent(tour.title)}&category=${encodeURIComponent(tour.category)}`,
   keywords: [
@@ -441,7 +441,7 @@ export function searchTourCatalog(
 ) {
   const normalizedTours = tours.map((tour) => ({
     ...tour,
-    kind: tour.category === 'Packages' ? 'Package' : 'Tour',
+    kind: tour.category === 'Dubai Packages Tour' ? 'Package' : 'Tour',
     destination: getDestination(tour.location),
     keywords: [CATEGORY_KEYWORDS[tour.category], tour.description, tour.duration, tour.location].filter(Boolean).join(' ')
   }))

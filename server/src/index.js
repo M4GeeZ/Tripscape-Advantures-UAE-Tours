@@ -5,6 +5,7 @@ import mongoose from 'mongoose'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import toursRouter from './routes/tours.js'
+import bookingsRouter from './routes/bookings.js'
 
 const app = express()
 const port = process.env.PORT || 5000
@@ -14,6 +15,7 @@ const __dirname = path.dirname(__filename)
 app.use(cors({ origin: process.env.CLIENT_URL || true }))
 app.use(express.json({ limit: '1mb' }))
 app.use('/api/tours', toursRouter)
+app.use('/api/bookings', bookingsRouter)
 app.get('/api/health', (_req, res) => res.json({ ok: true, service: 'tripscape-api' }))
 app.post('/api/contact', (req, res) => {
   const { name, email, message } = req.body || {}

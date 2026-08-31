@@ -19,3 +19,25 @@
 @media(max-width:1050px){.ad-package-grid{grid-template-columns:repeat(2,1fr)}.ad-package-grid .ad-package-card:last-child{grid-column:1/-1;max-width:520px}.ad-benefits__grid,.ad-booking-section__grid,.ad-faqs__grid{gap:48px}.ad-booking-section__grid{grid-template-columns:1fr 1fr}.ad-details__grid{grid-template-columns:1fr 1fr}.ad-detail-panel--before{grid-column:1/-1}.ad-proof-strip__inner{grid-template-columns:1fr 1fr;padding-block:16px}}
 @media(max-width:760px){.ad-hero{min-height:690px;background-position:center}.ad-hero__overlay{background:linear-gradient(180deg,rgba(7,18,31,.5),rgba(7,18,31,.85) 60%,rgba(7,18,31,.95))}.ad-hero__content{padding:140px 20px 80px;margin:0;align-self:flex-end}.ad-hero h1{font-size:clamp(44px,13vw,64px)}.ad-hero p{font-size:15px}.ad-hero__actions{display:grid;grid-template-columns:1fr 1fr}.ad-hero__actions .ad-btn--gold{grid-column:1/-1}.ad-proof-strip__inner{grid-template-columns:1fr 1fr;font-size:11px}.ad-packages,.ad-benefits,.ad-details,.ad-booking-section,.ad-faqs{padding:64px 0}.ad-package-grid{grid-template-columns:1fr}.ad-package-grid .ad-package-card:last-child{grid-column:auto;max-width:none}.ad-package-card__body{min-height:350px}.ad-benefits__grid,.ad-booking-section__grid,.ad-faqs__grid{grid-template-columns:1fr;gap:32px}.ad-benefits__list{grid-template-columns:1fr}.ad-details__grid{grid-template-columns:1fr}.ad-detail-panel--before{grid-column:auto}.ad-booking-form{grid-template-columns:1fr;padding:22px}.ad-field--full,.ad-booking-form__head{grid-column:auto}.ad-booking-submit,.ad-booking-call{grid-column:auto}.ad-mobile-bar{position:fixed;z-index:400;right:10px;bottom:10px;left:10px;height:54px;padding:5px;display:grid;grid-template-columns:.8fr 1fr 1.2fr;gap:5px;border:1px solid rgba(255,255,255,.16);border-radius:15px;background:#0d1b2d;box-shadow:0 16px 40px rgba(7,18,31,.3)}.ad-mobile-bar a{display:flex;align-items:center;justify-content:center;gap:5px;border-radius:10px;color:#fff;font-size:11px;font-weight:800;text-decoration:none}.ad-mobile-bar a:last-child{background:var(--gold)}.ad-landing-page footer{padding-bottom:70px}}
 @media(max-width:460px){.ad-hero__actions{grid-template-columns:1fr}.ad-hero__actions .ad-btn--gold{grid-column:auto}.ad-proof-strip__inner{grid-template-columns:1fr}.ad-package-card__actions{flex-direction:column}.ad-package-card__image{height:220px}.ad-mobile-bar{grid-template-columns:.75fr 1fr 1.1fr}}
+<<<<<<< HEAD
+=======
+
+/* Booking enquiry confirmation controls */
+.ad-whatsapp-check {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center;
+  gap: 10px;
+}
+.ad-whatsapp-check input { width: 18px; height: 18px; accent-color: #d28f26; }
+.ad-whatsapp-check span { margin: 0 !important; }
+.ad-booking-status {
+  grid-column: 1 / -1;
+  border-radius: 12px;
+  padding: 11px 13px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.ad-booking-status.is-success { background: #edf8f1; color: #17663a; border: 1px solid #cbe8d6; }
+.ad-booking-status.is-error { background: #fff0ef; color: #a43a32; border: 1px solid #f0cfcb; }
+>>>>>>> 777843e (updated web with client reviews)

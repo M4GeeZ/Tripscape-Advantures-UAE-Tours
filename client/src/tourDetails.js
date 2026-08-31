@@ -7,6 +7,7 @@ import {
   tours
 } from './data'
 import { tourCategoryPages } from './tourCategoryPages'
+import { privateEventExperiences } from './privateEventExperiences'
 
 export function slugify(value = '') {
   return value
@@ -117,6 +118,15 @@ const exactIncluded = {
     '30 minutes Thrilling dune bashing.',
     '30 Minutes Quad Biking Experience',
     'Cold Drink, Water Bottle.'
+  ],
+  'Hummer Desert Safari': [
+    'Private Hummer-style 4×4 desert experience',
+    'Hotel pickup and drop-off in Dubai',
+    'Dune bashing with an experienced desert safari driver',
+    'Desert photo stops and scenic dune views',
+    'Camel ride at the desert camp',
+    'Sandboarding session',
+    'Water and soft drinks during the experience'
   ],
   'Evening Desert Safari with BBQ Dinner': [
     'Hotel pickup by 4×4 SUV',
@@ -437,12 +447,23 @@ const serviceOnlyItems = [
   { category: 'Aerial Experiences', title: 'Helicopter Sightseeing Tour', image: '/images/services/14-helicopter-sightseeing.webp', price: 'Contact for price', duration: 'Scenic flight', location: 'Dubai, UAE' },
   { category: 'Aerial Experiences', title: 'Extreme Hot Air Balloon Ride', image: '/images/services/15-hot-air-balloon-landscape.webp', price: 'Contact for price', duration: 'Sunrise flight', location: 'Dubai, UAE' },
   { category: 'Water Activities', title: 'Scuba Diving Experience', image: '/images/services/17-scuba-diving.webp', price: 'Contact for price', duration: 'Water activity', location: 'Dubai, UAE' },
-  { category: 'Packages', title: 'Private Airport Transfer', image: '/images/services/18-airport-transfer.webp', price: 'Contact for price', duration: 'Private transfer', location: 'Dubai, UAE' },
+  { category: 'Dubai Packages Tour', title: 'Private Airport Transfer', image: '/images/services/18-airport-transfer.webp', price: 'Contact for price', duration: 'Private transfer', location: 'Dubai, UAE' },
   { category: 'Attractions', title: 'Attraction and Excursion Tickets and many more...', image: '/images/services/19-attraction-tickets.webp', price: 'Contact for price', duration: 'Tickets & excursions', location: 'UAE' }
 ]
 
+const privateEventItems = privateEventExperiences.map((event) => ({
+  ...event,
+  category: 'Desert Safari',
+  duration: event.meta || 'Private event',
+  location: 'Dubai, UAE',
+  price: 'Contact for price',
+  rating: '4.9',
+  reviews: 0,
+  useExactContent: true
+}))
+
 const homepageTours = [
-  ...tours.map((item) => ({
+  ...tours.filter((item) => !item.skipDetailGeneration).map((item) => ({
     ...item,
     category: 'Desert Safari',
     duration: item.meta,
@@ -496,6 +517,7 @@ const categoryPageTours = Object.values(tourCategoryPages).flatMap((page) =>
 
 const allBaseItems = uniqueByTitle([
   ...homepageTours,
+  ...privateEventItems,
   ...serviceOnlyItems,
   ...normalizedCatalog,
   ...categoryPageTours
@@ -530,7 +552,7 @@ export const tourDetailPages = allBaseItems.map((item) => {
   const primaryImage = featuredTopImages[item.title] || item.image
   const relatedImages = categoryImages[categorySlug] || []
   const gallery = [primaryImage, ...relatedImages.filter((image) => image !== primaryImage)].slice(0, 4)
-  const included = exactIncluded[item.title] || [
+  const included = item.included || exactIncluded[item.title] || [
     ...(categoryIncluded[categorySlug] || categoryIncluded['desert-safari']),
     ...titleSpecificExtras(item.title)
   ]
@@ -541,8 +563,8 @@ export const tourDetailPages = allBaseItems.map((item) => {
     image: primaryImage,
     gallery,
     included: [...new Set(included)],
-    excluded: getTourExcluded(item.title, categorySlug),
-    faqs: getTourFaqs(item, categorySlug),
+    excluded: item.excluded || getTourExcluded(item.title, categorySlug),
+    faqs: item.faqs || getTourFaqs(item, categorySlug),
     categorySlug,
     slug: slugify(item.title),
     categoryLabel: item.category,
@@ -553,7 +575,9 @@ export const tourDetailPages = allBaseItems.map((item) => {
     reviews: item.reviews ?? 0,
     isBookable: Boolean(basePrice),
     basePrice: basePrice || null,
-    description: getTourDescription(item, categorySlug)
+    description: item.useExactContent && item.description
+      ? item.description
+      : getTourDescription(item, categorySlug)
   }
 })
 

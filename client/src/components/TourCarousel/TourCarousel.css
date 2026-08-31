@@ -64,6 +64,17 @@
   transition: transform 0.6s ease;
 }
 
+.tour-image-wrap img.tour-image-contain {
+  object-fit: contain;
+  object-position: center;
+  background: #f6f1e8;
+  padding: 0;
+}
+
+.tour-card:hover .tour-image-wrap img.tour-image-contain {
+  transform: none;
+}
+
 /* Existing image zoom effect preserved */
 .tour-card:hover .tour-image-wrap img {
   transform: scale(1.06);
@@ -275,3 +286,43 @@
     min-height: 0;
   }
 }
+<<<<<<< HEAD
+=======
+
+/* =========================================================
+   CARD ROW ALIGNMENT FIX
+   Keep every card in a grid row the same visual height and pin the
+   price + CTA area to the same baseline, regardless of point wrapping.
+========================================================= */
+.tour-grid {
+  align-items: stretch;
+}
+
+.tour-grid > .tour-card {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+}
+
+.tour-grid > .tour-card .tour-card-body {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.tour-grid > .tour-card .tour-card-price-line {
+  margin-top: auto;
+}
+
+.tour-grid > .tour-card .experience-card-actions {
+  margin-top: 0;
+  padding-top: 16px;
+}
+
+@media (max-width: 640px) {
+  .tour-grid > .tour-card .experience-card-actions {
+    padding-top: 14px;
+  }
+}
+>>>>>>> 777843e (updated web with client reviews)

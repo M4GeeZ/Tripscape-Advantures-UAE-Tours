@@ -1,0 +1,213 @@
+.booking-enquiry-card {
+  position: sticky;
+  top: 118px;
+  margin-top: 8px;
+  padding: 22px;
+  border: 1px solid rgba(16, 27, 43, 0.12);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 12px 32px rgba(16, 27, 43, 0.08);
+}
+
+.booking-enquiry-card__head > span {
+  display: block;
+  margin-bottom: 6px;
+  color: #9097a0;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+
+.booking-enquiry-card__head strong {
+  display: block;
+  color: var(--gold);
+  font-size: 24px;
+  line-height: 1.1;
+}
+
+.booking-enquiry-card__head p {
+  margin: 10px 0 18px;
+  color: #6b7380;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.booking-enquiry-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 11px;
+}
+
+.booking-enquiry-field {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+}
+
+.booking-enquiry-field--full {
+  grid-column: 1 / -1;
+}
+
+.booking-enquiry-field > span {
+  color: #3a4350;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .035em;
+  text-transform: uppercase;
+}
+
+.booking-enquiry-field input {
+  width: 100%;
+  min-width: 0;
+  height: 42px;
+  padding: 0 11px;
+  border: 1px solid rgba(16, 27, 43, 0.15);
+  border-radius: 10px;
+  outline: none;
+  color: #111b2b;
+  background: #fff;
+  font: inherit;
+  font-size: 12px;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.booking-enquiry-field input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201, 138, 46, 0.12);
+}
+
+
+.booking-enquiry-phone-group {
+  display: grid;
+  grid-template-columns: minmax(105px, .42fr) minmax(0, 1fr);
+  gap: 11px;
+}
+
+.booking-enquiry-whatsapp-check {
+  min-height: 38px;
+  padding: 9px 11px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid rgba(16, 27, 43, 0.1);
+  border-radius: 10px;
+  background: #faf8f3;
+  color: #4f5865;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.booking-enquiry-whatsapp-check input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--gold);
+}
+
+.booking-enquiry-status {
+  grid-column: 1 / -1;
+  padding: 10px 11px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.booking-enquiry-status.is-success {
+  color: #176a46;
+  background: #eaf8f1;
+}
+
+.booking-enquiry-status.is-error {
+  color: #9b3d33;
+  background: #fff0ed;
+}
+
+.booking-enquiry-status svg {
+  flex: 0 0 auto;
+  margin-top: 1px;
+}
+
+.booking-enquiry-actions {
+  display: grid;
+  grid-template-columns: 1.2fr .8fr;
+  gap: 10px;
+}
+
+.booking-enquiry-submit,
+.booking-enquiry-call {
+  min-height: 48px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 11px;
+  font-size: 11px;
+  font-weight: 850;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.booking-enquiry-submit {
+  border: 0;
+  color: #fff;
+  background: var(--gold);
+  box-shadow: 0 10px 22px rgba(201, 138, 46, 0.22);
+  cursor: pointer;
+}
+
+.booking-enquiry-submit:disabled {
+  opacity: .65;
+  cursor: wait;
+}
+
+.booking-enquiry-call {
+  border: 1px solid rgba(16, 27, 43, 0.14);
+  color: var(--ink);
+  background: #fff;
+}
+
+.booking-enquiry-submit:hover,
+.booking-enquiry-call:hover {
+  transform: translateY(-1px);
+}
+
+@media (max-width: 820px) {
+  .booking-enquiry-card {
+    position: static;
+    width: min(100%, 560px);
+  }
+}
+
+@media (max-width: 500px) {
+  .booking-enquiry-card {
+    padding: 18px;
+    border-radius: 15px;
+  }
+
+  .booking-enquiry-form,
+  .booking-enquiry-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-enquiry-field,
+  .booking-enquiry-field--full,
+  .booking-enquiry-status,
+  .booking-enquiry-actions {
+    grid-column: 1;
+  }
+
+  .booking-enquiry-submit,
+  .booking-enquiry-call {
+    width: 100%;
+  }
+}
+
+@media (max-width: 380px) {
+  .booking-enquiry-phone-group {
+    grid-template-columns: 1fr;
+  }
+}

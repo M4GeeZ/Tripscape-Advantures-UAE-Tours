@@ -7,6 +7,10 @@ import TourCategory from "./pages/TourCategory/TourCategory";
 import TourDetail from "./pages/TourDetail/TourDetail";
 import CampaignLanding from "./pages/CampaignLanding/CampaignLanding";
 import DesertEJet from "./pages/DesertEJet/DesertEJet";
+<<<<<<< HEAD
+=======
+import PrivateDesertEvents from "./pages/PrivateDesertEvents/PrivateDesertEvents";
+>>>>>>> 777843e (updated web with client reviews)
 import Services from "./pages/Services/Services";
 import About from "./pages/About/About";
 import Blog from "./pages/Blog/Blog";
@@ -47,6 +51,13 @@ export default function App() {
       return <DesertEJet {...pageProps} />;
     }
 
+<<<<<<< HEAD
+=======
+    if (normalizedPath === "/tours/desert-safari/vip-private-desert-safari-family-package") {
+      return <PrivateDesertEvents {...pageProps} />;
+    }
+
+>>>>>>> 777843e (updated web with client reviews)
     const blogDetailMatch = normalizedPath.match(/^\/blog\/([^/]+)$/);
 
     if (blogDetailMatch) {

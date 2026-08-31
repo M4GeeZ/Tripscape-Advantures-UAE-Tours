@@ -15,23 +15,24 @@ const fallbackTour = {
   price: 'Contact for price'
 }
 
-const featuredImages = [
-  '/images/top-experiences/morning-desert-safari-quad-bike.png',
-  '/images/top-experiences/evening-desert-safari-bbq-dinner.png',
-  '/images/top-experiences/desert-safari-vip-setup.png',
-  '/images/top-experiences/vip-desert-safari-private-seating.png',
-  '/images/top-experiences/vip-premium-desert-safari-bbq-dinner.png',
-  '/images/top-experiences/sunrise-camel-trekking.png',
-  '/images/top-experiences/desert-safari-dinner-caravanserai.png',
-  '/images/top-experiences/family-desert-safari-quad-experience.png'
-]
+const featuredImagesByTitle = {
+  'Morning Desert Safari with Quad Bike': '/images/top-experiences/morning-desert-safari-quad-bike.png',
+  'Evening Desert Safari with BBQ Dinner': '/images/top-experiences/evening-desert-safari-bbq-dinner.png',
+  'VIP Desert Safari with Private Seating': '/images/top-experiences/vip-desert-safari-private-seating.png',
+  'VIP Premium Desert Safari with BBQ Dinner': '/images/top-experiences/vip-premium-desert-safari-bbq-dinner.png',
+  'Sunrise Camel Trekking': '/images/top-experiences/sunrise-camel-trekking.png',
+  'Desert Safari with Dinner at Caravanserai': '/images/top-experiences/desert-safari-dinner-caravanserai.png'
+}
 
 export default function TourCarousel() {
   const baseTours = tours.length >= 8 ? tours.slice(0, 8) : [...tours, fallbackTour].slice(0, 8)
 
-  const displayedTours = baseTours.map((tour, index) => ({
+  const displayedTours = baseTours.map((tour) => ({
     ...tour,
-    image: index < featuredImages.length ? featuredImages[index] : tour.image
+    image:
+      tour.featuredImage ||
+      featuredImagesByTitle[tour.sourceTitle || tour.title] ||
+      tour.image
   }))
 
   return (
@@ -47,15 +48,16 @@ export default function TourCarousel() {
 
         <div className="tour-grid">
           {displayedTours.map((tour, index) => {
-            const detailHref = getTourDetailHref('Desert Safari', tour.title)
-            const points = getCardPoints('Desert Safari', tour.title, '', 5)
+            const sourceTitle = tour.sourceTitle || tour.title
+            const detailHref = tour.href || getTourDetailHref('Desert Safari', sourceTitle)
+            const points = tour.points || getCardPoints('Desert Safari', sourceTitle, '', 5)
 
             return (
               <article className="tour-card" key={`${tour.title}-${index}`} data-reveal>
                 <a href={detailHref} className="tour-image-link" aria-label={`View ${tour.title}`}>
                   <div className="tour-image-wrap">
-                    <img src={tour.image} alt={tour.title} loading="lazy" />
-                    <span className="card-tag">{tour.tag}</span>
+                    <img className={tour.imageFit === 'contain' ? 'tour-image-contain' : ''} src={tour.image} alt={tour.title} loading="lazy" />
+                    {!tour.hideTag && <span className="card-tag">{tour.tag}</span>}
                     <span className="card-meta"><Clock size={15} />{tour.meta}</span>
                   </div>
                 </a>

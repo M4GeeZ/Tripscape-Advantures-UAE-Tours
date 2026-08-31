@@ -83,7 +83,7 @@ export default function Footer() {
           <a href="/tours/desert-adventures">Adventures</a>
           <a href="/tours/city-tours">City Tours</a>
           <a href="/tours/attractions">Attractions</a>
-          <a href="/tours/packages">Packages</a>
+          <a href="/tours/packages">Dubai Packages Tour</a>
         </div>
 
         <div className="footer-column">

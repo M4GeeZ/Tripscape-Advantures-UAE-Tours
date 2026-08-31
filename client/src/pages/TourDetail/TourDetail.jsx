@@ -4,6 +4,7 @@ import Navbar from '../../components/Navbar/Navbar'
 import Footer from '../../components/Footer/Footer'
 import WhatsAppFloat from '../../components/WhatsAppFloat/WhatsAppFloat'
 import CallFloat from '../../components/CallFloat/CallFloat'
+import BookingEnquiryForm from '../../components/BookingEnquiryForm'
 import { useLuxuryReveal } from '../../hooks/useLuxuryReveal'
 import { getTourDetail } from '../../tourDetails'
 import './TourDetail.css'
@@ -48,8 +49,6 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
   const gallery = tour.gallery?.length ? tour.gallery : [tour.image]
   const totalPrice = tour.isBookable ? tour.basePrice * adults : 0
 
-  const whatsappText = encodeURIComponent(`Hi Tripscape, I would like to ask about: ${tour.title}`)
-  const whatsappHref = `https://wa.me/971549930684?text=${whatsappText}`
 
   const bookingMessage = [
     `Hi Tripscape, I would like to book: ${tour.title}`,
@@ -61,7 +60,7 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
 
   const bookingWhatsappHref = tour.isBookable
     ? `https://wa.me/971549930684?text=${encodeURIComponent(bookingMessage)}`
-    : whatsappHref
+    : '#'
 
   const displayContactPrice = /(?:from\s*)?aed\s*0/i.test(String(tour.price || ''))
     ? 'Contact for price'
@@ -286,21 +285,10 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
                 </ul>
               </aside>
             ) : (
-              <aside className="tour-detail-price-card" data-lux-reveal>
-                <span>PRICE</span>
-                <strong>{displayContactPrice}</strong>
-                <p>Contact our team for availability and the current rate.</p>
-
-                <a
-                  href={whatsappHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="tour-detail-whatsapp"
-                >
-                  <MessageCircle size={18} />
-                  Ask on WhatsApp
-                </a>
-              </aside>
+              <BookingEnquiryForm
+                tourTitle={tour.title}
+                displayPrice={displayContactPrice}
+              />
             )}
           </div>
         </section>

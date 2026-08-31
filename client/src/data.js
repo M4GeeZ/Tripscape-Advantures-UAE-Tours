@@ -28,13 +28,78 @@ export const heroSlides = [
 ]
 
 export const tours = [
-  { image: images.tourQuad, tag: 'Desert safari', meta: 'Morning', title: 'Morning Desert Safari with Quad Bike', price: 'Contact for price' },
-  { image: images.tourCamp, tag: 'Desert safari', meta: 'Evening', title: 'Evening Desert Safari with BBQ Dinner', price: 'Contact for price' },
-  { image: images.tourVip, tag: 'Desert safari', meta: 'VIP', title: 'Desert Safari with VIP Setup', price: 'Contact for price' },
-  { image: images.tourPrivate, tag: 'Desert safari', meta: 'Private', title: 'VIP Desert Safari with Private Seating', price: 'Contact for price' },
-  { image: images.tourGate, tag: 'Desert safari', meta: 'Premium', title: 'VIP Premium Desert Safari with BBQ Dinner', price: 'Contact for price' },
-  { image: images.tourCamel, tag: 'Desert safari', meta: '30 min', title: 'Sunrise Camel Trekking', price: 'Contact for price' },
-  { image: images.tourCaravan, tag: 'Desert safari', meta: 'Dinner', title: 'Desert Safari with Dinner at Caravanserai', price: 'Contact for price' }
+  {
+    image: '/images/top-experiences/morning-desert-safari-quad-bike.png',
+    tag: 'Desert safari',
+    meta: 'Morning',
+    title: 'Morning Desert Safari with Quad Bike',
+    price: 'Contact for price'
+  },
+  {
+    image: '/images/hero-desert.webp',
+    featuredImage: '/images/hero-desert.webp',
+    tag: 'Desert safari',
+    meta: 'Morning',
+    title: 'Morning Desert Safari',
+    sourceTitle: 'Morning Desert Safari with Quad Bike',
+    href: '/tours/desert-safari/morning-desert-safari-with-quad-bike',
+    skipDetailGeneration: true,
+    price: 'Contact for price'
+  },
+  {
+    image: '/images/top-experiences/vip-premium-desert-safari-bbq-dinner.png',
+    tag: 'Desert safari',
+    meta: 'Premium',
+    title: 'VIP Premium Desert Safari with BBQ Dinner',
+    price: 'Contact for price'
+  },
+  {
+    image: '/images/top-experiences/vip-private-family-desert-safari.webp',
+    tag: 'Desert safari',
+    meta: 'Family · 6 Guests',
+    title: 'VIP Private Desert Safari – Family Package',
+    href: '/tours/desert-safari/vip-private-desert-safari-family-package',
+    skipDetailGeneration: true,
+    points: [
+      'Private setup for up to 6 guests',
+      'Family and small-group friendly',
+      'Reserved seating and dedicated service',
+      'Dinner and transfer options available',
+      'Six celebration and event setups to choose from'
+    ],
+    price: 'Contact for price'
+  },
+  {
+    image: '/images/tour-reference-14.webp',
+    featuredImage: '/images/tour-reference-14.webp',
+    imageFit: 'contain',
+    hideTag: true,
+    tag: 'Desert safari',
+    meta: 'Private 4×4',
+    title: 'Hummer Desert Safari',
+    price: 'Contact for price'
+  },
+  {
+    image: '/images/top-experiences/evening-desert-safari-bbq-dinner.png',
+    tag: 'Desert safari',
+    meta: 'Evening',
+    title: 'Evening Desert Safari with BBQ Dinner',
+    price: 'Contact for price'
+  },
+  {
+    image: '/images/top-experiences/sunrise-camel-trekking.png',
+    tag: 'Desert safari',
+    meta: '30 min',
+    title: 'Sunrise Camel Trekking',
+    price: 'Contact for price'
+  },
+  {
+    image: '/images/top-experiences/desert-safari-dinner-caravanserai.png',
+    tag: 'Desert safari',
+    meta: 'Dinner',
+    title: 'Desert Safari with Dinner at Caravanserai',
+    price: 'Contact for price'
+  }
 ]
 
 export const cities = [
@@ -121,7 +186,7 @@ export const tourCategories = [
   { name: 'Cruises', description: 'Marina cruising and waterfront dining experiences', image: '/images/city-dubai.webp' },
   { name: 'Water Activities', description: 'Yachts, underwater and coastal adventures', image: images.attractionAquarium },
   { name: 'Aerial Experiences', description: 'Helicopter flights and skyline experiences', image: '/images/heli-card-02.jpg' },
-  { name: 'Packages', description: 'Curated multi-day itineraries and value packages', image: '/images/hero-camp.webp' }
+  { name: 'Dubai Packages Tour', description: 'Curated multi-day itineraries and value packages', image: '/images/hero-camp.webp' }
 ]
 
 export const tourFilterNames = ['All', ...tourCategories.map((category) => category.name)]
