@@ -4,10 +4,7 @@ import Navbar from '../../components/Navbar/Navbar'
 import Footer from '../../components/Footer/Footer'
 import WhatsAppFloat from '../../components/WhatsAppFloat/WhatsAppFloat'
 import CallFloat from '../../components/CallFloat/CallFloat'
-<<<<<<< HEAD
-=======
 import CountryCodeSelect from '../../components/CountryCodeSelect/CountryCodeSelect'
->>>>>>> 777843e (updated web with client reviews)
 import ReviewsSection from '../../components/ReviewsSection/ReviewsSection'
 import { useLuxuryReveal } from '../../hooks/useLuxuryReveal'
 import { getCampaignPage } from '../../campaignPages'
@@ -60,13 +57,6 @@ function BookingForm({ page }) {
     date: tomorrow(),
     adults: '2',
     children: '0',
-<<<<<<< HEAD
-    name: '',
-    phone: '',
-    pickup: '',
-    notes: ''
-  })
-=======
     age: '',
     name: '',
     email: '',
@@ -78,22 +68,17 @@ function BookingForm({ page }) {
   })
   const [status, setStatus] = useState({ type: '', message: '' })
   const [submitting, setSubmitting] = useState(false)
->>>>>>> 777843e (updated web with client reviews)
 
   useEffect(() => {
     setForm((current) => ({ ...current, package: page.tours[0]?.title || '', date: tomorrow() }))
   }, [page])
 
-<<<<<<< HEAD
-  const update = (event) => setForm((current) => ({ ...current, [event.target.name]: event.target.value }))
-=======
   const update = (event) => {
     const { name, value, type, checked } = event.target
     setForm((current) => ({ ...current, [name]: type === 'checkbox' ? checked : value }))
   }
 
   const fullPhone = `${form.countryCode} ${form.phone}`.trim()
->>>>>>> 777843e (updated web with client reviews)
 
   const whatsappHref = useMemo(() => {
     const message = [
@@ -103,25 +88,14 @@ function BookingForm({ page }) {
       `Adults: ${form.adults}`,
       `Children: ${form.children}`,
       `Name: ${form.name || '-'}`,
-<<<<<<< HEAD
-      `Phone: ${form.phone || '-'}`,
-=======
       `Age: ${form.age || '-'}`,
       `Email: ${form.email || '-'}`,
       `Country code: ${form.countryCode || '-'}`,
       `Phone: ${form.phone ? fullPhone : '-'}`,
->>>>>>> 777843e (updated web with client reviews)
       `Pickup/Hotel: ${form.pickup || '-'}`,
       `Notes: ${form.notes || '-'}`
     ].join('\n')
     return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(message)}`
-<<<<<<< HEAD
-  }, [form, page.title])
-
-  const submit = (event) => {
-    event.preventDefault()
-    window.open(whatsappHref, '_blank', 'noopener,noreferrer')
-=======
   }, [form, fullPhone, page.title])
 
   const submit = async (event) => {
@@ -169,7 +143,6 @@ function BookingForm({ page }) {
     } finally {
       setSubmitting(false)
     }
->>>>>>> 777843e (updated web with client reviews)
   }
 
   return (
@@ -177,19 +150,6 @@ function BookingForm({ page }) {
       <div className="ad-booking-form__head">
         <span>BOOK THIS EXPERIENCE</span>
         <h2>Check availability</h2>
-<<<<<<< HEAD
-        <p>Send your details directly to the booking team on WhatsApp.</p>
-      </div>
-      <label className="ad-field ad-field--full"><span>Package</span><select name="package" value={form.package} onChange={update}>{page.tours.map((tour) => <option key={tour.title} value={tour.title}>{tour.title}</option>)}</select></label>
-      <label className="ad-field"><span>Travel date</span><input type="date" name="date" value={form.date} onChange={update} required /></label>
-      <label className="ad-field"><span>Adults</span><input type="number" min="1" name="adults" value={form.adults} onChange={update} required /></label>
-      <label className="ad-field"><span>Children</span><input type="number" min="0" name="children" value={form.children} onChange={update} /></label>
-      <label className="ad-field"><span>Name</span><input type="text" name="name" value={form.name} onChange={update} placeholder="Your name" required /></label>
-      <label className="ad-field"><span>Phone / WhatsApp</span><input type="tel" name="phone" value={form.phone} onChange={update} placeholder="+971 ..." required /></label>
-      <label className="ad-field"><span>Pickup / hotel</span><input type="text" name="pickup" value={form.pickup} onChange={update} placeholder="Hotel or area" /></label>
-      <label className="ad-field ad-field--full"><span>Notes</span><textarea name="notes" rows="3" value={form.notes} onChange={update} placeholder="Any timing, celebration or package request" /></label>
-      <button type="submit" className="ad-booking-submit"><MessageCircle size={18} /> Send booking request</button>
-=======
         <p>Submit your booking enquiry. We will email your confirmation and open WhatsApp when selected.</p>
       </div>
       <label className="ad-field ad-field--full"><span>Package</span><select name="package" value={form.package} onChange={update}>{page.tours.map((tour) => <option key={tour.title} value={tour.title}>{tour.title}</option>)}</select></label>
@@ -206,7 +166,6 @@ function BookingForm({ page }) {
       <label className="ad-field ad-field--full ad-whatsapp-check"><input type="checkbox" name="hasWhatsApp" checked={form.hasWhatsApp} onChange={update} /><span>This phone number has WhatsApp</span></label>
       {status.message && <div className={`ad-booking-status is-${status.type}`}>{status.message}</div>}
       <button type="submit" disabled={submitting} className="ad-booking-submit"><MessageCircle size={18} /> {submitting ? 'Sending...' : 'Book Enquiry Now'}</button>
->>>>>>> 777843e (updated web with client reviews)
       <a className="ad-booking-call" href={`tel:${PHONE}`}><Phone size={17} /> Call +971 54 993 0684</a>
     </form>
   )
@@ -263,11 +222,7 @@ export default function CampaignLanding({ slug, menuOpen, setMenuOpen }) {
         <section className="ad-proof-strip">
           <div className="container ad-proof-strip__inner">
             <span><Check size={16} /> Focused packages only</span>
-<<<<<<< HEAD
-            <span><Check size={16} /> Direct WhatsApp confirmation</span>
-=======
             <span><Check size={16} /> Email + WhatsApp booking support</span>
->>>>>>> 777843e (updated web with client reviews)
             <span><Check size={16} /> Pickup guidance</span>
             <span><Check size={16} /> Local booking support</span>
           </div>
