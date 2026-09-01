@@ -208,6 +208,38 @@
 
 @media (max-width: 380px) {
   .booking-enquiry-phone-group {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(92px, .42fr) minmax(0, 1fr);
+    gap: 8px;
+  }
+}
+
+/* Mobile phone row: keep country code and phone number parallel */
+@media (max-width: 500px) {
+  .booking-enquiry-phone-group {
+    width: 100%;
+    display: grid !important;
+    grid-template-columns: 104px minmax(0, 1fr) !important;
+    gap: 10px !important;
+    align-items: end;
+    grid-column: 1 / -1 !important;
+  }
+
+  .booking-enquiry-phone-group > .booking-enquiry-field {
+    grid-column: auto !important;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .booking-enquiry-phone-group .country-code-select,
+  .booking-enquiry-phone-group input {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 380px) {
+  .booking-enquiry-phone-group {
+    grid-template-columns: 96px minmax(0, 1fr) !important;
+    gap: 8px !important;
   }
 }

@@ -46,19 +46,6 @@
   white-space: nowrap !important;
 }
 
-/* Keep button text consistent even inside card layouts that style all spans. */
-.experience-card-action > span {
-  display: inline !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  color: inherit !important;
-  font: inherit !important;
-  line-height: 1 !important;
-  letter-spacing: 0 !important;
-  text-transform: none !important;
-  white-space: nowrap !important;
-}
-
 .experience-card-action:hover {
   color: #fff;
   transform: translateY(-2px);

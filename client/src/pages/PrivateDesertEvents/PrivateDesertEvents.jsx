@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { Check, MessageCircle, Phone, Star, Users } from 'lucide-react'
+import { ArrowRight, Check, MessageCircle, Phone, Users } from 'lucide-react'
 import Navbar from '../../components/Navbar/Navbar'
 import Footer from '../../components/Footer/Footer'
 import CallFloat from '../../components/CallFloat/CallFloat'
@@ -7,7 +7,6 @@ import WhatsAppFloat from '../../components/WhatsAppFloat/WhatsAppFloat'
 import { useLuxuryReveal } from '../../hooks/useLuxuryReveal'
 import { privateEventExperiences } from '../../privateEventExperiences'
 import { getTourDetailHref } from '../../tourDetails'
-import ExperienceCardActions from '../../components/ExperienceCardActions/ExperienceCardActions'
 import './PrivateDesertEvents.css'
 
 const FAMILY_HIGHLIGHTS = [
@@ -80,27 +79,16 @@ export default function PrivateDesertEvents({ menuOpen, setMenuOpen }) {
                   <article className="private-event-card" key={event.title} data-lux-reveal>
                     <a className="private-event-card__image" href={href} aria-label={`View ${event.title}`}>
                       <img src={event.image} alt={event.title} loading="lazy" />
-                      <span className="private-event-card__tag">{event.meta}</span>
-                      <span className="private-event-card__image-meta"><Users size={15} /> Private Event</span>
+                      <span>{event.meta}</span>
                     </a>
-
                     <div className="private-event-card__body">
-                      <div className="private-event-card__rating">
-                        <Star size={16} fill="currentColor" />
-                        <span>4.9 · 0 reviews</span>
-                      </div>
-
+                      <div className="private-event-card__meta"><Users size={15} /> Private event</div>
                       <h3><a href={href}>{event.title}</a></h3>
-
-                      <ul className="experience-card-points">
-                        {event.included.slice(0, 5).map((point) => <li key={point}>{point}</li>)}
-                      </ul>
-
-                      <div className="private-event-card__price">
+                      <p>{event.description}</p>
+                      <div className="private-event-card__footer">
                         <strong>Contact for price</strong>
+                        <a href={href}>View Page <ArrowRight size={16} /></a>
                       </div>
-
-                      <ExperienceCardActions title={event.title} detailHref={href} />
                     </div>
                   </article>
                 )

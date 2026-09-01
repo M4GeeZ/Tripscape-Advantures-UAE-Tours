@@ -159,8 +159,10 @@ function BookingForm({ page }) {
       <label className="ad-field"><span>Children</span><input type="number" min="0" name="children" value={form.children} onChange={update} /></label>
       <label className="ad-field"><span>Name</span><input type="text" name="name" value={form.name} onChange={update} placeholder="Your name" required /></label>
       <label className="ad-field"><span>Email</span><input type="email" name="email" value={form.email} onChange={update} placeholder="you@example.com" required /></label>
-      <div className="ad-field"><span>Country code</span><CountryCodeSelect value={form.countryCode} onChange={(countryCode) => setForm((current) => ({ ...current, countryCode }))} /></div>
-      <label className="ad-field"><span>Phone number</span><input type="tel" name="phone" value={form.phone} onChange={update} placeholder="50 123 4567" required /></label>
+      <div className="ad-phone-row ad-field--full">
+        <div className="ad-field"><span>Country code</span><CountryCodeSelect value={form.countryCode} onChange={(countryCode) => setForm((current) => ({ ...current, countryCode }))} /></div>
+        <label className="ad-field"><span>Phone number</span><input type="tel" name="phone" value={form.phone} onChange={update} placeholder="50 123 4567" required /></label>
+      </div>
       <label className="ad-field"><span>Pickup / hotel</span><input type="text" name="pickup" value={form.pickup} onChange={update} placeholder="Hotel or area" /></label>
       <label className="ad-field ad-field--full"><span>Notes</span><textarea name="notes" rows="3" value={form.notes} onChange={update} placeholder="Any timing, celebration or package request" /></label>
       <label className="ad-field ad-field--full ad-whatsapp-check"><input type="checkbox" name="hasWhatsApp" checked={form.hasWhatsApp} onChange={update} /><span>This phone number has WhatsApp</span></label>

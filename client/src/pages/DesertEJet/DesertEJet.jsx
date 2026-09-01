@@ -187,8 +187,10 @@ export default function DesertEJet({ menuOpen, setMenuOpen }) {
               <label><span>Name</span><input name="name" value={form.name} onChange={update} required placeholder="Your name"/></label>
               <label><span>Age</span><input type="number" min="1" max="100" name="age" value={form.age} onChange={update} required placeholder="Age"/></label>
               <label className="ejet-form__full"><span>Email</span><input type="email" name="email" value={form.email} onChange={update} required placeholder="you@example.com"/></label>
-              <div className="ejet-country-field"><span>Country code</span><CountryCodeSelect value={form.countryCode} onChange={(countryCode) => setForm((current) => ({ ...current, countryCode }))} /></div>
-              <label><span>Phone number</span><input name="phone" value={form.phone} onChange={update} required placeholder="50 123 4567"/></label>
+              <div className="ejet-phone-row ejet-form__full">
+                <div className="ejet-country-field"><span>Country code</span><CountryCodeSelect value={form.countryCode} onChange={(countryCode) => setForm((current) => ({ ...current, countryCode }))} /></div>
+                <label><span>Phone number</span><input name="phone" value={form.phone} onChange={update} required placeholder="50 123 4567"/></label>
+              </div>
               <label className="ejet-form__full ejet-whatsapp-check"><input type="checkbox" name="hasWhatsApp" checked={form.hasWhatsApp} onChange={update}/><span>This phone number has WhatsApp</span></label>
               <label className="ejet-form__full"><span>Notes</span><textarea name="notes" value={form.notes} onChange={update} rows="3" placeholder="Group size or questions"/></label>
               <div className="ejet-form__total"><span>Estimated activity price</span><strong>AED {selected.price * Number(form.riders || 1)}</strong></div>

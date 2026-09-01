@@ -38,3 +38,13 @@
 }
 .ad-booking-status.is-success { background: #edf8f1; color: #17663a; border: 1px solid #cbe8d6; }
 .ad-booking-status.is-error { background: #fff0ef; color: #a43a32; border: 1px solid #f0cfcb; }
+
+.ad-phone-row{display:grid;grid-template-columns:minmax(112px,.42fr) minmax(0,1fr);gap:12px;align-items:end}
+@media(max-width:760px){.ad-phone-row{grid-column:auto;grid-template-columns:minmax(96px,.42fr) minmax(0,1fr);gap:9px}.ad-phone-row .ad-field{min-width:0}}
+@media(max-width:390px){.ad-phone-row{grid-template-columns:minmax(90px,.4fr) minmax(0,1fr);gap:8px}}
+
+@media(max-width:760px){
+  .ad-phone-row{display:grid!important;grid-template-columns:104px minmax(0,1fr)!important;gap:10px!important;align-items:end;width:100%;grid-column:auto!important}
+  .ad-phone-row>.ad-field{grid-column:auto!important;min-width:0;width:100%}
+}
+@media(max-width:390px){.ad-phone-row{grid-template-columns:96px minmax(0,1fr)!important;gap:8px!important}}
