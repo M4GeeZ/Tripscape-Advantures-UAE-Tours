@@ -56,7 +56,15 @@ export default function TourCarousel() {
               <article className="tour-card" key={`${tour.title}-${index}`} data-reveal>
                 <a href={detailHref} className="tour-image-link" aria-label={`View ${tour.title}`}>
                   <div className="tour-image-wrap">
-                    <img className={tour.imageFit === 'contain' ? 'tour-image-contain' : ''} src={tour.image} alt={tour.title} loading="lazy" />
+                    <img
+                      className={[
+                        tour.imageFit === 'contain' && tour.title !== 'Hummer Desert Safari' ? 'tour-image-contain' : '',
+                        tour.title === 'Hummer Desert Safari' ? 'tour-image-hummer' : ''
+                      ].filter(Boolean).join(' ')}
+                      src={tour.image}
+                      alt={tour.title}
+                      loading="lazy"
+                    />
                     {!tour.hideTag && <span className="card-tag">{tour.tag}</span>}
                     <span className="card-meta"><Clock size={15} />{tour.meta}</span>
                   </div>

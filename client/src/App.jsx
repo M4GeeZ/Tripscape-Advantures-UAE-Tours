@@ -38,6 +38,7 @@ export default function App() {
       "/tours/quad-bike": "quad-bike",
       "/tours/dune-buggy": "dune-buggy",
       "/tours/private-desert-setup": "private-desert-setup",
+      "/tours/desert-safari/private-desert-safari-packages": "private-desert-safari-packages",
     };
 
     if (campaignRoutes[normalizedPath]) {

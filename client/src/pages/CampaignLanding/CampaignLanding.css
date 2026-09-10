@@ -48,3 +48,61 @@
   .ad-phone-row>.ad-field{grid-column:auto!important;min-width:0;width:100%}
 }
 @media(max-width:390px){.ad-phone-row{grid-template-columns:96px minmax(0,1fr)!important;gap:8px!important}}
+
+/* Booking add-ons */
+.ad-addons{
+  margin:0;
+  padding:14px;
+  border:1px solid rgba(16,27,43,.11);
+  border-radius:12px;
+  background:#faf8f3;
+}
+.ad-addons legend{padding:0 5px;color:#3b4451;font-size:10px;font-weight:850;letter-spacing:.05em;text-transform:uppercase}
+.ad-addons>p{margin:0 0 10px;color:#78808b;font-size:11px;line-height:1.45}
+.ad-addons__grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ad-addon-option{min-height:40px;padding:8px 10px;display:flex!important;align-items:center;gap:8px;border:1px solid rgba(16,27,43,.09);border-radius:9px;background:#fff;cursor:pointer}
+.ad-addon-option input{width:16px!important;height:16px!important;flex:0 0 auto;accent-color:var(--gold)}
+.ad-addon-option span{font-size:11px!important;font-weight:700!important;line-height:1.3;letter-spacing:0!important;text-transform:none!important;color:#4f5865!important}
+@media(max-width:760px){.ad-addons__grid{grid-template-columns:1fr}}
+
+/* Five-package feature page: 3 cards on the first row, 2 equal full-width cards on the second row. */
+@media (min-width: 1051px) {
+  .ad-package-grid--five {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  .ad-package-grid--five .ad-package-card:nth-child(-n + 3) {
+    grid-column: span 2;
+  }
+  .ad-package-grid--five .ad-package-card:nth-child(n + 4) {
+    grid-column: span 3;
+  }
+}
+
+@media (max-width: 1050px) and (min-width: 761px) {
+  .ad-package-grid--five {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .ad-package-grid--five .ad-package-card {
+    grid-column: auto;
+    max-width: none;
+    width: 100%;
+  }
+  .ad-package-grid--five .ad-package-card:last-child {
+    grid-column: 1 / -1;
+    max-width: 560px;
+    width: 100%;
+    justify-self: center;
+  }
+}
+
+@media (max-width: 760px) {
+  .ad-package-grid--five {
+    grid-template-columns: 1fr;
+  }
+  .ad-package-grid--five .ad-package-card,
+  .ad-package-grid--five .ad-package-card:last-child {
+    grid-column: auto;
+    max-width: none;
+    width: 100%;
+  }
+}

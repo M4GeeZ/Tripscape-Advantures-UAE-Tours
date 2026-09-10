@@ -54,10 +54,25 @@ export const tours = [
     price: 'Contact for price'
   },
   {
+    image: '/images/top-experiences/evening-desert-safari-bbq-dinner.png',
+    tag: 'Desert safari',
+    meta: 'Evening',
+    title: 'Evening Desert Safari with BBQ Dinner',
+    price: 'Contact for price'
+  },
+  {
+    image: '/images/top-experiences/hummer-desert-safari.webp',
+    featuredImage: '/images/top-experiences/hummer-desert-safari.webp',
+    tag: 'Desert safari',
+    meta: 'Private 4×4',
+    title: 'Hummer Desert Safari',
+    price: 'Contact for price'
+  },
+  {
     image: '/images/top-experiences/vip-private-family-desert-safari.webp',
     tag: 'Desert safari',
     meta: 'Family · 6 Guests',
-    title: 'VIP Private Desert Safari – Family Package',
+    title: 'VIP Private Family Desert Safari',
     href: '/tours/desert-safari/vip-private-desert-safari-family-package',
     skipDetailGeneration: true,
     points: [
@@ -67,23 +82,6 @@ export const tours = [
       'Dinner and transfer options available',
       'Six celebration and event setups to choose from'
     ],
-    price: 'Contact for price'
-  },
-  {
-    image: '/images/tour-reference-14.webp',
-    featuredImage: '/images/tour-reference-14.webp',
-    imageFit: 'contain',
-    hideTag: true,
-    tag: 'Desert safari',
-    meta: 'Private 4×4',
-    title: 'Hummer Desert Safari',
-    price: 'Contact for price'
-  },
-  {
-    image: '/images/top-experiences/evening-desert-safari-bbq-dinner.png',
-    tag: 'Desert safari',
-    meta: 'Evening',
-    title: 'Evening Desert Safari with BBQ Dinner',
     price: 'Contact for price'
   },
   {
@@ -118,8 +116,7 @@ export const adventures = [
   { image: images.adventureQuad, title: 'Evening Buggy Tour with Dinner', price: 'From AED 800' },
   { image: images.adventureEvening, title: 'Evening Quad Bike with Dinner', price: 'From AED 450' },
   { image: images.adventureDrive, title: 'Dune Buggy Experience', price: 'From AED 0' },
-  { image: images.adventureDouble, title: 'Single and Double Quad Bike', price: 'From AED 0' },
-  { image: '/images/desert-ejet/ejet-track-1.jpg', title: 'Desert E-Jet Water Go Kart Dubai', price: 'From AED 250' }
+  { image: images.adventureDouble, title: 'Single and Double Quad Bike', price: 'From AED 0' }
 ]
 
 export const helicopters = [

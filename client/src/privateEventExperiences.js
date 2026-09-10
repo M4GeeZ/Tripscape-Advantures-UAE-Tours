@@ -58,7 +58,7 @@ export const privateEventExperiences = [
   {
     title: 'Anniversary Desert Dinner',
     meta: 'Anniversary',
-    image: '/images/tour-private.webp',
+    image: '/images/top-experiences/vip-desert-safari-private-seating.png',
     description: 'Enjoy a private anniversary dinner surrounded by Dubai desert scenery with reserved seating, attentive service and a relaxed evening atmosphere. It is a simple premium option for couples or small groups who want a more personal desert experience.',
     included: [
       'Private anniversary seating area',

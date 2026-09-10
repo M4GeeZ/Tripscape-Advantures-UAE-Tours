@@ -1,9 +1,9 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Mail, MessageCircle, Phone, Send } from 'lucide-react'
 import CountryCodeSelect from './CountryCodeSelect/CountryCodeSelect'
+import { getBookingAddOns, getBookingServices } from '../bookingOptions'
 import './BookingEnquiryForm.css'
 
-const COMPANY_WHATSAPP = '971549930684'
 const COMPANY_PHONE = '+971549930684'
 
 function tomorrow() {
@@ -13,49 +13,53 @@ function tomorrow() {
 }
 
 export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact for price' }) {
+  const serviceOptions = useMemo(() => getBookingServices(tourTitle), [tourTitle])
+  const addOnOptions = useMemo(() => getBookingAddOns(tourTitle), [tourTitle])
+
   const [form, setForm] = useState({
+    service: serviceOptions[0] || tourTitle,
     name: '',
-    age: '',
     adults: '1',
     children: '0',
     email: '',
     countryCode: '+971',
     phone: '',
     travelDate: tomorrow(),
-    hasWhatsApp: true,
+    pickup: '',
+    addOns: [],
+    hasWhatsApp: false,
   })
   const [status, setStatus] = useState({ type: '', message: '' })
   const [submitting, setSubmitting] = useState(false)
+
+  useEffect(() => {
+    setForm((current) => ({
+      ...current,
+      service: serviceOptions[0] || tourTitle,
+      addOns: [],
+    }))
+  }, [serviceOptions, tourTitle])
 
   const update = (event) => {
     const { name, value, type, checked } = event.target
     setForm((current) => ({ ...current, [name]: type === 'checkbox' ? checked : value }))
   }
 
-  const fullPhone = `${form.countryCode} ${form.phone}`.trim()
+  const toggleAddOn = (addOn) => {
+    setForm((current) => ({
+      ...current,
+      addOns: current.addOns.includes(addOn)
+        ? current.addOns.filter((item) => item !== addOn)
+        : [...current.addOns, addOn],
+    }))
+  }
 
-  const bookingMessage = useMemo(() => [
-    `Hi Tripscape, I would like to book: ${tourTitle}`,
-    `Travel date: ${form.travelDate}`,
-    `Name: ${form.name || '-'}`,
-    `Age: ${form.age || '-'}`,
-    `Adults: ${form.adults}`,
-    `Children: ${form.children}`,
-    `Email: ${form.email || '-'}`,
-    `Phone: ${form.phone ? fullPhone : '-'}`,
-    `Country code: ${form.countryCode || '-'}`,
-    `Price: ${displayPrice}`,
-  ].join('\n'), [displayPrice, form, fullPhone, tourTitle])
-
-  const whatsappHref = `https://wa.me/${COMPANY_WHATSAPP}?text=${encodeURIComponent(bookingMessage)}`
 
   const submit = async (event) => {
     event.preventDefault()
     setStatus({ type: '', message: '' })
     setSubmitting(true)
 
-    // Open a blank tab during the user gesture so popup blockers do not stop WhatsApp later.
-    const whatsappWindow = form.hasWhatsApp ? window.open('', '_blank') : null
 
     try {
       const response = await fetch('/api/bookings', {
@@ -63,28 +67,41 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           tourTitle,
+          service: form.service,
+          addOns: form.addOns,
+          pickup: form.pickup,
           price: displayPrice,
-          ...form,
+          name: form.name,
+          adults: form.adults,
+          children: form.children,
+          email: form.email,
+          countryCode: form.countryCode,
+          phone: form.phone,
+          travelDate: form.travelDate,
+          hasWhatsApp: form.hasWhatsApp,
         }),
       })
 
       const data = await response.json().catch(() => ({}))
       if (!response.ok) throw new Error(data.message || 'Unable to send booking request right now.')
+      const emailSent = data.customerEmail === 'sent'
+      const whatsappSent = data.whatsappConfirmation === 'sent'
+      let confirmationMessage = `Reservation request ${data.bookingReference || ''} saved successfully. Your booking details are safely recorded.`
 
-      setStatus({
-        type: 'success',
-        message: form.hasWhatsApp
-          ? (data.whatsappConfirmation === 'sent'
-            ? 'Booking enquiry sent. Email and WhatsApp confirmation have been sent to you; WhatsApp is also opening so you can message our booking team.'
-            : 'Booking enquiry sent. Email confirmation has been sent to you; WhatsApp is opening with your details ready to send to our booking team.')
-          : 'Booking enquiry sent by email. Please check your inbox for confirmation.',
-      })
-
-      if (form.hasWhatsApp && whatsappWindow) {
-        whatsappWindow.location.href = whatsappHref
+      if (emailSent && whatsappSent) {
+        confirmationMessage += ' Confirmation has been sent to your email and WhatsApp.'
+      } else if (emailSent) {
+        confirmationMessage += form.hasWhatsApp
+          ? ' Email confirmation has been sent. WhatsApp confirmation could not be delivered automatically.'
+          : ' Email confirmation has been sent.'
+      } else if (whatsappSent) {
+        confirmationMessage += ' WhatsApp confirmation has been sent, but the email confirmation could not be delivered.'
+      } else {
+        confirmationMessage += ' Automatic confirmation could not be delivered right now, but your booking request has been saved for the booking team.'
       }
+
+      setStatus({ type: 'success', message: confirmationMessage })
     } catch (error) {
-      if (whatsappWindow) whatsappWindow.close()
       setStatus({ type: 'error', message: error.message || 'Something went wrong. Please try again.' })
     } finally {
       setSubmitting(false)
@@ -96,38 +113,45 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
       <div className="booking-enquiry-card__head">
         <span>BOOKING REQUEST</span>
         <strong>{displayPrice}</strong>
-        <p>Fill in your details to send a booking enquiry. You will receive email confirmation, and WhatsApp confirmation is also sent when available.</p>
+        <p>Choose your preferred package or service, add any extras, and send your booking enquiry.</p>
       </div>
 
       <form className="booking-enquiry-form" onSubmit={submit}>
         <label className="booking-enquiry-field booking-enquiry-field--full">
+          <span>Package / Service</span>
+          <select name="service" value={form.service} onChange={update}>
+            {serviceOptions.map((service) => <option key={service} value={service}>{service}</option>)}
+          </select>
+        </label>
+
+        <label className="booking-enquiry-field booking-enquiry-field--name">
           <span>Full name</span>
           <input type="text" name="name" value={form.name} onChange={update} placeholder="Your name" required />
         </label>
 
-        <label className="booking-enquiry-field">
-          <span>Age</span>
-          <input type="number" min="1" max="100" name="age" value={form.age} onChange={update} placeholder="Age" required />
+        <label className="booking-enquiry-field booking-enquiry-field--email">
+          <span>Email</span>
+          <input type="email" name="email" value={form.email} onChange={update} placeholder="you@example.com" required />
         </label>
 
-        <label className="booking-enquiry-field">
+        <label className="booking-enquiry-field booking-enquiry-field--date">
           <span>Travel date</span>
           <input type="date" name="travelDate" value={form.travelDate} onChange={update} required />
         </label>
 
-        <label className="booking-enquiry-field">
+        <label className="booking-enquiry-field booking-enquiry-field--guest">
           <span>Adults</span>
           <input type="number" min="1" name="adults" value={form.adults} onChange={update} required />
         </label>
 
-        <label className="booking-enquiry-field">
+        <label className="booking-enquiry-field booking-enquiry-field--guest">
           <span>Children</span>
           <input type="number" min="0" name="children" value={form.children} onChange={update} />
         </label>
 
-        <label className="booking-enquiry-field booking-enquiry-field--full">
-          <span>Email</span>
-          <input type="email" name="email" value={form.email} onChange={update} placeholder="you@example.com" required />
+        <label className="booking-enquiry-field booking-enquiry-field--pickup">
+          <span>Pickup / hotel</span>
+          <input type="text" name="pickup" value={form.pickup} onChange={update} placeholder="Hotel or area" />
         </label>
 
         <div className="booking-enquiry-phone-group booking-enquiry-field--full">
@@ -137,9 +161,26 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
           </div>
           <label className="booking-enquiry-field">
             <span>Phone number</span>
-            <input type="tel" name="phone" value={form.phone} onChange={update} placeholder="50 123 4567" required />
+            <input type="tel" name="phone" value={form.phone} onChange={update} placeholder="50 123 4567" inputMode="tel" minLength="7" maxLength="20" required />
           </label>
         </div>
+
+        <fieldset className="booking-enquiry-addons booking-enquiry-field--full">
+          <legend>Add-ons</legend>
+          <p>Select any extra services you want with this booking.</p>
+          <div className="booking-enquiry-addons__grid">
+            {addOnOptions.map((addOn) => (
+              <label key={addOn} className="booking-enquiry-addon-option">
+                <input
+                  type="checkbox"
+                  checked={form.addOns.includes(addOn)}
+                  onChange={() => toggleAddOn(addOn)}
+                />
+                <span>{addOn}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
 
         <label className="booking-enquiry-whatsapp-check booking-enquiry-field--full">
           <input type="checkbox" name="hasWhatsApp" checked={form.hasWhatsApp} onChange={update} />

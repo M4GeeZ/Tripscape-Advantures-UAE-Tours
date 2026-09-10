@@ -702,3 +702,76 @@
   font-size: 10px;
   line-height: 1.4;
 }
+
+/* Wider, cleaner enquiry form on tour detail pages only. */
+@media (min-width: 1051px) {
+  .tour-detail-content__grid.has-enquiry-form {
+    width: min(1220px, calc(100% - 48px));
+    grid-template-columns: minmax(0, 650px) minmax(410px, 440px);
+    gap: 72px;
+  }
+
+  .tour-detail-content__grid.has-enquiry-form .tour-detail-main {
+    left: 0;
+  }
+
+  .tour-detail-content__grid.has-enquiry-form .booking-enquiry-card {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+@media (min-width: 821px) and (max-width: 1050px) {
+  .tour-detail-content__grid.has-enquiry-form {
+    width: calc(100% - 36px);
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 42%);
+    gap: 30px;
+  }
+
+  .tour-detail-content__grid.has-enquiry-form .tour-detail-main {
+    left: 0;
+  }
+
+  .tour-detail-content__grid.has-enquiry-form .booking-enquiry-card {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+/* Wider booking column: uses the previously empty right-side space without touching other tour layouts. */
+@media (min-width: 1181px) {
+  .tour-detail-content__grid.has-enquiry-form {
+    width: min(1270px, calc(100% - 56px));
+    grid-template-columns: minmax(0, 650px) minmax(460px, 500px);
+    gap: clamp(48px, 5vw, 72px);
+  }
+}
+
+@media (min-width: 1081px) and (max-width: 1180px) {
+  .tour-detail-content__grid.has-enquiry-form {
+    width: min(1120px, calc(100% - 48px));
+    grid-template-columns: minmax(0, 1fr) minmax(430px, 470px);
+    gap: 44px;
+  }
+}
+
+@media (min-width: 901px) and (max-width: 1080px) {
+  .tour-detail-content__grid.has-enquiry-form {
+    width: calc(100% - 42px);
+    grid-template-columns: minmax(0, 1fr) minmax(410px, 460px);
+    gap: 32px;
+  }
+}
+
+@media (min-width: 821px) and (max-width: 900px) {
+  .tour-detail-content__grid.has-enquiry-form {
+    width: calc(100% - 40px);
+    grid-template-columns: 1fr;
+    gap: 34px;
+  }
+
+  .tour-detail-content__grid.has-enquiry-form .booking-enquiry-card {
+    position: static;
+    max-width: 620px;
+  }
+}

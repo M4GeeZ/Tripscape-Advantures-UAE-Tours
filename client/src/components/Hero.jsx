@@ -53,7 +53,7 @@ export default function Hero() {
         <div className="rating-line">
           <span>★★★★★</span>
           <strong>4.9 / 5</strong>
-          <span>· 356 verified reviews</span>
+          <span>· 391 Google reviews</span>
         </div>
       </div>
 

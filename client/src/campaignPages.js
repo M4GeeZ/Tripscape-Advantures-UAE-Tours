@@ -12,10 +12,25 @@ export const campaignPages = {
     heroImage: '/images/top-experiences/evening-desert-safari-bbq-dinner.png',
     seoTitle: 'Evening Desert Safari Dubai | BBQ Dinner & Live Shows',
     seoDescription: 'Book an evening desert safari in Dubai with dune bashing, camel ride, BBQ dinner and live entertainment. Compare a few selected packages and book direct by WhatsApp.',
-    packageTitles: [
-      'Evening Desert Safari with BBQ Dinner',
-      'VIP Premium Desert Safari with BBQ Dinner',
-      'Desert Safari with Dinner at Caravanserai'
+    packageItems: [
+      { sourceTitle: 'Evening Desert Safari with BBQ Dinner' },
+      {
+        sourceTitle: 'VIP Premium Desert Safari with BBQ Dinner',
+        image: '/images/top-experiences/vip-premium-desert-safari-bbq-dinner.png'
+      },
+      {
+        title: 'Private Desert Safari Packages',
+        category: 'Desert Safari',
+        image: '/images/top-experiences/vip-private-family-desert-safari.webp',
+        description: 'Explore standard, premium, private family, quad-bike and dune-buggy evening safari options in one place.',
+        duration: '5 package options',
+        location: 'Dubai, UAE',
+        price: 'Contact for price',
+        unit: '',
+        rating: '4.9',
+        reviews: 0,
+        href: '/tours/desert-safari/private-desert-safari-packages'
+      }
     ],
     sectionTitle: 'Choose your evening desert safari package',
     sectionCopy: 'Only the most relevant evening packages for this campaign are shown below.',
@@ -55,6 +70,99 @@ export const campaignPages = {
       ['Is the evening safari suitable for families?', 'Many evening safari packages are family friendly. Share child ages before booking so the team can confirm the right option.'],
       ['Can I choose VIP seating?', 'Yes. Select a VIP or premium package if you want upgraded seating or service.'],
       ['How do I book?', 'Choose a package and complete the booking form. Your request opens directly in WhatsApp for confirmation.']
+    ]
+  },
+  'private-desert-safari-packages': {
+    slug: 'private-desert-safari-packages',
+    canonicalPath: '/tours/desert-safari/private-desert-safari-packages',
+    fiveCardLayout: true,
+    eyebrow: 'DESERT SAFARI PACKAGES',
+    title: 'Evening & Private Desert Safari Packages',
+    heroCopy: 'Compare five focused Dubai desert safari choices, from a classic evening dinner package to premium, private family, quad-bike and dune-buggy options.',
+    heroImage: '/images/top-experiences/vip-private-family-desert-safari.webp',
+    seoTitle: 'Private & Evening Desert Safari Packages Dubai',
+    seoDescription: 'Compare five Dubai desert safari packages including standard dinner, premium safari, private family package, quad bike and dune buggy options.',
+    packageItems: [
+      {
+        sourceTitle: 'Evening Desert Safari with BBQ Dinner',
+        title: 'Standard Package – Evening Safari with Dinner',
+        image: '/images/top-experiences/evening-desert-safari-bbq-dinner.png',
+        duration: 'Evening',
+        href: '/tours/desert-safari/evening-desert-safari-with-bbq-dinner'
+      },
+      {
+        sourceTitle: 'VIP Premium Desert Safari with BBQ Dinner',
+        title: 'Premium Evening Desert Safari',
+        image: '/images/top-experiences/vip-premium-desert-safari-bbq-dinner.png',
+        duration: 'Premium',
+        href: '/tours/desert-safari/vip-premium-desert-safari-with-bbq-dinner'
+      },
+      {
+        title: 'Private Car Family Package – Up to 6 People',
+        category: 'Desert Safari',
+        image: '/images/top-experiences/vip-private-family-desert-safari.webp',
+        description: 'A private family desert safari option for up to six guests with dedicated transport and a more personal setup.',
+        duration: 'Up to 6 guests',
+        location: 'Dubai, UAE',
+        price: 'Contact for price',
+        unit: '',
+        rating: '4.9',
+        reviews: 0,
+        href: '/tours/desert-safari/vip-private-desert-safari-family-package'
+      },
+      {
+        sourceTitle: 'Evening Quad Bike with Dinner',
+        title: 'Evening Safari with Quad Bike',
+        image: '/images/adv-quad.webp',
+        duration: 'Evening',
+        href: '/tours/desert-adventures/evening-quad-bike-with-dinner'
+      },
+      {
+        sourceTitle: 'Evening Buggy Tour with Dinner',
+        title: 'Evening Safari with Dune Buggy',
+        image: '/images/adv-buggy.webp',
+        duration: 'Evening',
+        href: '/tours/desert-adventures/evening-buggy-tour-with-dinner'
+      }
+    ],
+    sectionTitle: 'Choose your desert safari package',
+    sectionCopy: 'Three core packages are shown on the first row, with the final two adventure packages sharing the full second row so there is no empty card space.',
+    highlights: [
+      'Standard and premium evening safari options',
+      'Private family package for up to 6 guests',
+      'Quad-bike and dune-buggy combinations',
+      'Dinner and camp experiences on selected packages',
+      'Pickup and private transfer options',
+      'Direct booking support by email and WhatsApp'
+    ],
+    included: [
+      'Package-specific desert safari experience',
+      'Dune bashing or guided desert activity where stated',
+      'Dinner on selected evening packages',
+      'Camel ride and camp activities where included',
+      'Safety support for quad-bike and dune-buggy packages',
+      'Pickup or private transfer according to the selected package',
+      'Booking support before travel'
+    ],
+    excluded: [
+      'Optional upgrades not selected',
+      'Personal purchases and souvenirs',
+      'Alcoholic beverages unless specifically stated',
+      'Extra activity time beyond the selected package',
+      'Anything not included in the final booking confirmation'
+    ],
+    knowBefore: [
+      'Exact pickup timing is confirmed after the package and travel date are selected.',
+      'Activity age and safety requirements apply to quad-bike and dune-buggy options.',
+      'Private vehicle capacity is up to 6 people for the family package shown.',
+      'Final inclusions and availability are confirmed before payment.'
+    ],
+    faqs: [
+      ['Which package is best for a first-time visitor?', 'The standard evening safari with dinner is a simple all-round choice, while premium and private options are better for guests wanting upgraded comfort or privacy.'],
+      ['Which option is private for families?', 'Choose the Private Car Family Package for up to 6 people for a more private vehicle and family-focused experience.'],
+      ['Can I add quad biking or a dune buggy?', 'Yes. The fourth and fifth packages are dedicated evening safari combinations with quad bike or dune buggy activities.'],
+      ['Is dinner included in every package?', 'Dinner is included where stated in the selected package. Check the package page or booking confirmation for exact inclusions.'],
+      ['How do I confirm availability?', 'Select the package in the booking form and submit your date and contact details. The team will confirm availability and the final package details.']
     ]
   },
   'quad-bike': {
@@ -218,8 +326,26 @@ export const campaignPages = {
   }
 }
 
+function buildPackageItem(item) {
+  if (typeof item === 'string') return findTour(item)
+
+  const base = item.sourceTitle ? findTour(item.sourceTitle) : null
+  if (!base && item.sourceTitle) return null
+
+  return {
+    ...(base || {}),
+    ...item,
+    sourceTitle: item.sourceTitle || base?.title,
+    category: item.category || base?.category || 'Desert Safari'
+  }
+}
+
 Object.values(campaignPages).forEach((page) => {
-  page.tours = pickTours(page.packageTitles)
+  if (page.packageItems) {
+    page.tours = page.packageItems.map(buildPackageItem).filter(Boolean)
+  } else {
+    page.tours = pickTours(page.packageTitles || [])
+  }
 })
 
 export function getCampaignPage(slug) {

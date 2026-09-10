@@ -9,6 +9,7 @@ import ReviewsSection from '../../components/ReviewsSection/ReviewsSection'
 import { useLuxuryReveal } from '../../hooks/useLuxuryReveal'
 import { getCampaignPage } from '../../campaignPages'
 import { getTourDetailHref } from '../../tourDetails'
+import { getBookingAddOns } from '../../bookingOptions'
 import './CampaignLanding.css'
 
 const PHONE = '+971549930684'
@@ -21,7 +22,7 @@ function tomorrow() {
 }
 
 function CampaignPackageCard({ tour, campaignTitle }) {
-  const href = getTourDetailHref(tour.category, tour.title)
+  const href = tour.href || getTourDetailHref(tour.category, tour.sourceTitle || tour.title)
   const contactPrice = /contact|aed\s*0/i.test(String(tour.price || ''))
   return (
     <article className="ad-package-card" data-lux-reveal>
@@ -57,53 +58,54 @@ function BookingForm({ page }) {
     date: tomorrow(),
     adults: '2',
     children: '0',
-    age: '',
     name: '',
     email: '',
     countryCode: '+971',
     phone: '',
-    hasWhatsApp: true,
+    hasWhatsApp: false,
     pickup: '',
-    notes: ''
+    notes: '',
+    addOns: []
   })
   const [status, setStatus] = useState({ type: '', message: '' })
   const [submitting, setSubmitting] = useState(false)
 
+  const addOnOptions = useMemo(
+    () => getBookingAddOns(form.package || page.title),
+    [form.package, page.title]
+  )
+
   useEffect(() => {
-    setForm((current) => ({ ...current, package: page.tours[0]?.title || '', date: tomorrow() }))
+    setForm((current) => ({
+      ...current,
+      package: page.tours[0]?.title || '',
+      date: tomorrow(),
+      addOns: []
+    }))
   }, [page])
 
   const update = (event) => {
     const { name, value, type, checked } = event.target
-    setForm((current) => ({ ...current, [name]: type === 'checkbox' ? checked : value }))
+    setForm((current) => ({
+      ...current,
+      [name]: type === 'checkbox' ? checked : value,
+      ...(name === 'package' ? { addOns: [] } : {})
+    }))
   }
 
-  const fullPhone = `${form.countryCode} ${form.phone}`.trim()
-
-  const whatsappHref = useMemo(() => {
-    const message = [
-      `Hi Tripscape, I want to book from the ${page.title} campaign.`,
-      `Package: ${form.package || 'Please advise'}`,
-      `Date: ${form.date}`,
-      `Adults: ${form.adults}`,
-      `Children: ${form.children}`,
-      `Name: ${form.name || '-'}`,
-      `Age: ${form.age || '-'}`,
-      `Email: ${form.email || '-'}`,
-      `Country code: ${form.countryCode || '-'}`,
-      `Phone: ${form.phone ? fullPhone : '-'}`,
-      `Pickup/Hotel: ${form.pickup || '-'}`,
-      `Notes: ${form.notes || '-'}`
-    ].join('\n')
-    return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(message)}`
-  }, [form, fullPhone, page.title])
+  const toggleAddOn = (addOn) => {
+    setForm((current) => ({
+      ...current,
+      addOns: current.addOns.includes(addOn)
+        ? current.addOns.filter((item) => item !== addOn)
+        : [...current.addOns, addOn]
+    }))
+  }
 
   const submit = async (event) => {
     event.preventDefault()
     setStatus({ type: '', message: '' })
     setSubmitting(true)
-    const whatsappWindow = form.hasWhatsApp ? window.open('', '_blank') : null
-
     try {
       const selectedTour = page.tours.find((tour) => tour.title === form.package)
       const response = await fetch('/api/bookings', {
@@ -111,9 +113,9 @@ function BookingForm({ page }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           tourTitle: form.package || page.title,
+          service: form.package || page.title,
           price: selectedTour?.price || 'Contact for price',
           name: form.name,
-          age: form.age,
           adults: form.adults,
           children: form.children,
           email: form.email,
@@ -121,24 +123,32 @@ function BookingForm({ page }) {
           phone: form.phone,
           travelDate: form.date,
           hasWhatsApp: form.hasWhatsApp,
+          pickup: form.pickup,
+          notes: form.notes,
+          addOns: form.addOns,
         }),
       })
 
       const data = await response.json().catch(() => ({}))
       if (!response.ok) throw new Error(data.message || 'Unable to send booking enquiry right now.')
+      const emailSent = data.customerEmail === 'sent'
+      const whatsappSent = data.whatsappConfirmation === 'sent'
+      let confirmationMessage = `Reservation request ${data.bookingReference || ''} saved successfully. Your booking details are safely recorded.`
 
-      setStatus({
-        type: 'success',
-        message: form.hasWhatsApp
-          ? (data.whatsappConfirmation === 'sent'
-            ? `Enquiry ${data.bookingReference || ''} sent. Email and WhatsApp confirmation sent.`
-            : `Enquiry ${data.bookingReference || ''} sent. Email confirmation sent; WhatsApp is opening for your message.`)
-          : `Enquiry ${data.bookingReference || ''} sent by email. Please check your inbox.`,
-      })
+      if (emailSent && whatsappSent) {
+        confirmationMessage += ' Confirmation has been sent to your email and WhatsApp.'
+      } else if (emailSent) {
+        confirmationMessage += form.hasWhatsApp
+          ? ' Email confirmation has been sent. WhatsApp confirmation could not be delivered automatically.'
+          : ' Email confirmation has been sent.'
+      } else if (whatsappSent) {
+        confirmationMessage += ' WhatsApp confirmation has been sent, but the email confirmation could not be delivered.'
+      } else {
+        confirmationMessage += ' Automatic confirmation could not be delivered right now, but your booking request has been saved for the booking team.'
+      }
 
-      if (form.hasWhatsApp && whatsappWindow) whatsappWindow.location.href = whatsappHref
+      setStatus({ type: 'success', message: confirmationMessage })
     } catch (error) {
-      if (whatsappWindow) whatsappWindow.close()
       setStatus({ type: 'error', message: error.message || 'Something went wrong. Please try again.' })
     } finally {
       setSubmitting(false)
@@ -150,21 +160,43 @@ function BookingForm({ page }) {
       <div className="ad-booking-form__head">
         <span>BOOK THIS EXPERIENCE</span>
         <h2>Check availability</h2>
-        <p>Submit your booking enquiry. We will email your confirmation and open WhatsApp when selected.</p>
+        <p>Choose a package, select any add-ons, and send your booking enquiry.</p>
       </div>
-      <label className="ad-field ad-field--full"><span>Package</span><select name="package" value={form.package} onChange={update}>{page.tours.map((tour) => <option key={tour.title} value={tour.title}>{tour.title}</option>)}</select></label>
+
+      <label className="ad-field ad-field--full">
+        <span>Package</span>
+        <select name="package" value={form.package} onChange={update}>
+          {page.tours.map((tour) => <option key={tour.title} value={tour.title}>{tour.title}</option>)}
+        </select>
+      </label>
+
       <label className="ad-field"><span>Travel date</span><input type="date" name="date" value={form.date} onChange={update} required /></label>
-      <label className="ad-field"><span>Age</span><input type="number" min="1" max="100" name="age" value={form.age} onChange={update} placeholder="Age" required /></label>
       <label className="ad-field"><span>Adults</span><input type="number" min="1" name="adults" value={form.adults} onChange={update} required /></label>
       <label className="ad-field"><span>Children</span><input type="number" min="0" name="children" value={form.children} onChange={update} /></label>
       <label className="ad-field"><span>Name</span><input type="text" name="name" value={form.name} onChange={update} placeholder="Your name" required /></label>
-      <label className="ad-field"><span>Email</span><input type="email" name="email" value={form.email} onChange={update} placeholder="you@example.com" required /></label>
+      <label className="ad-field ad-field--full"><span>Email</span><input type="email" name="email" value={form.email} onChange={update} placeholder="you@example.com" required /></label>
+
       <div className="ad-phone-row ad-field--full">
         <div className="ad-field"><span>Country code</span><CountryCodeSelect value={form.countryCode} onChange={(countryCode) => setForm((current) => ({ ...current, countryCode }))} /></div>
-        <label className="ad-field"><span>Phone number</span><input type="tel" name="phone" value={form.phone} onChange={update} placeholder="50 123 4567" required /></label>
+        <label className="ad-field"><span>Phone number</span><input type="tel" name="phone" value={form.phone} onChange={update} placeholder="50 123 4567" inputMode="tel" minLength="7" maxLength="20" required /></label>
       </div>
-      <label className="ad-field"><span>Pickup / hotel</span><input type="text" name="pickup" value={form.pickup} onChange={update} placeholder="Hotel or area" /></label>
+
+      <label className="ad-field ad-field--full"><span>Pickup / hotel</span><input type="text" name="pickup" value={form.pickup} onChange={update} placeholder="Hotel or area" /></label>
       <label className="ad-field ad-field--full"><span>Notes</span><textarea name="notes" rows="3" value={form.notes} onChange={update} placeholder="Any timing, celebration or package request" /></label>
+
+      <fieldset className="ad-addons ad-field--full">
+        <legend>Add-ons</legend>
+        <p>Select any extra services you would like to request.</p>
+        <div className="ad-addons__grid">
+          {addOnOptions.map((addOn) => (
+            <label className="ad-addon-option" key={addOn}>
+              <input type="checkbox" checked={form.addOns.includes(addOn)} onChange={() => toggleAddOn(addOn)} />
+              <span>{addOn}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
       <label className="ad-field ad-field--full ad-whatsapp-check"><input type="checkbox" name="hasWhatsApp" checked={form.hasWhatsApp} onChange={update} /><span>This phone number has WhatsApp</span></label>
       {status.message && <div className={`ad-booking-status is-${status.type}`}>{status.message}</div>}
       <button type="submit" disabled={submitting} className="ad-booking-submit"><MessageCircle size={18} /> {submitting ? 'Sending...' : 'Book Enquiry Now'}</button>
@@ -195,7 +227,8 @@ export default function CampaignLanding({ slug, menuOpen, setMenuOpen }) {
       canonical.rel = 'canonical'
       document.head.appendChild(canonical)
     }
-    canonical.href = `${window.location.origin}${page.slug === 'evening-desert-safari' ? '/tours/desert-safari' : `/tours/${page.slug}`}`
+    const canonicalPath = page.canonicalPath || (page.slug === 'evening-desert-safari' ? '/tours/desert-safari' : `/tours/${page.slug}`)
+    canonical.href = `${window.location.origin}${canonicalPath}`
   }, [page])
 
   if (!page) return null
@@ -233,7 +266,14 @@ export default function CampaignLanding({ slug, menuOpen, setMenuOpen }) {
         <section className="ad-packages" id="packages">
           <div className="container">
             <div className="ad-section-head" data-lux-reveal><span className="ad-eyebrow ad-eyebrow--dark">SELECTED PACKAGES</span><h2>{page.sectionTitle}</h2><p>{page.sectionCopy}</p></div>
-            <div className="ad-package-grid">{page.tours.map((tour) => <CampaignPackageCard key={tour.title} tour={tour} campaignTitle={page.title} />)}</div>
+            <div className={`ad-package-grid${page.fiveCardLayout ? ' ad-package-grid--five' : ''}`}>{page.tours.map((tour) => <CampaignPackageCard key={tour.title} tour={tour} campaignTitle={page.title} />)}</div>
+          </div>
+        </section>
+
+        <section className="ad-booking-section">
+          <div className="container ad-booking-section__grid">
+            <div className="ad-booking-copy" data-lux-reveal><span className="ad-eyebrow">BOOK DIRECT</span><h2>Tell us your date and package.</h2><p>Complete the short form. Your request will open in WhatsApp with all booking details ready to send.</p><div className="ad-booking-contact"><a href={whatsappIntro} target="_blank" rel="noreferrer"><MessageCircle size={20} /> WhatsApp booking</a><a href={`tel:${PHONE}`}><Phone size={20} /> +971 54 993 0684</a></div></div>
+            <BookingForm page={page} />
           </div>
         </section>
 
@@ -249,13 +289,6 @@ export default function CampaignLanding({ slug, menuOpen, setMenuOpen }) {
             <div className="ad-detail-panel" data-lux-reveal><h2>Included</h2><ul>{page.included.map((item) => <li key={item}><Check size={17} /><span>{item}</span></li>)}</ul></div>
             <div className="ad-detail-panel ad-detail-panel--excluded" data-lux-reveal><h2>Not included</h2><ul>{page.excluded.map((item) => <li key={item}><X size={17} /><span>{item}</span></li>)}</ul></div>
             <div className="ad-detail-panel ad-detail-panel--before" data-lux-reveal><h2>Know before you go</h2><ul>{page.knowBefore.map((item) => <li key={item}><Check size={17} /><span>{item}</span></li>)}</ul></div>
-          </div>
-        </section>
-
-        <section className="ad-booking-section">
-          <div className="container ad-booking-section__grid">
-            <div className="ad-booking-copy" data-lux-reveal><span className="ad-eyebrow">BOOK DIRECT</span><h2>Tell us your date and package.</h2><p>Complete the short form. Your request will open in WhatsApp with all booking details ready to send.</p><div className="ad-booking-contact"><a href={whatsappIntro} target="_blank" rel="noreferrer"><MessageCircle size={20} /> WhatsApp booking</a><a href={`tel:${PHONE}`}><Phone size={20} /> +971 54 993 0684</a></div></div>
-            <BookingForm page={page} />
           </div>
         </section>
 

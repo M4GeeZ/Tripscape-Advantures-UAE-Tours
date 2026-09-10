@@ -116,7 +116,7 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
         </section>
 
         <section className={`tour-detail-content ${tour.isBookable ? 'is-bookable-tour' : ''}`}>
-          <div className="container tour-detail-content__grid">
+          <div className={`container tour-detail-content__grid ${tour.isBookable ? '' : 'has-enquiry-form'}`}>
             <div className="tour-detail-main">
               <span className="tour-detail-badge" data-lux-reveal>
                 {tour.categoryLabel}

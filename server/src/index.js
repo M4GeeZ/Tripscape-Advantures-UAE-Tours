@@ -5,7 +5,8 @@ import mongoose from 'mongoose'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import toursRouter from './routes/tours.js'
-import bookingsRouter from './routes/bookings.js'
+import bookingsRouter, { startBookingNotificationWorker } from './routes/bookings.js'
+import googleReviewsRouter from './routes/googleReviews.js'
 
 const app = express()
 const port = process.env.PORT || 5000
@@ -16,6 +17,7 @@ app.use(cors({ origin: process.env.CLIENT_URL || true }))
 app.use(express.json({ limit: '1mb' }))
 app.use('/api/tours', toursRouter)
 app.use('/api/bookings', bookingsRouter)
+app.use('/api/google-reviews', googleReviewsRouter)
 app.get('/api/health', (_req, res) => res.json({ ok: true, service: 'tripscape-api' }))
 app.post('/api/contact', (req, res) => {
   const { name, email, message } = req.body || {}
@@ -39,6 +41,7 @@ async function start() {
       console.warn('MongoDB unavailable; using fallback data.')
     }
   }
+  startBookingNotificationWorker()
   app.listen(port, () => console.log(`Tripscape API running on http://localhost:${port}`))
 }
 

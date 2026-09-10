@@ -75,6 +75,17 @@
   transform: none;
 }
 
+
+/* Hummer card: force the image to fill the media area with no side gaps. */
+.tour-image-wrap img.tour-image-hummer {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
+
 /* Existing image zoom effect preserved */
 .tour-card:hover .tour-image-wrap img {
   transform: scale(1.06);

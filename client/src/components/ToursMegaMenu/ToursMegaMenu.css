@@ -303,3 +303,191 @@
     font-size: 14px;
   }
 }
+
+/* =========================================================
+   FEATURED EXPERIENCE ROW
+   Quad Bike + E-Jet + Private Desert Safari fill the full row
+   so the center feature no longer has empty space on the sides.
+========================================================= */
+.tours-mega-featured-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.tours-mega-promo-card {
+  min-height: 122px;
+  border: 1px solid rgba(210, 145, 35, .22);
+}
+
+.tours-mega-promo-card--side {
+  background-position: center center;
+}
+
+.tours-mega-promo-card--featured {
+  background-position: center 58%;
+  border-color: rgba(210, 145, 35, .34);
+}
+
+.tours-mega-promo-card--featured::before {
+  background-position: center 58%;
+}
+
+.tours-mega-card-overlay--promo {
+  background:
+    linear-gradient(180deg, rgba(8, 17, 30, .09) 5%, rgba(8, 17, 30, .78) 100%),
+    linear-gradient(90deg, rgba(8, 17, 30, .42), rgba(8, 17, 30, .08));
+}
+
+.tours-mega-card-overlay--featured {
+  background:
+    linear-gradient(90deg, rgba(7, 17, 31, .88) 0%, rgba(7, 17, 31, .64) 48%, rgba(7, 17, 31, .25) 100%),
+    linear-gradient(180deg, rgba(9, 17, 29, .02), rgba(9, 17, 29, .5));
+}
+
+.tours-mega-promo-eyebrow,
+.tours-mega-featured-label {
+  position: absolute;
+  top: 13px;
+  left: 17px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  max-width: calc(100% - 34px);
+  padding: 0 9px;
+  border-radius: 999px;
+  background: rgba(214, 148, 36, .94);
+  color: #101b2b;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: .95px;
+  text-transform: uppercase;
+  box-shadow: 0 5px 14px rgba(8, 18, 32, .18);
+}
+
+.tours-mega-promo-eyebrow {
+  background: rgba(255, 255, 255, .9);
+  color: #172335;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.tours-mega-card-content--promo {
+  left: 17px;
+  right: 42px;
+  bottom: 15px;
+}
+
+.tours-mega-card-content--featured {
+  right: 155px;
+  bottom: 15px;
+}
+
+.tours-mega-promo-card strong {
+  font-size: 14px;
+}
+
+.tours-mega-promo-card--featured strong {
+  font-size: 16px;
+}
+
+.tours-mega-featured-price {
+  position: absolute;
+  right: 48px;
+  top: 14px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  min-height: 27px;
+  padding: 0 10px;
+  border: 1px solid rgba(255, 255, 255, .28);
+  border-radius: 999px;
+  color: #fff;
+  background: rgba(9, 17, 29, .64);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+@media (max-width: 1180px) {
+  .tours-mega-featured-row {
+    grid-template-columns: minmax(0, .9fr) minmax(0, 1.7fr) minmax(0, .9fr);
+  }
+
+  .tours-mega-promo-card strong {
+    font-size: 13px;
+  }
+
+  .tours-mega-promo-card small {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 1080px) {
+  .tours-mega-featured-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tours-mega-promo-card--featured {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+}
+
+@media (max-width: 900px) {
+  .tours-mega-featured-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .tours-mega-promo-card {
+    min-height: 142px;
+  }
+
+  .tours-mega-promo-card--featured {
+    grid-column: 1 / -1;
+  }
+
+  .tours-mega-card-content--featured {
+    right: 125px;
+  }
+
+  .tours-mega-featured-price {
+    right: 42px;
+    top: 12px;
+  }
+}
+
+@media (max-width: 520px) {
+  .tours-mega-featured-row {
+    grid-template-columns: 1fr;
+    gap: 9px;
+    margin-top: 9px;
+  }
+
+  .tours-mega-promo-card,
+  .tours-mega-promo-card--featured {
+    grid-column: auto;
+    min-height: 126px;
+  }
+
+  .tours-mega-card-content--featured {
+    right: 34px;
+  }
+
+  .tours-mega-promo-eyebrow,
+  .tours-mega-featured-label {
+    top: 11px;
+    left: 13px;
+  }
+
+  .tours-mega-featured-price {
+    top: 11px;
+    right: 12px;
+    font-size: 9px;
+  }
+}
