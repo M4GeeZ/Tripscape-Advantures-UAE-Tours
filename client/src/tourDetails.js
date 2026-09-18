@@ -459,7 +459,8 @@ const privateEventItems = privateEventExperiences.map((event) => ({
   price: 'Contact for price',
   rating: '4.9',
   reviews: 0,
-  useExactContent: true
+  useExactContent: true,
+  hideServiceSelector: true
 }))
 
 const homepageTours = [

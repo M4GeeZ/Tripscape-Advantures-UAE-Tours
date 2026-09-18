@@ -66,7 +66,7 @@ export default function TourCarousel() {
                       loading="lazy"
                     />
                     {!tour.hideTag && <span className="card-tag">{tour.tag}</span>}
-                    <span className="card-meta"><Clock size={15} />{tour.meta}</span>
+                    {tour.meta && <span className="card-meta"><Clock size={15} />{tour.meta}</span>}
                   </div>
                 </a>
 

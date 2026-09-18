@@ -12,12 +12,12 @@ function tomorrow() {
   return date.toISOString().slice(0, 10)
 }
 
-export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact for price' }) {
+export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact for price', hideServiceSelector = false }) {
   const serviceOptions = useMemo(() => getBookingServices(tourTitle), [tourTitle])
   const addOnOptions = useMemo(() => getBookingAddOns(tourTitle), [tourTitle])
 
   const [form, setForm] = useState({
-    service: serviceOptions[0] || tourTitle,
+    service: hideServiceSelector ? tourTitle : (serviceOptions[0] || tourTitle),
     name: '',
     adults: '1',
     children: '0',
@@ -35,10 +35,10 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
   useEffect(() => {
     setForm((current) => ({
       ...current,
-      service: serviceOptions[0] || tourTitle,
+      service: hideServiceSelector ? tourTitle : (serviceOptions[0] || tourTitle),
       addOns: [],
     }))
-  }, [serviceOptions, tourTitle])
+  }, [hideServiceSelector, serviceOptions, tourTitle])
 
   const update = (event) => {
     const { name, value, type, checked } = event.target
@@ -117,12 +117,14 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
       </div>
 
       <form className="booking-enquiry-form" onSubmit={submit}>
-        <label className="booking-enquiry-field booking-enquiry-field--full">
-          <span>Package / Service</span>
-          <select name="service" value={form.service} onChange={update}>
-            {serviceOptions.map((service) => <option key={service} value={service}>{service}</option>)}
-          </select>
-        </label>
+        {!hideServiceSelector && (
+          <label className="booking-enquiry-field booking-enquiry-field--full">
+            <span>Package / Service</span>
+            <select name="service" value={form.service} onChange={update}>
+              {serviceOptions.map((service) => <option key={service} value={service}>{service}</option>)}
+            </select>
+          </label>
+        )}
 
         <label className="booking-enquiry-field booking-enquiry-field--name">
           <span>Full name</span>

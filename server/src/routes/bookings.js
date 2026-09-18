@@ -8,8 +8,9 @@ import Booking from '../models/Booking.js'
 
 const router = Router()
 
-const DEFAULT_BOOKING_EMAIL = 'info@tripscapeadventures.com'
+const DEFAULT_BOOKING_EMAIL = 'info@tripscapetourism.com'
 const COMPANY_PHONE_DISPLAY = '+971 54 993 0684'
+const DEFAULT_BOOKING_WHATSAPP_TO = '971549930684'
 const RETRY_INTERVAL_MS = Number(process.env.BOOKING_RETRY_INTERVAL_MS || 10 * 60 * 1000)
 const RETRY_AFTER_MS = Number(process.env.BOOKING_RETRY_AFTER_MS || 10 * 60 * 1000)
 const MAX_NOTIFICATION_ATTEMPTS = Number(process.env.BOOKING_NOTIFICATION_MAX_ATTEMPTS || 5)
@@ -49,34 +50,107 @@ function isValidEmail(value) {
 }
 
 function smtpConfigured() {
-  return Boolean(clean(process.env.SMTP_HOST) && clean(process.env.SMTP_USER) && clean(process.env.SMTP_PASS))
+  const primary = Boolean(clean(process.env.SMTP_HOST) && clean(process.env.SMTP_USER) && clean(process.env.SMTP_PASS))
+  const fallback = Boolean(clean(process.env.SMTP_FALLBACK_HOST) && clean(process.env.SMTP_FALLBACK_USER) && clean(process.env.SMTP_FALLBACK_PASS))
+  return primary || fallback
 }
 
-function whatsappConfigured() {
+function whatsappApiConfigured() {
   return Boolean(
     clean(process.env.WHATSAPP_ACCESS_TOKEN)
-    && clean(process.env.WHATSAPP_PHONE_NUMBER_ID)
-    && clean(process.env.WHATSAPP_CONFIRMATION_TEMPLATE),
+    && clean(process.env.WHATSAPP_PHONE_NUMBER_ID),
   )
 }
 
-function getTransporter() {
-  const host = clean(process.env.SMTP_HOST)
-  const port = Number(process.env.SMTP_PORT || 465)
-  const user = clean(process.env.SMTP_USER)
-  const pass = clean(process.env.SMTP_PASS)
+function customerWhatsappTemplate() {
+  return clean(process.env.WHATSAPP_CUSTOMER_TEMPLATE || process.env.WHATSAPP_CONFIRMATION_TEMPLATE)
+}
+
+function companyWhatsappTemplate() {
+  return clean(process.env.WHATSAPP_COMPANY_TEMPLATE)
+}
+
+function customerWhatsappConfigured() {
+  return whatsappApiConfigured() && Boolean(customerWhatsappTemplate())
+}
+
+function companyWhatsappConfigured() {
+  return whatsappApiConfigured() && Boolean(companyWhatsappTemplate()) && Boolean(digits(process.env.BOOKING_WHATSAPP_TO || DEFAULT_BOOKING_WHATSAPP_TO))
+}
+
+function normalizeSmtpPassword(host, value) {
+  const password = String(value ?? '')
+  // Google app passwords are commonly copied as four groups with spaces.
+  // Gmail expects the 16-character value without those spaces.
+  if (clean(host).toLowerCase().includes('gmail.com')) return password.replace(/\s+/g, '')
+  return password.trim()
+}
+
+function smtpProvider(prefix = 'SMTP') {
+  const host = clean(process.env[`${prefix}_HOST`])
+  const port = Number(process.env[`${prefix}_PORT`] || 465)
+  const user = clean(process.env[`${prefix}_USER`])
+  const pass = normalizeSmtpPassword(host, process.env[`${prefix}_PASS`])
+  const secure = String(process.env[`${prefix}_SECURE`] ?? port === 465).toLowerCase() === 'true'
+  const authMethod = clean(process.env[`${prefix}_AUTH_METHOD`])
+  const fromName = clean(process.env[`${prefix}_FROM_NAME`], clean(process.env.SMTP_FROM_NAME, 'Tripscape Tourism'))
+  const fromEmail = clean(process.env[`${prefix}_FROM_EMAIL`], user)
 
   if (!host || !user || !pass) return null
 
-  return nodemailer.createTransport({
+  const transportOptions = {
     host,
     port,
-    secure: String(process.env.SMTP_SECURE ?? port === 465).toLowerCase() === 'true',
+    secure,
     auth: { user, pass },
     connectionTimeout: 15000,
     greetingTimeout: 15000,
     socketTimeout: 20000,
-  })
+  }
+  if (authMethod) transportOptions.authMethod = authMethod
+
+  return {
+    name: prefix === 'SMTP' ? 'primary' : 'fallback',
+    host,
+    user,
+    fromName,
+    fromEmail,
+    transporter: nodemailer.createTransport(transportOptions),
+  }
+}
+
+function getSmtpProviders() {
+  return [smtpProvider('SMTP'), smtpProvider('SMTP_FALLBACK')].filter(Boolean)
+}
+
+async function sendMailWithFallback(mailFactory) {
+  const providers = getSmtpProviders()
+  if (!providers.length) {
+    const error = new Error('No SMTP provider is configured.')
+    error.code = 'SMTP_NOT_CONFIGURED'
+    throw error
+  }
+
+  const failures = []
+  for (const provider of providers) {
+    try {
+      const mail = mailFactory(provider)
+      const info = await provider.transporter.sendMail(mail)
+      console.log(`Booking email sent via ${provider.name} SMTP (${provider.host})`, {
+        messageId: info?.messageId || '',
+        accepted: info?.accepted || [],
+        rejected: info?.rejected || [],
+      })
+      return { provider: provider.name, info }
+    } catch (error) {
+      failures.push(`${provider.name}: ${notificationError(error)}`)
+      console.error(`Booking email ${provider.name} SMTP error:`, error)
+    }
+  }
+
+  const error = new Error(`All configured SMTP providers failed. ${failures.join(' || ')}`)
+  error.code = 'SMTP_ALL_PROVIDERS_FAILED'
+  throw error
 }
 
 async function sendWhatsAppTemplate({ to, templateName, parameters }) {
@@ -91,6 +165,7 @@ async function sendWhatsAppTemplate({ to, templateName, parameters }) {
 
   const response = await fetch(`https://graph.facebook.com/${graphVersion}/${phoneNumberId}/messages`, {
     method: 'POST',
+    signal: AbortSignal.timeout(15000),
     headers: {
       Authorization: `Bearer ${accessToken}`,
       'Content-Type': 'application/json',
@@ -140,6 +215,7 @@ function normalizeBooking(body = {}) {
     : clean(body.addOns) ? [singleLine(body.addOns)] : []
 
   return {
+    submissionId: singleLine(body.submissionId).slice(0, 120),
     tourTitle: singleLine(body.tourTitle),
     service: singleLine(body.service, body.tourTitle),
     addOns: safeAddOns,
@@ -154,7 +230,7 @@ function normalizeBooking(body = {}) {
     phone: safePhoneLocal,
     phoneDigits,
     travelDate: singleLine(body.travelDate),
-    hasWhatsApp: Boolean(body.hasWhatsApp),
+    hasWhatsApp: body.hasWhatsApp === true || body.hasWhatsApp === 'true',
   }
 }
 
@@ -253,6 +329,119 @@ async function appendFallbackBooking(booking) {
   return filePath
 }
 
+
+function fallbackQueueDirectory() {
+  const configuredPath = clean(process.env.BOOKING_FALLBACK_QUEUE_DIR, 'data/booking-notification-queue')
+  return path.isAbsolute(configuredPath) ? configuredPath : path.resolve(serverRoot, configuredPath)
+}
+
+const FALLBACK_QUEUE_EXTENSION = '.booking-job'
+
+function fallbackQueueFileName(bookingReference) {
+  return `${clean(bookingReference).replace(/[^a-zA-Z0-9_-]/g, '_')}${FALLBACK_QUEUE_EXTENSION}`
+}
+
+function legacyFallbackQueueFileName(bookingReference) {
+  return `${clean(bookingReference).replace(/[^a-zA-Z0-9_-]/g, '_')}.json`
+}
+
+async function persistFallbackQueueJob(booking) {
+  const dir = fallbackQueueDirectory()
+  await fs.mkdir(dir, { recursive: true })
+  const filePath = path.join(dir, fallbackQueueFileName(booking.bookingReference))
+  const payload = { ...booking, queueUpdatedAt: new Date().toISOString() }
+  await fs.writeFile(filePath, JSON.stringify(payload, null, 2), 'utf8')
+  return filePath
+}
+
+async function removeFallbackQueueJob(bookingReference) {
+  const dir = fallbackQueueDirectory()
+  const filePaths = [
+    path.join(dir, fallbackQueueFileName(bookingReference)),
+    path.join(dir, legacyFallbackQueueFileName(bookingReference)),
+  ]
+
+  await Promise.all(filePaths.map((filePath) => fs.unlink(filePath).catch((error) => {
+    if (error?.code !== 'ENOENT') throw error
+  })))
+}
+
+async function readFallbackQueueJobs(limit = 20) {
+  const dir = fallbackQueueDirectory()
+  let names = []
+  try {
+    names = await fs.readdir(dir)
+  } catch (error) {
+    if (error?.code === 'ENOENT') return []
+    throw error
+  }
+
+  const jobs = []
+  const seenReferences = new Set()
+  const queueNames = names
+    .filter((item) => item.endsWith(FALLBACK_QUEUE_EXTENSION) || item.endsWith('.json'))
+    // Prefer the current format when a legacy .json copy exists for the same booking.
+    .sort((left, right) => Number(left.endsWith('.json')) - Number(right.endsWith('.json')))
+
+  for (const name of queueNames) {
+    if (jobs.length >= limit) break
+    try {
+      const body = await fs.readFile(path.join(dir, name), 'utf8')
+      const job = JSON.parse(body)
+      if (job?.bookingReference && !seenReferences.has(job.bookingReference)) {
+        seenReferences.add(job.bookingReference)
+        if (job.nextNotificationAttemptAt && new Date(job.nextNotificationAttemptAt).getTime() > Date.now()) continue
+        if (!fallbackNotificationsComplete(job) && !Object.values(job.delivery || {}).some((entry) => shouldAttemptChannel(entry, true))) continue
+        jobs.push(job)
+      }
+    } catch (error) {
+      console.error(`Booking fallback queue read error (${name}):`, error)
+    }
+  }
+  return jobs
+}
+
+function mergeFallbackDelivery(booking, result) {
+  booking.delivery ||= {}
+  const mapping = {
+    companyEmail: 'companyEmail',
+    customerEmail: 'customerEmail',
+    customerWhatsApp: 'whatsappConfirmation',
+    companyWhatsApp: 'companyWhatsApp',
+  }
+
+  for (const [channel, resultKey] of Object.entries(mapping)) {
+    const status = result[resultKey]
+    if (!status) continue
+    const previous = booking.delivery[channel] || { status: 'pending', attempts: 0 }
+    const wasAttempted = result.attemptedChannels?.includes(resultKey) || false
+    booking.delivery[channel] = {
+      ...previous,
+      status,
+      attempts: Number(previous.attempts || 0) + (wasAttempted ? 1 : 0),
+      lastAttemptAt: wasAttempted ? new Date().toISOString() : previous.lastAttemptAt || null,
+      lastError: wasAttempted ? clean(result.errors?.[resultKey]).slice(0, 1000) : previous.lastError || '',
+    }
+  }
+  booking.nextNotificationAttemptAt = fallbackNotificationsComplete(booking)
+    ? null : new Date(Date.now() + RETRY_AFTER_MS).toISOString()
+  return booking
+}
+
+function notificationError(error) {
+  const parts = [error?.code, error?.responseCode, error?.command, error?.message]
+    .map((value) => clean(value))
+    .filter(Boolean)
+  return parts.join(' | ').slice(0, 1000)
+}
+
+function fallbackNotificationsComplete(booking) {
+  return ['companyEmail', 'customerEmail', 'customerWhatsApp', 'companyWhatsApp'].every((channel) => {
+    const status = booking.delivery?.[channel]?.status
+    return status === 'sent' || status === 'not_requested'
+  })
+}
+
 async function updateDelivery(bookingDoc, channel, status, error = '') {
   if (!bookingDoc?._id || mongoose.connection.readyState !== 1) return
   const base = `delivery.${channel}`
@@ -268,70 +457,79 @@ async function updateDelivery(bookingDoc, channel, status, error = '') {
 function shouldAttemptChannel(entry, onlyPending) {
   if (!onlyPending) return true
   if (entry?.status === 'sent' || entry?.status === 'not_requested') return false
+  if (String(process.env.BOOKING_FORCE_RETRY_FAILED || '').toLowerCase() === 'true') return true
   return Number(entry?.attempts || 0) < MAX_NOTIFICATION_ATTEMPTS
 }
 
 async function deliverNotifications(bookingDocOrObject, { onlyPending = false } = {}) {
   const booking = bookingDocOrObject?.toObject ? bookingDocOrObject.toObject() : bookingDocOrObject
-  const transporter = getTransporter()
+  const smtpAvailable = getSmtpProviders().length > 0
   const { companyHtml, customerHtml, companyText, customerText, bookingTo } = emailContent(booking)
-  const fromEmail = clean(process.env.SMTP_FROM_EMAIL, process.env.SMTP_USER || DEFAULT_BOOKING_EMAIL)
-  const fromName = clean(process.env.SMTP_FROM_NAME, 'Tripscape Adventures')
+  const backupCompanyEmail = clean(process.env.BOOKING_ALERT_EMAIL)
+  const companyRecipients = [...new Set([bookingTo, backupCompanyEmail].filter(Boolean))]
   const result = {
-    companyEmail: transporter ? 'pending' : 'not_configured',
-    customerEmail: transporter ? 'pending' : 'not_configured',
-    whatsappConfirmation: booking.hasWhatsApp ? (whatsappConfigured() ? 'pending' : 'not_configured') : 'not_requested',
+    companyEmail: smtpAvailable ? 'pending' : 'not_configured',
+    customerEmail: smtpAvailable ? 'pending' : 'not_configured',
+    whatsappConfirmation: booking.hasWhatsApp ? (customerWhatsappConfigured() ? 'pending' : 'not_configured') : 'not_requested',
+    companyWhatsApp: booking.hasWhatsApp ? (companyWhatsappConfigured() ? 'pending' : 'not_configured') : 'not_requested',
+    errors: {},
+    attemptedChannels: [],
   }
 
   const currentDelivery = booking.delivery || {}
 
-  if (transporter && shouldAttemptChannel(currentDelivery.companyEmail, onlyPending)) {
+  if (smtpAvailable && shouldAttemptChannel(currentDelivery.companyEmail, onlyPending)) {
+    result.attemptedChannels.push('companyEmail')
     try {
-      await transporter.sendMail({
-        from: `"${fromName}" <${fromEmail}>`,
-        to: bookingTo,
+      await sendMailWithFallback((provider) => ({
+        from: `"${provider.fromName}" <${provider.fromEmail}>`,
+        to: companyRecipients,
         replyTo: booking.email,
         subject: `[${booking.bookingReference}] New reservation request: ${singleLine(booking.service)}`,
         html: companyHtml,
         text: companyText,
-      })
+      }))
       result.companyEmail = 'sent'
       await updateDelivery(bookingDocOrObject, 'companyEmail', 'sent')
     } catch (error) {
       console.error('Company booking email error:', error)
       result.companyEmail = 'failed'
+      result.errors.companyEmail = notificationError(error)
       await updateDelivery(bookingDocOrObject, 'companyEmail', 'failed', error.message)
     }
   } else if (onlyPending) {
     result.companyEmail = currentDelivery.companyEmail?.status || result.companyEmail
   }
 
-  if (transporter && shouldAttemptChannel(currentDelivery.customerEmail, onlyPending)) {
+  if (smtpAvailable && shouldAttemptChannel(currentDelivery.customerEmail, onlyPending)) {
+    result.attemptedChannels.push('customerEmail')
     try {
-      await transporter.sendMail({
-        from: `"${fromName}" <${fromEmail}>`,
+      await sendMailWithFallback((provider) => ({
+        from: `"${provider.fromName}" <${provider.fromEmail}>`,
         to: booking.email,
         replyTo: bookingTo,
         subject: `[${booking.bookingReference}] Your Tripscape reservation request was received`,
         html: customerHtml,
         text: customerText,
-      })
+      }))
       result.customerEmail = 'sent'
       await updateDelivery(bookingDocOrObject, 'customerEmail', 'sent')
     } catch (error) {
       console.error('Customer confirmation email error:', error)
       result.customerEmail = 'failed'
+      result.errors.customerEmail = notificationError(error)
       await updateDelivery(bookingDocOrObject, 'customerEmail', 'failed', error.message)
     }
   } else if (onlyPending) {
     result.customerEmail = currentDelivery.customerEmail?.status || result.customerEmail
   }
 
-  if (booking.hasWhatsApp && whatsappConfigured() && shouldAttemptChannel(currentDelivery.customerWhatsApp, onlyPending)) {
+  if (booking.hasWhatsApp && customerWhatsappConfigured() && shouldAttemptChannel(currentDelivery.customerWhatsApp, onlyPending)) {
+    result.attemptedChannels.push('whatsappConfirmation')
     try {
       const waResult = await sendWhatsAppTemplate({
         to: booking.phoneDigits,
-        templateName: clean(process.env.WHATSAPP_CONFIRMATION_TEMPLATE),
+        templateName: customerWhatsappTemplate(),
         parameters: [booking.name, booking.bookingReference, booking.service, booking.travelDate],
       })
       result.whatsappConfirmation = waResult.status
@@ -339,14 +537,43 @@ async function deliverNotifications(bookingDocOrObject, { onlyPending = false } 
     } catch (error) {
       console.error('Customer WhatsApp confirmation error:', error)
       result.whatsappConfirmation = 'failed'
+      result.errors.whatsappConfirmation = notificationError(error)
       await updateDelivery(bookingDocOrObject, 'customerWhatsApp', 'failed', error.message)
     }
   } else if (booking.hasWhatsApp && onlyPending) {
     result.whatsappConfirmation = currentDelivery.customerWhatsApp?.status || result.whatsappConfirmation
   }
 
+  if (booking.hasWhatsApp && companyWhatsappConfigured() && shouldAttemptChannel(currentDelivery.companyWhatsApp, onlyPending)) {
+    result.attemptedChannels.push('companyWhatsApp')
+    try {
+      const companyWhatsAppTo = digits(process.env.BOOKING_WHATSAPP_TO || DEFAULT_BOOKING_WHATSAPP_TO)
+      const companyWaResult = await sendWhatsAppTemplate({
+        to: companyWhatsAppTo,
+        templateName: companyWhatsappTemplate(),
+        parameters: [
+          booking.bookingReference,
+          booking.name,
+          booking.service,
+          booking.travelDate,
+          `${booking.countryCode} ${booking.phone}`.trim(),
+          booking.email,
+        ],
+      })
+      result.companyWhatsApp = companyWaResult.status
+      await updateDelivery(bookingDocOrObject, 'companyWhatsApp', companyWaResult.status)
+    } catch (error) {
+      console.error('Company WhatsApp booking alert error:', error)
+      result.companyWhatsApp = 'failed'
+      result.errors.companyWhatsApp = notificationError(error)
+      await updateDelivery(bookingDocOrObject, 'companyWhatsApp', 'failed', error.message)
+    }
+  } else if (booking.hasWhatsApp && onlyPending) {
+    result.companyWhatsApp = currentDelivery.companyWhatsApp?.status || result.companyWhatsApp
+  }
+
   if (bookingDocOrObject?._id && mongoose.connection.readyState === 1) {
-    const retryNeeded = [result.companyEmail, result.customerEmail, result.whatsappConfirmation]
+    const retryNeeded = [result.companyEmail, result.customerEmail, result.whatsappConfirmation, result.companyWhatsApp]
       .some((status) => status === 'failed' || status === 'pending' || status === 'not_configured')
     await Booking.updateOne(
       { _id: bookingDocOrObject._id },
@@ -362,7 +589,11 @@ router.get('/health', (_req, res) => {
     ok: true,
     database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
     email: smtpConfigured() ? 'configured' : 'not_configured',
-    whatsapp: whatsappConfigured() ? 'configured' : 'not_configured',
+    smtpPrimary: smtpProvider('SMTP') ? 'configured' : 'not_configured',
+    smtpFallback: smtpProvider('SMTP_FALLBACK') ? 'configured' : 'not_configured',
+    whatsappApi: whatsappApiConfigured() ? 'configured' : 'not_configured',
+    customerWhatsApp: customerWhatsappConfigured() ? 'configured' : 'not_configured',
+    companyWhatsApp: companyWhatsappConfigured() ? 'configured' : 'not_configured',
   })
 })
 
@@ -370,6 +601,22 @@ router.post('/', async (req, res) => {
   const normalized = normalizeBooking(req.body || {})
   const validationError = validateBooking(normalized)
   if (validationError) return res.status(400).json({ message: validationError })
+
+  if (normalized.submissionId && mongoose.connection.readyState === 1) {
+    const existing = await Booking.findOne({ submissionId: normalized.submissionId }).lean().catch(() => null)
+    if (existing) {
+      return res.status(200).json({
+        message: 'Reservation request already received.',
+        bookingReference: existing.bookingReference,
+        storage: 'mongodb',
+        duplicate: true,
+        companyEmail: existing.delivery?.companyEmail?.status || 'pending',
+        customerEmail: existing.delivery?.customerEmail?.status || 'pending',
+        whatsappConfirmation: existing.delivery?.customerWhatsApp?.status || 'not_requested',
+        companyWhatsApp: existing.delivery?.companyWhatsApp?.status || 'not_requested',
+      })
+    }
+  }
 
   const booking = {
     bookingReference: makeBookingReference(),
@@ -380,7 +627,13 @@ router.post('/', async (req, res) => {
       customerEmail: { status: smtpConfigured() ? 'pending' : 'not_configured', attempts: 0 },
       customerWhatsApp: {
         status: normalized.hasWhatsApp
-          ? (whatsappConfigured() ? 'pending' : 'not_configured')
+          ? (customerWhatsappConfigured() ? 'pending' : 'not_configured')
+          : 'not_requested',
+        attempts: 0,
+      },
+      companyWhatsApp: {
+        status: normalized.hasWhatsApp
+          ? (companyWhatsappConfigured() ? 'pending' : 'not_configured')
           : 'not_requested',
         attempts: 0,
       },
@@ -390,19 +643,42 @@ router.post('/', async (req, res) => {
 
   let bookingDoc = null
   let storage = 'none'
+  let duplicateBooking = false
 
   if (mongoose.connection.readyState === 1) {
     try {
       bookingDoc = await Booking.create(booking)
       storage = 'mongodb'
     } catch (error) {
-      console.error('MongoDB booking save error:', error)
+      if (error?.code === 11000 && normalized.submissionId) {
+        bookingDoc = await Booking.findOne({ submissionId: normalized.submissionId }).catch(() => null)
+        if (bookingDoc) {
+          storage = 'mongodb'
+          duplicateBooking = true
+        }
+      } else {
+        console.error('MongoDB booking save error:', error)
+      }
     }
+  }
+
+  if (duplicateBooking && bookingDoc) {
+    return res.status(200).json({
+      message: 'Reservation request already received.',
+      bookingReference: bookingDoc.bookingReference,
+      storage: 'mongodb',
+      duplicate: true,
+      companyEmail: bookingDoc.delivery?.companyEmail?.status || 'pending',
+      customerEmail: bookingDoc.delivery?.customerEmail?.status || 'pending',
+      whatsappConfirmation: bookingDoc.delivery?.customerWhatsApp?.status || 'not_requested',
+      companyWhatsApp: bookingDoc.delivery?.companyWhatsApp?.status || 'not_requested',
+    })
   }
 
   if (!bookingDoc) {
     try {
       await appendFallbackBooking(booking)
+      await persistFallbackQueueJob(booking)
       storage = 'file_fallback'
     } catch (error) {
       console.error('Fallback booking save error:', error)
@@ -417,13 +693,23 @@ router.post('/', async (req, res) => {
 
   const delivery = await deliverNotifications(bookingDoc || booking)
 
+  if (!bookingDoc && storage === 'file_fallback') {
+    mergeFallbackDelivery(booking, delivery)
+    if (fallbackNotificationsComplete(booking)) {
+      await removeFallbackQueueJob(booking.bookingReference).catch((error) => console.error('Fallback queue cleanup error:', error))
+    } else {
+      await persistFallbackQueueJob(booking).catch((error) => console.error('Fallback queue update error:', error))
+    }
+  }
+
   return res.status(201).json({
     message: 'Reservation request saved successfully.',
-    bookingReference: booking.bookingReference,
+    bookingReference: bookingDoc?.bookingReference || booking.bookingReference,
     storage,
     companyEmail: delivery.companyEmail,
     customerEmail: delivery.customerEmail,
     whatsappConfirmation: delivery.whatsappConfirmation,
+    companyWhatsApp: delivery.companyWhatsApp,
   })
 })
 
@@ -433,7 +719,23 @@ export function startBookingNotificationWorker() {
   if (workerStarted) return
   workerStarted = true
 
-  const run = async () => {
+  let running = false
+  const processJobs = async () => {
+    try {
+      const fallbackJobs = await readFallbackQueueJobs(20)
+      for (const fallbackJob of fallbackJobs) {
+        const result = await deliverNotifications(fallbackJob, { onlyPending: true })
+        mergeFallbackDelivery(fallbackJob, result)
+        if (fallbackNotificationsComplete(fallbackJob)) {
+          await removeFallbackQueueJob(fallbackJob.bookingReference)
+        } else {
+          await persistFallbackQueueJob(fallbackJob)
+        }
+      }
+    } catch (error) {
+      console.error('Booking fallback notification worker error:', error)
+    }
+
     if (mongoose.connection.readyState !== 1) return
     try {
       const now = new Date()
@@ -443,13 +745,14 @@ export function startBookingNotificationWorker() {
           { 'delivery.companyEmail.status': { $in: ['pending', 'failed', 'not_configured'] } },
           { 'delivery.customerEmail.status': { $in: ['pending', 'failed', 'not_configured'] } },
           { 'delivery.customerWhatsApp.status': { $in: ['pending', 'failed', 'not_configured'] } },
+          { 'delivery.companyWhatsApp.status': { $in: ['pending', 'failed', 'not_configured'] } },
         ],
       }).sort({ createdAt: 1 }).limit(20)
 
       for (const booking of bookings) {
-        const maxAttemptsReached = ['companyEmail', 'customerEmail', 'customerWhatsApp'].every((channel) => {
+        const maxAttemptsReached = ['companyEmail', 'customerEmail', 'customerWhatsApp', 'companyWhatsApp'].every((channel) => {
           const entry = booking.delivery?.[channel]
-          return ['sent', 'not_requested'].includes(entry?.status) || Number(entry?.attempts || 0) >= MAX_NOTIFICATION_ATTEMPTS
+          return !shouldAttemptChannel(entry, true)
         })
 
         if (maxAttemptsReached) {
@@ -465,7 +768,12 @@ export function startBookingNotificationWorker() {
     }
   }
 
-  setTimeout(run, 15000)
+  const run = async () => {
+    if (running) return
+    running = true
+    try { await processJobs() } finally { running = false }
+  }
+  setTimeout(run, 15000).unref?.()
   const timer = setInterval(run, Math.max(RETRY_INTERVAL_MS, 60000))
   timer.unref?.()
 }

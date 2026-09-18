@@ -71,8 +71,8 @@ export const tours = [
   {
     image: '/images/top-experiences/vip-private-family-desert-safari.webp',
     tag: 'Desert safari',
-    meta: 'Family · 6 Guests',
-    title: 'VIP Private Family Desert Safari',
+    meta: null,
+    title: 'VIP Private Desert Safari – Family Package',
     href: '/tours/desert-safari/vip-private-desert-safari-family-package',
     skipDetailGeneration: true,
     points: [
@@ -201,7 +201,7 @@ export const tourCatalog = [
   { id: 10, category: 'Desert Safari', image: '/images/adv-dunes.webp', title: 'Bedouin Desert Safari Tour', description: 'Bedouin Desert Safari Tour experience in the UAE.', duration: '', location: 'Dubai, UAE', price: 'AED 1400', unit: '/person', rating: '4.9', reviews: 0 },
   { id: 11, category: 'Desert Safari', image: '/images/hero-camel.webp', title: 'Falconry Show and Dinner at Camp', description: 'Falconry Show and Dinner at Camp experience in the UAE.', duration: '', location: 'Dubai, UAE', price: 'AED 1649', unit: '/person', rating: '4.9', reviews: 0 },
   { id: 12, category: 'Desert Safari', image: '/images/adv-evening.webp', title: 'Desert Safari with Falconry Show and Dinner', description: 'Desert Safari with Falconry Show and Dinner experience in the UAE.', duration: '', location: 'Dubai, UAE', price: 'AED 1999', unit: '/person', rating: '4.9', reviews: 0 },
-  { id: 13, category: 'Desert Safari', image: '/images/adv-dune-drive.webp', title: 'Private Desert Safari with Sahara Fortress Dinner', description: 'Private Desert Safari with Sahara Fortress Dinner experience in the UAE.', duration: '', location: 'Dubai, UAE', price: 'AED 2049', unit: '/person', rating: '4.9', reviews: 0 },
+  { id: 13, category: 'Desert Safari', image: '/images/adv-dune-drive.webp', title: 'Private Desert Safari with Sahara Fortress Dinner', description: 'Private Desert Safari with Sahara Fortress Dinner experience in the UAE.', duration: '', location: 'Dubai, UAE', price: 'Contact for price', unit: '', rating: '4.9', reviews: 0 },
   { id: 14, category: 'Desert Safari', image: '/images/hero-desert.webp', title: 'Private Desert Safari at Bab Al Shams Resort', description: 'Private Desert Safari at Bab Al Shams Resort experience in the UAE.', duration: '', location: 'Dubai, UAE', price: 'AED 2450', unit: '/person', rating: '4.9', reviews: 0 },
   { id: 15, category: 'Desert Adventures', image: '/images/adv-buggy.webp', title: 'CAN-AM Buggy Tour – 1 Hour', description: 'CAN-AM Buggy Tour – 1 Hour experience in the UAE.', duration: '1 hour', location: 'Dubai, UAE', price: 'AED 1249', unit: '/person', rating: '4.9', reviews: 0 },
   { id: 16, category: 'Desert Adventures', image: '/images/adv-dunes.webp', title: 'CAN-AM Buggy Tour with Dinner', description: 'CAN-AM Buggy Tour with Dinner experience in the UAE.', duration: '1 hour', location: 'Dubai, UAE', price: 'AED 1649', unit: '/person', rating: '4.9', reviews: 0 },

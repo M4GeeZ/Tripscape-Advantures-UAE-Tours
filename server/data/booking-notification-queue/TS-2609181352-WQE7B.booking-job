@@ -1,0 +1,51 @@
+{
+  "bookingReference": "TS-2609181352-WQE7B",
+  "submissionId": "db50932b-fb75-4182-bad9-136bd6562b67",
+  "tourTitle": "Sunrise Camel Trekking",
+  "service": "Sunrise Camel Trekking",
+  "addOns": [
+    "VIP Seating",
+    "Private Transfer"
+  ],
+  "pickup": "",
+  "notes": "",
+  "price": "Contact for price",
+  "name": "mughees",
+  "adults": 1,
+  "children": 0,
+  "email": "mughees1275@gmail.com",
+  "countryCode": "+92",
+  "phone": "3127519820",
+  "phoneDigits": "923127519820",
+  "travelDate": "2026-09-25",
+  "hasWhatsApp": false,
+  "source": "tripscapetourism.com",
+  "delivery": {
+    "companyEmail": {
+      "status": "failed",
+      "attempts": 2,
+      "lastAttemptAt": "2026-09-18T19:49:51.037Z",
+      "lastError": "SMTP_ALL_PROVIDERS_FAILED | All configured SMTP providers failed. primary: EAUTH | 535 | AUTH PLAIN | Invalid login: 535 Authentication Failed"
+    },
+    "customerEmail": {
+      "status": "failed",
+      "attempts": 2,
+      "lastAttemptAt": "2026-09-18T19:49:51.037Z",
+      "lastError": "SMTP_ALL_PROVIDERS_FAILED | All configured SMTP providers failed. primary: EAUTH | 535 | AUTH PLAIN | Invalid login: 535 Authentication Failed"
+    },
+    "customerWhatsApp": {
+      "status": "not_requested",
+      "attempts": 0,
+      "lastAttemptAt": null,
+      "lastError": ""
+    },
+    "companyWhatsApp": {
+      "status": "not_requested",
+      "attempts": 0,
+      "lastAttemptAt": null,
+      "lastError": ""
+    }
+  },
+  "nextNotificationAttemptAt": "2026-09-18T19:59:51.037Z",
+  "queueUpdatedAt": "2026-09-18T19:49:51.037Z"
+}

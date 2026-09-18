@@ -2,7 +2,7 @@ export const privateEventExperiences = [
   {
     title: 'Desert Wedding Celebration',
     meta: 'Wedding',
-    image: '/images/top-experiences/vip-desert-safari-private-seating.png',
+    image: '/images/private-events/desert-wedding-celebration.jpg',
     description: 'Celebrate your wedding in a private Dubai desert setting with reserved seating, coordinated guest service and a dinner setup tailored around your group. The experience is designed for couples who want an intimate desert celebration with a simple planning flow and direct WhatsApp coordination before the event.',
     included: [
       'Private desert celebration setup',
@@ -30,7 +30,7 @@ export const privateEventExperiences = [
   {
     title: 'Birthday Party Desert Setup',
     meta: 'Birthday',
-    image: '/images/hero-camp.webp',
+    image: '/images/private-events/birthday-desert-celebration.webp',
     description: 'Turn a birthday into a private desert celebration with reserved seating, dinner and a comfortable setup for family or friends. The package can be shaped around your guest count, preferred timing and any optional birthday extras you want to add.',
     included: [
       'Private birthday seating setup',
@@ -58,7 +58,7 @@ export const privateEventExperiences = [
   {
     title: 'Anniversary Desert Dinner',
     meta: 'Anniversary',
-    image: '/images/top-experiences/vip-desert-safari-private-seating.png',
+    image: '/images/private-events/anniversary-desert-dinner.jpg',
     description: 'Enjoy a private anniversary dinner surrounded by Dubai desert scenery with reserved seating, attentive service and a relaxed evening atmosphere. It is a simple premium option for couples or small groups who want a more personal desert experience.',
     included: [
       'Private anniversary seating area',
@@ -86,7 +86,7 @@ export const privateEventExperiences = [
   {
     title: 'Romantic Desert Proposal Setup',
     meta: 'Proposal',
-    image: '/images/top-experiences/desert-safari-vip-setup.png',
+    image: '/images/private-events/romantic-desert-proposal.webp',
     description: 'Plan a memorable desert proposal with a private setup, sunset timing and discreet coordination before your arrival. The team can help organise the core experience and quote optional romantic extras separately based on your preferred style.',
     included: [
       'Private proposal setup area',
@@ -113,8 +113,8 @@ export const privateEventExperiences = [
   },
   {
     title: 'Family Desert Celebration – Up to 6 Guests',
-    meta: 'Family · 6 Guests',
-    image: '/images/top-experiences/family-desert-safari-quad-experience.png',
+    meta: 'Family',
+    image: '/images/private-events/family-private-desert-celebration.webp',
     description: 'A private desert family package designed for up to six guests, with reserved seating, comfortable service and a flexible celebration setup. It is ideal for families who want a more personal desert experience without sharing the main seating area with a larger group.',
     included: [
       'Private setup for up to 6 guests',
@@ -142,7 +142,7 @@ export const privateEventExperiences = [
   {
     title: 'Corporate & Private Group Desert Event',
     meta: 'Corporate',
-    image: '/images/services/05-royal-desert-fortress.webp',
+    image: '/images/private-events/corporate-private-desert-event.webp',
     description: 'Host a private desert gathering for colleagues, clients or a larger group with coordinated seating, dining and guest support. The final arrangement is tailored to the group size, event format and any optional branding or entertainment requirements.',
     included: [
       'Reserved private event area',

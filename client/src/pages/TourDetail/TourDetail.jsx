@@ -288,6 +288,7 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
               <BookingEnquiryForm
                 tourTitle={tour.title}
                 displayPrice={displayContactPrice}
+                hideServiceSelector={Boolean(tour.hideServiceSelector)}
               />
             )}
           </div>

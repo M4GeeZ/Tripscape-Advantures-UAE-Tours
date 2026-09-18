@@ -1,0 +1,6 @@
+{
+  "watch": ["src"],
+  "ext": "js,mjs,cjs",
+  "ignore": ["data/**", "**/*.log"],
+  "delay": "300ms"
+}
