@@ -7,6 +7,8 @@ import CallFloat from '../../components/CallFloat/CallFloat'
 import CountryCodeSelect from '../../components/CountryCodeSelect/CountryCodeSelect'
 import { useLuxuryReveal } from '../../hooks/useLuxuryReveal'
 import { getBookingAddOns } from '../../bookingOptions'
+import { apiUrl } from '../../utils/apiBaseUrl'
+import createSubmissionId from '../../utils/createSubmissionId'
 import './DesertEJet.css'
 
 const WHATSAPP = '971549930684'
@@ -28,6 +30,7 @@ export default function DesertEJet({ menuOpen, setMenuOpen }) {
   const [form, setForm] = useState({ package: packages[0].name, date: tomorrow(), riders: '1', name: '', email: '', countryCode: '+971', phone: '', hasWhatsApp: false, pickup: '', notes: '', addOns: [] })
   const [status, setStatus] = useState({ type: '', message: '' })
   const [submitting, setSubmitting] = useState(false)
+  const submissionIdRef = useRef('')
   useLuxuryReveal(pageRef)
 
   useEffect(() => {
@@ -60,11 +63,14 @@ export default function DesertEJet({ menuOpen, setMenuOpen }) {
     event.preventDefault()
     setStatus({ type: '', message: '' })
     setSubmitting(true)
+    const submissionId = submissionIdRef.current || createSubmissionId()
+    submissionIdRef.current = submissionId
     try {
-      const response = await fetch('/api/bookings', {
+      const response = await fetch(apiUrl('/api/bookings'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          submissionId,
           tourTitle: 'Desert E-Jet Water Go Kart Dubai',
           service: form.package,
           price: `AED ${selected.price * Number(form.riders || 1)} estimated`,
@@ -84,20 +90,16 @@ export default function DesertEJet({ menuOpen, setMenuOpen }) {
 
       const data = await response.json().catch(() => ({}))
       if (!response.ok) throw new Error(data.message || 'Unable to send booking enquiry right now.')
-      const emailSent = data.customerEmail === 'sent'
-      const whatsappSent = data.whatsappConfirmation === 'sent'
+      const customerEmailSent = data.customerEmail === 'sent'
+      const companyEmailSent = data.companyEmail === 'sent'
       let confirmationMessage = `Reservation request ${data.bookingReference || ''} submitted successfully. Our team received your complete booking details.`
 
-      if (emailSent && whatsappSent) {
-        confirmationMessage += ' Confirmation has been sent to your email and WhatsApp.'
-      } else if (emailSent) {
-        confirmationMessage += form.hasWhatsApp
-          ? ' Email confirmation has been sent. WhatsApp confirmation could not be delivered automatically.'
-          : ' Email confirmation has been sent.'
-      } else if (whatsappSent) {
-        confirmationMessage += ' WhatsApp confirmation has been sent, but the email confirmation could not be delivered.'
+      if (customerEmailSent && companyEmailSent) {
+        confirmationMessage += ' Confirmation has been sent to your email, and our booking team has received the request by email.'
+      } else if (customerEmailSent) {
+        confirmationMessage += ' Confirmation has been sent to your email. Our booking team will receive the saved request shortly.'
       } else {
-        confirmationMessage += ' Automatic customer confirmation could not be delivered, so our booking team will follow up using the details you provided.'
+        confirmationMessage += ' Your request is saved. Email confirmation is temporarily pending; our booking team will follow up.'
       }
 
       setStatus({ type: 'success', message: confirmationMessage })

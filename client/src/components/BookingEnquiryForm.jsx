@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Mail, MessageCircle, Phone, Send } from 'lucide-react'
 import CountryCodeSelect from './CountryCodeSelect/CountryCodeSelect'
 import { getBookingAddOns, getBookingServices } from '../bookingOptions'
+import { apiUrl } from '../utils/apiBaseUrl'
+import createSubmissionId from '../utils/createSubmissionId'
 import './BookingEnquiryForm.css'
 
 const COMPANY_PHONE = '+971549930684'
@@ -31,6 +33,7 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
   })
   const [status, setStatus] = useState({ type: '', message: '' })
   const [submitting, setSubmitting] = useState(false)
+  const submissionIdRef = useRef('')
 
   useEffect(() => {
     setForm((current) => ({
@@ -59,13 +62,16 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
     event.preventDefault()
     setStatus({ type: '', message: '' })
     setSubmitting(true)
+    const submissionId = submissionIdRef.current || createSubmissionId()
+    submissionIdRef.current = submissionId
 
 
     try {
-      const response = await fetch('/api/bookings', {
+      const response = await fetch(apiUrl('/api/bookings'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          submissionId,
           tourTitle,
           service: form.service,
           addOns: form.addOns,
@@ -84,20 +90,16 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
 
       const data = await response.json().catch(() => ({}))
       if (!response.ok) throw new Error(data.message || 'Unable to send booking request right now.')
-      const emailSent = data.customerEmail === 'sent'
-      const whatsappSent = data.whatsappConfirmation === 'sent'
+      const customerEmailSent = data.customerEmail === 'sent'
+      const companyEmailSent = data.companyEmail === 'sent'
       let confirmationMessage = `Reservation request ${data.bookingReference || ''} saved successfully. Your booking details are safely recorded.`
 
-      if (emailSent && whatsappSent) {
-        confirmationMessage += ' Confirmation has been sent to your email and WhatsApp.'
-      } else if (emailSent) {
-        confirmationMessage += form.hasWhatsApp
-          ? ' Email confirmation has been sent. WhatsApp confirmation could not be delivered automatically.'
-          : ' Email confirmation has been sent.'
-      } else if (whatsappSent) {
-        confirmationMessage += ' WhatsApp confirmation has been sent, but the email confirmation could not be delivered.'
+      if (customerEmailSent && companyEmailSent) {
+        confirmationMessage += ' Confirmation has been sent to your email, and our booking team has received the request by email.'
+      } else if (customerEmailSent) {
+        confirmationMessage += ' Confirmation has been sent to your email. Our booking team will receive the saved request shortly.'
       } else {
-        confirmationMessage += ' Automatic confirmation could not be delivered right now, but your booking request has been saved for the booking team.'
+        confirmationMessage += ' Your request is saved. Email confirmation is temporarily pending; our booking team will follow up.'
       }
 
       setStatus({ type: 'success', message: confirmationMessage })

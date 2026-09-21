@@ -13,7 +13,32 @@ const port = process.env.PORT || 5000
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-app.use(cors({ origin: process.env.CLIENT_URL || true }))
+const configuredOrigins = (process.env.CLIENT_URL || '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean)
+
+function isAllowedOrigin(origin) {
+  if (!origin) return true
+  if (configuredOrigins.includes(origin)) return true
+  try {
+    const hostname = new URL(origin).hostname.toLowerCase()
+    return hostname === 'tripscapetourism.com'
+      || hostname === 'www.tripscapetourism.com'
+      || hostname === 'localhost'
+      || hostname === '127.0.0.1'
+      || hostname.endsWith('.vercel.app')
+  } catch {
+    return false
+  }
+}
+
+app.use(cors({
+  origin(origin, callback) {
+    const allowed = isAllowedOrigin(origin)
+    callback(allowed ? null : new Error('Origin not allowed by CORS'), allowed)
+  },
+}))
 app.use(express.json({ limit: '1mb' }))
 app.use('/api/tours', toursRouter)
 app.use('/api/bookings', bookingsRouter)
@@ -42,7 +67,20 @@ async function start() {
     }
   }
   startBookingNotificationWorker()
-  app.listen(port, () => console.log(`Tripscape API running on http://localhost:${port}`))
+
+  const server = app.listen(port, () => {
+    console.log(`Tripscape API running on http://localhost:${port}`)
+  })
+
+  server.on('error', (error) => {
+    if (error.code === 'EADDRINUSE') {
+      console.error(`Port ${port} is already in use. Stop the running process or set PORT to another value.`)
+      process.exit(1)
+    }
+
+    console.error('Server startup failed:', error)
+    process.exit(1)
+  })
 }
 
 start()

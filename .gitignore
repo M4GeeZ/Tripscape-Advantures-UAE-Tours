@@ -3,3 +3,6 @@ node_modules
 client/dist
 .DS_Store
 *.log
+server/data/bookings.ndjson
+server/data/booking-notification-queue/
+tripscape-server-source.txt
