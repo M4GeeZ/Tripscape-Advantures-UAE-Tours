@@ -120,7 +120,7 @@ export const adventures = [
 ]
 
 export const helicopters = [
-  { image: '/images/heli-card-01.jpg', tier: 'Standard', title: 'Iconic Tour', duration: '12 Min', price: 'AED 710', unit: 'Per Person', copy: 'Best entry flight for guests who want a quick skyline experience.' },
+  { image: '/images/heli-palm.webp', tier: 'Standard', title: 'Iconic Tour', duration: '12 Min', price: 'AED 710', unit: 'Per Person', copy: 'Best entry flight for guests who want a quick skyline experience.' },
   { image: '/images/heli-card-02.jpg', tier: 'Standard', title: 'Palm Tour', duration: '17 Min', price: 'AED 945', unit: 'Per Person', copy: 'Balanced route covering Palm highlights and coastal views.' },
   { image: '/images/heli-card-03.jpg', tier: 'Standard', title: 'Vision Tour', duration: '22 Min', price: 'AED 1,299', unit: 'Per Person', copy: 'Longer scenic flight with a fuller Dubai overview.' },
   { image: '/images/heli-card-04.jpg', tier: 'Premium safari', title: 'VIP Private Flight', duration: '17 Min', price: 'AED 4,725', unit: 'Per Flight', copy: 'Private setup for couples, VIP arrivals, and small groups.' },
