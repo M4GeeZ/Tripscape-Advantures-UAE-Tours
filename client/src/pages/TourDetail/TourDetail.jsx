@@ -115,8 +115,8 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
           </div>
         </section>
 
-        <section className={`tour-detail-content ${tour.isBookable ? 'is-bookable-tour' : ''}`}>
-          <div className={`container tour-detail-content__grid ${tour.isBookable ? '' : 'has-enquiry-form'}`}>
+       <section className="tour-detail-content">
+  <div className="container tour-detail-content__grid has-enquiry-form">
             <div className="tour-detail-main">
               <span className="tour-detail-badge" data-lux-reveal>
                 {tour.categoryLabel}
@@ -186,111 +186,11 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
               </div>
             </div>
 
-            {tour.isBookable ? (
-              <aside className="tour-booking-card" data-lux-reveal>
-                <div className="tour-booking-price">
-                  <span>PRICE PER PERSON</span>
-                  <div>
-                    <strong>AED {tour.basePrice}</strong>
-                    <small>adult</small>
-                  </div>
-                </div>
-
-                <label className="tour-booking-date">
-                  <span>TRAVEL DATE</span>
-                  <input
-                    type="date"
-                    min={getTodayDate()}
-                    value={travelDate}
-                    onChange={(event) => setTravelDate(event.target.value)}
-                  />
-                </label>
-
-                <div className="tour-booking-counters">
-                  <div className="tour-booking-counter">
-                    <span className="tour-booking-counter__label">ADULTS</span>
-                    <div className="tour-booking-counter__controls">
-                      <button
-                        type="button"
-                        aria-label="Decrease adults"
-                        onClick={() => setAdults((value) => Math.max(1, value - 1))}
-                        disabled={adults <= 1}
-                      >
-                        <Minus size={16} />
-                      </button>
-                      <strong>{adults}</strong>
-                      <button
-                        type="button"
-                        aria-label="Increase adults"
-                        onClick={() => setAdults((value) => value + 1)}
-                      >
-                        <Plus size={16} />
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="tour-booking-counter">
-                    <span className="tour-booking-counter__label">CHILDREN</span>
-                    <div className="tour-booking-counter__controls">
-                      <button
-                        type="button"
-                        aria-label="Decrease children"
-                        onClick={() => setChildren((value) => Math.max(0, value - 1))}
-                        disabled={children <= 0}
-                      >
-                        <Minus size={16} />
-                      </button>
-                      <strong>{children}</strong>
-                      <button
-                        type="button"
-                        aria-label="Increase children"
-                        onClick={() => setChildren((value) => value + 1)}
-                      >
-                        <Plus size={16} />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <p className="tour-booking-child-note">Children are free in this price calculator.</p>
-
-                <div className="tour-booking-total">
-                  <span>Total estimate ({adults} adult{adults === 1 ? '' : 's'})</span>
-                  <strong>AED {totalPrice}</strong>
-                </div>
-
-                <a
-                  href={bookingWhatsappHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="tour-booking-continue"
-                >
-                  Continue to book
-                </a>
-
-                <a
-                  href={bookingWhatsappHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="tour-booking-whatsapp"
-                >
-                  <MessageCircle size={17} />
-                  Chat on WhatsApp
-                </a>
-
-                <ul className="tour-booking-benefits">
-                  <li><Check size={14} /> No booking fee</li>
-                  <li><Check size={14} /> Free cancellation 24hrs before</li>
-                  <li><Check size={14} /> 24/7 WhatsApp support</li>
-                </ul>
-              </aside>
-            ) : (
-              <BookingEnquiryForm
-                tourTitle={tour.title}
-                displayPrice={displayContactPrice}
-                hideServiceSelector={Boolean(tour.hideServiceSelector)}
-              />
-            )}
+           <BookingEnquiryForm
+  tourTitle={tour.title}
+  displayPrice={displayContactPrice}
+  hideServiceSelector={Boolean(tour.hideServiceSelector)}
+/>
           </div>
         </section>
       </main>
