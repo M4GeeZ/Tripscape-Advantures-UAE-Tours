@@ -32,7 +32,7 @@ export const tours = [
     image: '/images/top-experiences/morning-desert-safari-quad-bike.png',
     tag: 'Desert safari',
     meta: 'Morning',
-    title: 'Morning Desert Safari with Quad Bike',
+    title: 'Morning Desert Safari',
     price: 'Contact for price'
   },
   {
@@ -71,8 +71,8 @@ export const tours = [
   {
     image: '/images/top-experiences/vip-private-family-desert-safari.webp',
     tag: 'Desert safari',
-    meta: null,
-    title: 'VIP Private Desert Safari – Family Package',
+    meta: 'Ultra Romantic Private Setup',
+    title: 'The Desert Dreamscape',
     href: '/tours/desert-safari/vip-private-desert-safari-family-package',
     skipDetailGeneration: true,
     points: [

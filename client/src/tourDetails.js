@@ -107,16 +107,13 @@ const exactIncluded = {
     'Desert Dune Bashing by Land Cruiser (Air-Conditioned Vehicle).',
     'Camel Riding.',
     'Sand Skiing Session.',
-    'Stunning Quad Biking Experience.',
-    'Refreshment like Water & Soft drinks.',
+    'Board Experience Adventure.',
     'Photo Stops.',
-    '220CC Quad Bike',
     'Drop back to Residence/Hotel.',
     'Hotel pickup and drop-off by 4×4 SUV',
     'Pick by: 4×4 SUV for the desert safari',
     'DTCM Approve License Desert Safari Guide.',
     '30 minutes Thrilling dune bashing.',
-    '30 Minutes Quad Biking Experience',
     'Cold Drink, Water Bottle.'
   ],
   'Hummer Desert Safari': [
@@ -428,8 +425,8 @@ function uniqueByTitle(items) {
 const familyTour = {
   category: 'Desert Safari',
   image: featuredTopImages['Family Desert Safari & Quad Experience'],
-  title: 'Family Desert Safari & Quad Experience',
-  duration: 'Family',
+  title: 'The Desert Dreamscape',
+  duration: 'Ultra Romantic Private Setup',
   location: 'Dubai, UAE',
   price: 'Contact for price',
   rating: '4.9',

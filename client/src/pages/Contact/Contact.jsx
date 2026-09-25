@@ -7,11 +7,14 @@ import CallFloat from '../../components/CallFloat/CallFloat'
 import { useLuxuryReveal } from '../../hooks/useLuxuryReveal'
 import './Contact.css'
 
+const WHATSAPP_NUMBER = '+971 54 993 0684'
+const LANDLINE_NUMBER = '+971 43 945 676'
+
 const contactItems = [
-  { label: 'WhatsApp', value: '+971 54 993 0684', icon: MessageCircle, tone: 'green' },
-  { label: 'Phone', value: '+971 54 993 0684', icon: Phone },
+  { label: 'WhatsApp', value: WHATSAPP_NUMBER, icon: MessageCircle, tone: 'green' },
+  { label: 'Phone', value: LANDLINE_NUMBER, icon: Phone },
   { label: 'Email', value: 'info@tripscapetourism.com', icon: Mail },
-  { label: 'Address', value: 'Office 58, 2nd Floor, Dubai Shopping Centre, Deira, Dubai', icon: MapPin }
+  { label: 'Address', value: 'Office 58, 2nd Floor, Dubai Shopping Centre, Deira Port Saeed, Dubai', icon: MapPin }
 ]
 
 export default function Contact({ menuOpen, setMenuOpen }) {
@@ -35,7 +38,15 @@ export default function Contact({ menuOpen, setMenuOpen }) {
           <div className="contact-details">
             {contactItems.map(({ label, value, icon: Icon, tone }, index) => (
               <a
-                href={label === 'Email' ? `mailto:${value}` : label === 'Address' ? '#' : 'tel:+971549930684'}
+                href={
+                  label === 'Email'
+                    ? `mailto:${value}`
+                    : label === 'Address'
+                      ? '#'
+                      : label === 'WhatsApp'
+                        ? `https://wa.me/971549930684`
+                        : 'tel:+97143945676'
+                }
                 className="contact-detail-card"
                 key={label}
                 data-lux-reveal

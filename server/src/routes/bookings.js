@@ -80,10 +80,12 @@ function companyWhatsappConfigured() {
 
 function normalizeSmtpPassword(host, value) {
   const password = String(value ?? '')
+    .trim()
+    .replace(/^['"]+|['"]+$/g, '')
   // Google app passwords are commonly copied as four groups with spaces.
   // Gmail expects the 16-character value without those spaces.
   if (clean(host).toLowerCase().includes('gmail.com')) return password.replace(/\s+/g, '')
-  return password.trim()
+  return password
 }
 
 function smtpProvider(prefix = 'SMTP') {

@@ -37,9 +37,9 @@ export default function PrivateDesertEvents({ menuOpen, setMenuOpen }) {
           <div className="private-events-hero__overlay" />
           <div className="container private-events-hero__content">
             <span className="private-events-eyebrow" data-hero-reveal>VIP PRIVATE DESERT SAFARI</span>
-            <h1 data-hero-reveal>Private Desert Safari for Families & Special Events</h1>
+            <h1 data-hero-reveal>THE DESERT DREAMSCAPE</h1>
             <p data-hero-reveal>
-              A flexible private desert setup for families, couples and celebrations. Start with a package for up to 6 guests, then choose the event style that fits your occasion.
+              ULTRA ROMANTIC PRIVATE SETUP — A flexible private desert experience for families, couples and celebrations.
             </p>
             <div className="private-events-hero__actions" data-hero-reveal>
               <a className="private-events-primary" href="#event-packages">Book now</a>

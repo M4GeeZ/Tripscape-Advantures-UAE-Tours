@@ -57,7 +57,7 @@ export default function Footer() {
 
             <div className="footer-contact-item">
               <MapPin size={18} />
-              <span>Office 1204, Business Bay, Dubai, UAE</span>
+              <span>Office 58, 2nd Floor, Dubai Shopping Centre, Deira Port Saeed, Dubai</span>
             </div>
           </div>
 

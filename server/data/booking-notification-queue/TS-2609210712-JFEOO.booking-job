@@ -1,0 +1,52 @@
+{
+  "bookingReference": "TS-2609210712-JFEOO",
+  "submissionId": "",
+  "tourTitle": "Morning Desert Safari with Quad Bike",
+  "service": "Single Quad Bike",
+  "addOns": [
+    "Hotel Pickup & Drop-off",
+    "Private Transfer",
+    "Desert Safari Combo"
+  ],
+  "pickup": "hotel",
+  "notes": "",
+  "price": "Contact for price",
+  "name": "mughees",
+  "adults": 2,
+  "children": 2,
+  "email": "mughees1275@gmail.com",
+  "countryCode": "+92",
+  "phone": "3127519820",
+  "phoneDigits": "923127519820",
+  "travelDate": "2026-09-24",
+  "hasWhatsApp": false,
+  "source": "tripscapetourism.com",
+  "delivery": {
+    "companyEmail": {
+      "status": "failed",
+      "attempts": 5,
+      "lastAttemptAt": "2026-09-21T11:58:41.957Z",
+      "lastError": "SMTP_ALL_PROVIDERS_FAILED | All configured SMTP providers failed. primary: EAUTH | 535 | AUTH PLAIN | Invalid login: 535 Authentication Failed"
+    },
+    "customerEmail": {
+      "status": "failed",
+      "attempts": 5,
+      "lastAttemptAt": "2026-09-21T11:58:41.957Z",
+      "lastError": "SMTP_ALL_PROVIDERS_FAILED | All configured SMTP providers failed. primary: EAUTH | 535 | AUTH PLAIN | Invalid login: 535 Authentication Failed"
+    },
+    "customerWhatsApp": {
+      "status": "not_requested",
+      "attempts": 0,
+      "lastAttemptAt": null,
+      "lastError": ""
+    },
+    "companyWhatsApp": {
+      "status": "not_requested",
+      "attempts": 0,
+      "lastAttemptAt": null,
+      "lastError": ""
+    }
+  },
+  "nextNotificationAttemptAt": "2026-09-21T12:08:41.958Z",
+  "queueUpdatedAt": "2026-09-21T11:58:41.958Z"
+}

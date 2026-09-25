@@ -84,8 +84,8 @@ export const privateEventExperiences = [
     ]
   },
   {
-    title: 'Romantic Desert Proposal Setup',
-    meta: 'Proposal',
+    title: 'The Desert Dreamscape',
+    meta: 'Ultra Romantic Private Setup',
     image: '/images/private-events/romantic-desert-proposal.webp',
     description: 'Plan a memorable desert proposal with a private setup, sunset timing and discreet coordination before your arrival. The team can help organise the core experience and quote optional romantic extras separately based on your preferred style.',
     included: [
