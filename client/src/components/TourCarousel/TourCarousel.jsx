@@ -1,4 +1,4 @@
-import { Clock, Star } from 'lucide-react'
+﻿import { Clock, Star } from 'lucide-react'
 import { tours } from '../../data'
 import { images } from '../../generatedImages'
 import SectionHeading from '../SectionHeading/SectionHeading'
@@ -12,16 +12,16 @@ const fallbackTour = {
   tag: 'Desert adventure',
   meta: 'Family',
   title: 'Family Desert Safari & Quad Experience',
-  price: 'Contact for price'
+  price: ''
 }
 
 const featuredImagesByTitle = {
-  'Morning Desert Safari with Quad Bike': '/images/top-experiences/morning-desert-safari-quad-bike.png',
-  'Evening Desert Safari with BBQ Dinner': '/images/top-experiences/evening-desert-safari-bbq-dinner.png',
-  'VIP Desert Safari with Private Seating': '/images/top-experiences/vip-desert-safari-private-seating.png',
-  'VIP Premium Desert Safari with BBQ Dinner': '/images/top-experiences/vip-premium-desert-safari-bbq-dinner.png',
-  'Sunrise Camel Trekking': '/images/top-experiences/sunrise-camel-trekking.png',
-  'Desert Safari with Dinner at Caravanserai': '/images/top-experiences/desert-safari-dinner-caravanserai.png'
+  'Morning Desert Safari with Quad Bike': '/images/top-experiences/morning-desert-safari-quad-bike.webp',
+  'Evening Desert Safari with BBQ Dinner': '/images/top-experiences/evening-desert-safari-bbq-dinner.webp',
+  'VIP Desert Safari with Private Seating': '/images/top-experiences/vip-desert-safari-private-seating.webp',
+  'VIP Premium Desert Safari with BBQ Dinner': '/images/top-experiences/vip-premium-desert-safari-bbq-dinner.webp',
+  'Sunrise Camel Trekking': '/images/top-experiences/sunrise-camel-trekking.webp',
+  'Desert Safari with Dinner at Caravanserai': '/images/top-experiences/desert-safari-dinner-caravanserai.webp'
 }
 
 export default function TourCarousel() {
@@ -42,7 +42,7 @@ export default function TourCarousel() {
           <SectionHeading
             eyebrow="Top experiences"
             title="Top-rated tours, hand-picked."
-            copy="Our most-booked experiences this month — verified guides, instant confirmations, free WhatsApp re-scheduling."
+            copy="Our most-booked experiences this month â€” verified guides, instant confirmations, free WhatsApp re-scheduling."
           />
         </div>
 
@@ -51,6 +51,10 @@ export default function TourCarousel() {
             const sourceTitle = tour.sourceTitle || tour.title
             const detailHref = tour.href || getTourDetailHref('Desert Safari', sourceTitle)
             const points = tour.points || getCardPoints('Desert Safari', sourceTitle, '', 5)
+            const isDreamscape = tour.title === 'The Desert Dreamscape'
+            const displayTitle = isDreamscape
+              ? 'The Desert Dreamscape Ultra Romantic Private Setup'
+              : tour.title
 
             return (
               <article className="tour-card" key={`${tour.title}-${index}`} data-reveal>
@@ -66,20 +70,16 @@ export default function TourCarousel() {
                       loading="lazy"
                     />
                     {!tour.hideTag && <span className="card-tag">{tour.tag}</span>}
-                    {tour.meta && <span className="card-meta"><Clock size={15} />{tour.meta}</span>}
+                    {tour.meta && !isDreamscape && <span className="card-meta"><Clock size={15} />{tour.meta}</span>}
                   </div>
                 </a>
 
                 <div className="tour-card-body">
-                  <div className="rating"><Star size={16} fill="currentColor" /> 4.9 · 0 reviews</div>
-                  <h3><a href={detailHref}>{tour.title}</a></h3>
+                  <div className="rating"><Star size={16} fill="currentColor" /> 4.9 Â· 0 reviews</div>
+                  <h3><a href={detailHref}>{displayTitle}</a></h3>
                   <ul className="experience-card-points">
                     {points.map((point) => <li key={point}>{point}</li>)}
                   </ul>
-
-                  <div className="tour-card-price-line">
-                    <strong>{tour.price}</strong>
-                  </div>
 
                   <ExperienceCardActions title={tour.title} detailHref={detailHref} />
                 </div>
@@ -91,3 +91,4 @@ export default function TourCarousel() {
     </section>
   )
 }
+

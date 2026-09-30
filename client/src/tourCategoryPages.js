@@ -20,21 +20,21 @@ const aerialTours = helicopters.map((tour, index) => ({
 
 const cruiseTours = [
   ...byCategory('Cruises'),
-  { id: 'cruise-marina-sunset', category: 'Cruises', image: '/images/heli-marina.webp', title: 'Dubai Marina Sunset Cruise', description: 'Relaxed sunset sailing through Dubai Marina with skyline views.', duration: '2 hours', location: 'Dubai Marina, UAE', price: 'Contact for price', unit: '', rating: '4.9', reviews: 0 },
-  { id: 'cruise-creek-dinner', category: 'Cruises', image: '/images/city-old-dubai.webp', title: 'Dubai Creek Dhow Cruise with Dinner', description: 'Traditional dhow cruise through Old Dubai with dinner and evening views.', duration: '2 hours', location: 'Dubai Creek, UAE', price: 'Contact for price', unit: '', rating: '4.9', reviews: 0 },
-  { id: 'cruise-yacht', category: 'Cruises', image: '/images/heli-palm.webp', title: 'Private Dubai Marina Yacht Cruise', description: 'Private yacht experience for couples, families and small groups.', duration: '2 hours', location: 'Dubai Marina, UAE', price: 'Contact for price', unit: '', rating: '4.9', reviews: 0 }
+  { id: 'cruise-marina-sunset', category: 'Cruises', image: '/images/heli-marina.webp', title: 'Dubai Marina Sunset Cruise', description: 'Relaxed sunset sailing through Dubai Marina with skyline views.', duration: '2 hours', location: 'Dubai Marina, UAE', price: '', unit: '', rating: '4.9', reviews: 0 },
+  { id: 'cruise-creek-dinner', category: 'Cruises', image: '/images/city-old-dubai.webp', title: 'Dubai Creek Dhow Cruise with Dinner', description: 'Traditional dhow cruise through Old Dubai with dinner and evening views.', duration: '2 hours', location: 'Dubai Creek, UAE', price: '', unit: '', rating: '4.9', reviews: 0 },
+  { id: 'cruise-yacht', category: 'Cruises', image: '/images/heli-palm.webp', title: 'Private Dubai Marina Yacht Cruise', description: 'Private yacht experience for couples, families and small groups.', duration: '2 hours', location: 'Dubai Marina, UAE', price: '', unit: '', rating: '4.9', reviews: 0 }
 ]
 
 const waterTours = [
   ...byCategory('Water Activities'),
-  { id: 'water-parasailing', category: 'Water Activities', image: '/images/heli-palm.webp', title: 'Dubai Parasailing Experience', description: 'Take in the coastline from above on a guided parasailing session.', duration: '15 minutes', location: 'Dubai, UAE', price: 'Contact for price', unit: '', rating: '4.9', reviews: 0 }
+  { id: 'water-parasailing', category: 'Water Activities', image: '/images/heli-palm.webp', title: 'Dubai Parasailing Experience', description: 'Take in the coastline from above on a guided parasailing session.', duration: '15 minutes', location: 'Dubai, UAE', price: '', unit: '', rating: '4.9', reviews: 0 }
 ]
 
 const packageTours = [
-  { id: 'package-dubai-essentials', category: 'Dubai Packages Tour', image: '/images/city-02-dubai-burj-khalifa.webp', title: 'Dubai Essentials Package', description: 'A curated Dubai combination covering city highlights and a desert experience.', duration: '2 days', location: 'Dubai, UAE', price: 'Contact for price', unit: '', rating: '4.9', reviews: 0 },
-  { id: 'package-desert-city', category: 'Dubai Packages Tour', image: '/images/hero-camp.webp', title: 'Desert Safari + Dubai City Tour', description: 'Pair a guided Dubai city tour with an evening desert safari experience.', duration: '2 days', location: 'Dubai, UAE', price: 'Contact for price', unit: '', rating: '4.9', reviews: 0 },
-  { id: 'package-dubai-abudhabi', category: 'Dubai Packages Tour', image: '/images/city-03-abu-dhabi.webp', title: 'Dubai + Abu Dhabi Highlights', description: 'Discover signature landmarks across Dubai and Abu Dhabi in one easy itinerary.', duration: '3 days', location: 'Dubai & Abu Dhabi, UAE', price: 'Contact for price', unit: '', rating: '4.9', reviews: 0 },
-  { id: 'package-family', category: 'Dubai Packages Tour', image: '/images/attraction-card-06.jpg', title: 'Family UAE Experience Package', description: 'A flexible family-friendly mix of attractions, sightseeing and desert time.', duration: '3 days', location: 'UAE', price: 'Contact for price', unit: '', rating: '4.9', reviews: 0 }
+  { id: 'package-dubai-essentials', category: 'Dubai Packages Tour', image: '/images/city-02-dubai-burj-khalifa.webp', title: 'Dubai Essentials Package', description: 'A curated Dubai combination covering city highlights and a desert experience.', duration: '2 days', location: 'Dubai, UAE', price: '', unit: '', rating: '4.9', reviews: 0 },
+  { id: 'package-desert-city', category: 'Dubai Packages Tour', image: '/images/hero-camp.webp', title: 'Desert Safari + Dubai City Tour', description: 'Pair a guided Dubai city tour with an evening desert safari experience.', duration: '2 days', location: 'Dubai, UAE', price: '', unit: '', rating: '4.9', reviews: 0 },
+  { id: 'package-dubai-abudhabi', category: 'Dubai Packages Tour', image: '/images/city-03-abu-dhabi.webp', title: 'Dubai + Abu Dhabi Highlights', description: 'Discover signature landmarks across Dubai and Abu Dhabi in one easy itinerary.', duration: '3 days', location: 'Dubai & Abu Dhabi, UAE', price: '', unit: '', rating: '4.9', reviews: 0 },
+  { id: 'package-family', category: 'Dubai Packages Tour', image: '/images/attraction-card-06.jpg', title: 'Family UAE Experience Package', description: 'A flexible family-friendly mix of attractions, sightseeing and desert time.', duration: '3 days', location: 'UAE', price: '', unit: '', rating: '4.9', reviews: 0 }
 ]
 
 const quadBikeTours = [
