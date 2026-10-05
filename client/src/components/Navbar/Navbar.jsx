@@ -188,9 +188,9 @@ export default function Navbar({
             </div>
 
             <div className="nav-topbar-socials">
-              <a href="#" aria-label="Instagram"><Instagram size={13} /></a>
-              <a href="#" aria-label="Facebook"><Facebook size={13} /></a>
-              <a href="#" aria-label="YouTube"><Youtube size={14} /></a>
+              <a href="https://www.instagram.com/tripscapeadventures/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><Instagram size={13} /></a>
+              <a href="https://www.facebook.com/TripscapeAdventure/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><Facebook size={13} /></a>
+              <a href="https://www.youtube.com/@TripscapeAdventuresTourism" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><Youtube size={14} /></a>
             </div>
           </div>
         </div>

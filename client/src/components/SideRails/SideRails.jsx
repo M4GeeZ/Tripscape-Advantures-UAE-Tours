@@ -19,7 +19,7 @@ export default function SideRails() {
 
         <div className="side-rail__socials">
           <a
-            href="#"
+            href="https://www.instagram.com/tripscapeadventures/"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Instagram"
@@ -28,7 +28,7 @@ export default function SideRails() {
           </a>
 
           <a
-            href="#"
+            href="https://www.facebook.com/TripscapeAdventure/"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Facebook"
@@ -37,7 +37,7 @@ export default function SideRails() {
           </a>
 
           <a
-            href="#"
+            href="https://www.youtube.com/@TripscapeAdventuresTourism"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="YouTube"

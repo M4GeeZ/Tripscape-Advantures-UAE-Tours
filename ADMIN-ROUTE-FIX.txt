@@ -1,0 +1,8 @@
+TRIPSCAPE ADMIN ROUTE FIX
+
+Admin panel URL:
+http://localhost:5173/admin-panel-tripscape-tourism-993
+
+Old /admin route is NOT an admin entry point anymore. It falls through to the normal website.
+
+After extracting, run the project normally and hard-refresh the browser (Ctrl+Shift+R).

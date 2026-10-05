@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Search, SlidersHorizontal, Sparkles } from 'lucide-react'
 import Navbar from '../../components/Navbar/Navbar'
 import TourCard from '../../components/TourCard/TourCard'
@@ -7,6 +7,7 @@ import WhatsAppFloat from '../../components/WhatsAppFloat/WhatsAppFloat'
 import CallFloat from '../../components/CallFloat/CallFloat'
 import { tourCatalog, tourFilterNames } from '../../data'
 import { searchTourCatalog } from '../../utils/siteSearch'
+import { apiUrl } from '../../utils/apiBaseUrl'
 import './Tours.css'
 
 const getSearchParams = () => new URLSearchParams(window.location.search)
@@ -23,13 +24,31 @@ export default function Tours({ menuOpen, setMenuOpen }) {
   const [activeCategory, setActiveCategory] = useState(getInitialCategory)
   const [query, setQuery] = useState(getInitialQuery)
   const [destination] = useState(getInitialDestination)
+  const [dynamicTours, setDynamicTours] = useState([])
+
+  useEffect(() => {
+    fetch(apiUrl('/api/tours'))
+      .then((response) => response.ok ? response.json() : [])
+      .then((items) => Array.isArray(items) && setDynamicTours(items.filter((item) => item?.slug)))
+      .catch(() => {})
+  }, [])
+
+  const catalog = useMemo(() => {
+    const seen = new Set()
+    return [...dynamicTours, ...tourCatalog].filter((tour) => {
+      const key = String(tour.title || '').trim().toLowerCase()
+      if (!key || seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
+  }, [dynamicTours])
 
   const visibleTours = useMemo(
-    () => searchTourCatalog(tourCatalog, query, {
+    () => searchTourCatalog(catalog, query, {
       category: activeCategory,
       destination
     }),
-    [activeCategory, query, destination]
+    [catalog, activeCategory, query, destination]
   )
 
   const showingRecommendations = visibleTours.some((tour) => tour.searchMode === 'recommended')

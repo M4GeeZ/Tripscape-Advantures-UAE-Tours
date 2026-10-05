@@ -38,14 +38,14 @@ export function categoryToSlug(category = '') {
 }
 
 const featuredTopImages = {
-  'Morning Desert Safari with Quad Bike': '/images/top-experiences/morning-desert-safari-quad-bike.png',
-  'Evening Desert Safari with BBQ Dinner': '/images/top-experiences/evening-desert-safari-bbq-dinner.png',
-  'Desert Safari with VIP Setup': '/images/top-experiences/desert-safari-vip-setup.png',
-  'VIP Desert Safari with Private Seating': '/images/top-experiences/vip-desert-safari-private-seating.png',
-  'VIP Premium Desert Safari with BBQ Dinner': '/images/top-experiences/vip-premium-desert-safari-bbq-dinner.png',
-  'Sunrise Camel Trekking': '/images/top-experiences/sunrise-camel-trekking.png',
-  'Desert Safari with Dinner at Caravanserai': '/images/top-experiences/desert-safari-dinner-caravanserai.png',
-  'Family Desert Safari & Quad Experience': '/images/top-experiences/family-desert-safari-quad-experience.png'
+  'Morning Desert Safari with Quad Bike': '/images/top-experiences/morning-desert-safari-quad-bike.webp',
+  'Evening Desert Safari with BBQ Dinner': '/images/top-experiences/evening-desert-safari-bbq-dinner.webp',
+  'Desert Safari with VIP Setup': '/images/top-experiences/desert-safari-vip-setup.webp',
+  'VIP Desert Safari with Private Seating': '/images/top-experiences/vip-desert-safari-private-seating.webp',
+  'VIP Premium Desert Safari with BBQ Dinner': '/images/top-experiences/vip-premium-desert-safari-bbq-dinner.webp',
+  'Sunrise Camel Trekking': '/images/top-experiences/sunrise-camel-trekking.webp',
+  'Desert Safari with Dinner at Caravanserai': '/images/top-experiences/desert-safari-dinner-caravanserai.webp',
+  'Family Desert Safari & Quad Experience': '/images/top-experiences/family-desert-safari-quad-experience.webp'
 }
 
 const bookableTours = {
@@ -428,24 +428,24 @@ const familyTour = {
   title: 'The Desert Dreamscape',
   duration: 'Ultra Romantic Private Setup',
   location: 'Dubai, UAE',
-  price: 'Contact for price',
+  price: '',
   rating: '4.9',
   reviews: 0
 }
 
 const serviceOnlyItems = [
-  { category: 'Desert Safari', title: 'VIP Premium Desert Safari with BBQ', image: '/images/services/01-vip-premium-safari.webp', price: 'Contact for price', duration: 'Premium safari', location: 'Dubai, UAE' },
-  { category: 'Desert Safari', title: 'Morning Safari with Quad Bike', image: '/images/services/03-morning-quad-bike.webp', price: 'Contact for price', duration: 'Morning', location: 'Dubai, UAE' },
-  { category: 'Desert Safari', title: 'Sunrise View Safari with Camel Ride', image: '/images/services/06-sunrise-camel-ride.webp', price: 'Contact for price', duration: 'Sunrise', location: 'Dubai, UAE' },
-  { category: 'Desert Safari', title: 'VIP Desert Safari with BBQ (Table Service)', image: '/images/services/07-vip-table-service.webp', price: 'Contact for price', duration: 'VIP', location: 'Dubai, UAE' },
-  { category: 'Desert Adventures', title: 'Single and Double Quad bike', image: '/images/services/09-single-double-quad.webp', price: 'Contact for price', duration: 'Adventure', location: 'Dubai, UAE' },
-  { category: 'Cruises', title: 'Dubai Marina Cruise with Royal Dinner', image: '/images/services/12-marina-royal-cruise.webp', price: 'Contact for price', duration: 'Evening cruise', location: 'Dubai Marina, UAE' },
-  { category: 'City Tours', title: 'City Tours', image: '/images/services/13-city-tours.webp', price: 'Contact for price', duration: 'Guided tour', location: 'UAE' },
-  { category: 'Aerial Experiences', title: 'Helicopter Sightseeing Tour', image: '/images/services/14-helicopter-sightseeing.webp', price: 'Contact for price', duration: 'Scenic flight', location: 'Dubai, UAE' },
-  { category: 'Aerial Experiences', title: 'Extreme Hot Air Balloon Ride', image: '/images/services/15-hot-air-balloon-landscape.webp', price: 'Contact for price', duration: 'Sunrise flight', location: 'Dubai, UAE' },
-  { category: 'Water Activities', title: 'Scuba Diving Experience', image: '/images/services/17-scuba-diving.webp', price: 'Contact for price', duration: 'Water activity', location: 'Dubai, UAE' },
-  { category: 'Dubai Packages Tour', title: 'Private Airport Transfer', image: '/images/services/18-airport-transfer.webp', price: 'Contact for price', duration: 'Private transfer', location: 'Dubai, UAE' },
-  { category: 'Attractions', title: 'Attraction and Excursion Tickets and many more...', image: '/images/services/19-attraction-tickets.webp', price: 'Contact for price', duration: 'Tickets & excursions', location: 'UAE' }
+  { category: 'Desert Safari', title: 'VIP Premium Desert Safari with BBQ', image: '/images/services/01-vip-premium-safari.webp', price: '', duration: 'Premium safari', location: 'Dubai, UAE' },
+  { category: 'Desert Safari', title: 'Morning Safari with Quad Bike', image: '/images/services/03-morning-quad-bike.webp', price: '', duration: 'Morning', location: 'Dubai, UAE' },
+  { category: 'Desert Safari', title: 'Sunrise View Safari with Camel Ride', image: '/images/services/06-sunrise-camel-ride.webp', price: '', duration: 'Sunrise', location: 'Dubai, UAE' },
+  { category: 'Desert Safari', title: 'VIP Desert Safari with BBQ (Table Service)', image: '/images/services/07-vip-table-service.webp', price: '', duration: 'VIP', location: 'Dubai, UAE' },
+  { category: 'Desert Adventures', title: 'Single and Double Quad bike', image: '/images/services/09-single-double-quad.webp', price: '', duration: 'Adventure', location: 'Dubai, UAE' },
+  { category: 'Cruises', title: 'Dubai Marina Cruise with Royal Dinner', image: '/images/services/12-marina-royal-cruise.webp', price: '', duration: 'Evening cruise', location: 'Dubai Marina, UAE' },
+  { category: 'City Tours', title: 'City Tours', image: '/images/services/13-city-tours.webp', price: '', duration: 'Guided tour', location: 'UAE' },
+  { category: 'Aerial Experiences', title: 'Helicopter Sightseeing Tour', image: '/images/services/14-helicopter-sightseeing.webp', price: '', duration: 'Scenic flight', location: 'Dubai, UAE' },
+  { category: 'Aerial Experiences', title: 'Extreme Hot Air Balloon Ride', image: '/images/services/15-hot-air-balloon-landscape.webp', price: '', duration: 'Sunrise flight', location: 'Dubai, UAE' },
+  { category: 'Water Activities', title: 'Scuba Diving Experience', image: '/images/services/17-scuba-diving.webp', price: '', duration: 'Water activity', location: 'Dubai, UAE' },
+  { category: 'Dubai Packages Tour', title: 'Private Airport Transfer', image: '/images/services/18-airport-transfer.webp', price: '', duration: 'Private transfer', location: 'Dubai, UAE' },
+  { category: 'Attractions', title: 'Attraction and Excursion Tickets and many more...', image: '/images/services/19-attraction-tickets.webp', price: '', duration: 'Tickets & excursions', location: 'UAE' }
 ]
 
 const privateEventItems = privateEventExperiences.map((event) => ({
@@ -453,7 +453,7 @@ const privateEventItems = privateEventExperiences.map((event) => ({
   category: 'Desert Safari',
   duration: event.meta || 'Private event',
   location: 'Dubai, UAE',
-  price: 'Contact for price',
+  price: '',
   rating: '4.9',
   reviews: 0,
   useExactContent: true,
@@ -568,7 +568,7 @@ export const tourDetailPages = allBaseItems.map((item) => {
     categoryLabel: item.category,
     duration: item.duration || item.meta || 'Tour experience',
     location: item.location || 'Dubai, UAE',
-    price: item.price || 'Contact for price',
+    price: '',
     rating: item.rating || '4.9',
     reviews: item.reviews ?? 0,
     isBookable: Boolean(basePrice),

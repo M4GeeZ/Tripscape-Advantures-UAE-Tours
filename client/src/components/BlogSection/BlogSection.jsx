@@ -1,11 +1,22 @@
+import { useEffect, useMemo, useState } from 'react'
 import { ArrowRight, CalendarDays, Clock3 } from 'lucide-react'
 import { blogArticles } from '../../blogArticles'
 import SectionHeading from '../SectionHeading/SectionHeading'
 import './BlogSection.css'
-
-const blogs = blogArticles.slice(0, 3)
+import { apiUrl } from '../../utils/apiBaseUrl'
 
 export default function BlogSection() {
+  const [dynamicArticles, setDynamicArticles] = useState([])
+
+  useEffect(() => {
+    fetch(apiUrl('/api/blogs'))
+      .then((response) => response.ok ? response.json() : [])
+      .then((items) => Array.isArray(items) && setDynamicArticles(items))
+      .catch(() => {})
+  }, [])
+
+  const blogs = useMemo(() => [...dynamicArticles, ...blogArticles].filter((article, index, all) => all.findIndex((item) => item.slug === article.slug) === index).slice(0, 3), [dynamicArticles])
+
   return (
     <section id="blog" className="section white-section blog-section">
       <div className="container">

@@ -5,6 +5,7 @@ import Home from "./pages/Home/Home";
 import Tours from "./pages/Tours/Tours";
 import TourCategory from "./pages/TourCategory/TourCategory";
 import TourDetail from "./pages/TourDetail/TourDetail";
+import DynamicTourDetail from "./pages/TourDetail/DynamicTourDetail";
 import CampaignLanding from "./pages/CampaignLanding/CampaignLanding";
 import DesertEJet from "./pages/DesertEJet/DesertEJet";
 import PrivateDesertEvents from "./pages/PrivateDesertEvents/PrivateDesertEvents";
@@ -13,6 +14,7 @@ import About from "./pages/About/About";
 import Blog from "./pages/Blog/Blog";
 import BlogDetail from "./pages/Blog/BlogDetail";
 import Contact from "./pages/Contact/Contact";
+import AdminApp from './pages/Admin/AdminApp';
 
 import SideRails from "./components/SideRails/SideRails";
 import { tourCategoryPages } from "./tourCategoryPages";
@@ -25,6 +27,13 @@ export default function App() {
 
   const normalizedPath =
     window.location.pathname.replace(/\/+$/, "") || "/";
+
+  // Private CMS route. The old /admin path is intentionally NOT an admin entry point.
+  const ADMIN_PANEL_PATH = '/admin-panel-tripscape-tourism-993';
+
+  if (normalizedPath === ADMIN_PANEL_PATH) {
+    return <AdminApp />;
+  }
 
   const pageProps = {
     menuOpen,
@@ -72,6 +81,7 @@ export default function App() {
           />
         );
       }
+      return <DynamicTourDetail {...pageProps} categorySlug={categorySlug} tourSlug={tourSlug} />;
     }
 
     if (normalizedPath.startsWith("/tours/")) {

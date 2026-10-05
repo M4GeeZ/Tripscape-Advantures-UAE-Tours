@@ -26,9 +26,9 @@ function getTodayDate() {
   return `${year}-${month}-${day}`
 }
 
-export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOpen }) {
+export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOpen, tourOverride = null }) {
   const pageRef = useRef(null)
-  const tour = getTourDetail(categorySlug, tourSlug)
+  const tour = tourOverride || getTourDetail(categorySlug, tourSlug)
   const [activeImage, setActiveImage] = useState(0)
   const [travelDate, setTravelDate] = useState(getTomorrowDate)
   const [adults, setAdults] = useState(1)
@@ -43,6 +43,18 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
     setChildren(0)
     window.scrollTo(0, 0)
   }, [categorySlug, tourSlug])
+
+  useEffect(() => {
+    if (!tour) return
+    const title = tour.seoTitle || `${tour.title} | Tripscape Tourism`
+    const description = tour.metaDescription || tour.shortDescription || tour.description || ''
+    document.title = title
+    const meta = document.querySelector('meta[name="description"]')
+    if (meta && description) meta.setAttribute('content', description.slice(0, 320))
+    let canonical = document.querySelector('link[rel="canonical"]')
+    if (!canonical) { canonical = document.createElement('link'); canonical.rel = 'canonical'; document.head.appendChild(canonical) }
+    canonical.href = tour.canonical || `${window.location.origin}/tours/${categorySlug}/${tour.slug || tourSlug}`
+  }, [tour, categorySlug, tourSlug])
 
   if (!tour) return null
 

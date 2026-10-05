@@ -7,8 +7,16 @@ import { fileURLToPath } from 'url'
 import toursRouter from './routes/tours.js'
 import bookingsRouter, { startBookingNotificationWorker } from './routes/bookings.js'
 import googleReviewsRouter from './routes/googleReviews.js'
+import blogsRouter from './routes/blogs.js'
+import adminAuthRouter from './routes/adminAuth.js'
+import adminRouter from './routes/admin.js'
+import { securityHeaders } from './middleware/security.js'
+import { seedInitialBlogs, seedInitialTours } from './data/seedCms.js'
 
 const app = express()
+app.set('trust proxy', 1)
+app.disable('x-powered-by')
+app.use(securityHeaders)
 const port = process.env.PORT || 5000
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -38,11 +46,17 @@ app.use(cors({
     const allowed = isAllowedOrigin(origin)
     callback(allowed ? null : new Error('Origin not allowed by CORS'), allowed)
   },
+  credentials: true,
 }))
+app.use('/api/admin/upload', express.json({ limit: '12mb' }))
 app.use(express.json({ limit: '1mb' }))
 app.use('/api/tours', toursRouter)
 app.use('/api/bookings', bookingsRouter)
 app.use('/api/google-reviews', googleReviewsRouter)
+app.use('/api/blogs', blogsRouter)
+app.use('/api/admin/auth', adminAuthRouter)
+app.use('/api/admin', adminRouter)
+app.use('/uploads', express.static(path.resolve(__dirname, '../uploads'), { maxAge: '7d', immutable: true }))
 app.get('/api/health', (_req, res) => res.json({ ok: true, service: 'tripscape-api' }))
 app.post('/api/contact', (req, res) => {
   const { name, email, message } = req.body || {}
@@ -62,6 +76,13 @@ async function start() {
     try {
       await mongoose.connect(process.env.MONGO_URI)
       console.log('MongoDB connected')
+      try {
+        await seedInitialTours()
+        await seedInitialBlogs()
+        console.log('CMS seed check complete')
+      } catch (error) {
+        console.warn('CMS seed skipped:', error.message)
+      }
     } catch (error) {
       console.warn('MongoDB unavailable; using fallback data.')
     }

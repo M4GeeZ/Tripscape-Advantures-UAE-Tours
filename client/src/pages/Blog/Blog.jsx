@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Clock3 } from 'lucide-react'
 import Navbar from '../../components/Navbar/Navbar'
 import PageHero from '../../components/PageHero/PageHero'
@@ -7,21 +7,30 @@ import WhatsAppFloat from '../../components/WhatsAppFloat/WhatsAppFloat'
 import CallFloat from '../../components/CallFloat/CallFloat'
 import { useLuxuryReveal } from '../../hooks/useLuxuryReveal'
 import { blogArticles } from '../../blogArticles'
+import { apiUrl } from '../../utils/apiBaseUrl'
 import './Blog.css'
 
 const filters = ['All', 'Tips', 'Guides', 'Reviews', 'News', 'Destinations']
 
-const articles = blogArticles
-
 
 export default function Blog({ menuOpen, setMenuOpen }) {
   const [activeFilter, setActiveFilter] = useState('All')
+  const [dynamicArticles, setDynamicArticles] = useState([])
+
+  useEffect(() => {
+    fetch(apiUrl('/api/blogs'))
+      .then((response) => response.ok ? response.json() : [])
+      .then((items) => Array.isArray(items) && setDynamicArticles(items))
+      .catch(() => {})
+  }, [])
   const pageRef = useRef(null)
   useLuxuryReveal(pageRef)
 
+  const articles = useMemo(() => [...dynamicArticles, ...blogArticles].filter((article, index, all) => all.findIndex((item) => item.slug === article.slug) === index), [dynamicArticles])
+
   const visibleArticles = useMemo(
     () => activeFilter === 'All' ? articles : articles.filter((article) => article.category === activeFilter),
-    [activeFilter]
+    [activeFilter, articles]
   )
 
   return (

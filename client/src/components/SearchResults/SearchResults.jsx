@@ -64,7 +64,7 @@ export default function SearchResults({
               <strong>{item.title}</strong>
               <small>{item.description}</small>
               <span className="site-search-result__bottom">
-                <b>{item.price || item.category}</b>
+                <b>{item.category}</b>
                 <ArrowUpRight size={16} />
               </span>
             </span>

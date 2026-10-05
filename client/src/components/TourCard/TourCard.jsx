@@ -5,10 +5,15 @@ import { getCardPoints } from '../../utils/cardContent'
 import './TourCard.css'
 
 export default function TourCard({ tour }) {
-  const hasFixedPrice = tour.price !== 'Contact for price'
+  const displayPrice = String(tour.price || '').trim()
+  const showPrice = Boolean(displayPrice) && !/^contact for price$/i.test(displayPrice) && !/^from\s*aed\s*0$/i.test(displayPrice) && !/^aed\s*0$/i.test(displayPrice)
   const category = tour.category || 'Tours'
-  const detailHref = getTourDetailHref(category, tour.title)
-  const points = getCardPoints(category, tour.title, tour.description, 7)
+  const detailHref = tour.href || (tour.slug && tour.categorySlug
+    ? `/tours/${tour.categorySlug}/${tour.slug}`
+    : getTourDetailHref(category, tour.title))
+  const points = tour.included?.length
+    ? tour.included.slice(0, 7)
+    : getCardPoints(category, tour.title, tour.description, 7)
 
   return (
     <article className="tour-card-reference" data-reveal>
@@ -37,15 +42,17 @@ export default function TourCard({ tour }) {
 
         <div className="tour-card-divider" />
 
-        <div className="tour-card-price-row">
-          <div className={`tour-card-price ${hasFixedPrice ? 'fixed-price' : 'contact-price'}`}>
-            {hasFixedPrice && <small>FROM</small>}
-            <div>
-              <strong>{tour.price}</strong>
-              {hasFixedPrice && tour.unit && <span>{tour.unit}</span>}
+        {showPrice && (
+          <div className="tour-card-price-row">
+            <div className="tour-card-price fixed-price">
+              <small>FROM</small>
+              <div>
+                <strong>{displayPrice}</strong>
+                {tour.unit && <span>{tour.unit}</span>}
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         <ExperienceCardActions title={tour.title} detailHref={detailHref} />
       </div>
