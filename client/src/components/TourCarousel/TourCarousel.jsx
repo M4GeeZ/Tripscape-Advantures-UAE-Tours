@@ -88,7 +88,7 @@ export default function TourCarousel() {
           <SectionHeading
             eyebrow="Top experiences"
             title="Top-rated tours, hand-picked."
-            copy="Our most-booked experiences this month — verified guides, instant confirmations, free WhatsApp re-scheduling."
+            copy="Our most-booked experiences this month â€” verified guides, instant confirmations, free WhatsApp re-scheduling."
           />
         </div>
 
@@ -127,3 +127,4 @@ export default function TourCarousel() {
     </section>
   )
 }
+
