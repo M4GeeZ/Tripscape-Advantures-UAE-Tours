@@ -1,10 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Mail, MessageCircle, Phone, Send } from 'lucide-react'
+import { createPortal } from 'react-dom'
+import { Mail, MessageCircle, Phone, Send, Tag, X } from 'lucide-react'
 import CountryCodeSelect from './CountryCodeSelect/CountryCodeSelect'
 import { getBookingAddOns, getBookingServices } from '../bookingOptions'
 import { apiUrl } from '../utils/apiBaseUrl'
 import createSubmissionId from '../utils/createSubmissionId'
+import { forgetPromo, formatAed, getActivePromo, rememberPromo, usePromo, validatePromo } from '../utils/promoOffers'
 import './BookingEnquiryForm.css'
+import './BookingConfirm.css'
 
 const COMPANY_PHONE = '+971549930684'
 
@@ -34,6 +37,66 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
   const [status, setStatus] = useState({ type: '', message: '' })
   const [submitting, setSubmitting] = useState(false)
   const submissionIdRef = useRef('')
+  const activePromo = usePromo(tourTitle)
+  const [promoInput, setPromoInput] = useState(() => getActivePromo(tourTitle)?.code || '')
+  const [confirmation, setConfirmation] = useState(null)
+  const [promo, setPromo] = useState(null)
+  const [promoStatus, setPromoStatus] = useState({ type: '', message: '' })
+  const [checkingPromo, setCheckingPromo] = useState(false)
+
+  const applyPromo = async (rawCode = promoInput) => {
+    const code = String(rawCode || '').trim().toUpperCase()
+    if (!code) return
+    setCheckingPromo(true)
+    setPromoStatus({ type: '', message: '' })
+    try {
+      const data = await validatePromo(code, tourTitle)
+      setPromo(data)
+      setPromoInput(data.code)
+      rememberPromo(data)
+      setPromoStatus({ type: 'success', message: `${data.percent}% off applied — you save ${formatAed(data.basePrice - data.discountedPrice)}.` })
+    } catch (error) {
+      setPromo(null)
+      if (activePromo?.code === code) forgetPromo(tourTitle)
+      setPromoStatus({ type: 'error', message: error.message })
+    } finally {
+      setCheckingPromo(false)
+    }
+  }
+
+  const removePromo = () => {
+    setPromo(null)
+    setPromoInput('')
+    setPromoStatus({ type: '', message: '' })
+  }
+
+  // Code copied from the offer popup for this tour: fill it in and apply it.
+  useEffect(() => {
+    if (activePromo?.code && !promo && (!promoInput || promoInput === activePromo.code)) {
+      setPromoInput(activePromo.code)
+      applyPromo(activePromo.code)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activePromo?.code, tourTitle])
+
+  // Close the confirmation and get the form ready for a new booking.
+  const closeConfirmation = () => {
+    setConfirmation(null)
+    setStatus({ type: '', message: '' })
+    submissionIdRef.current = ''
+    setPromo(null)
+    setPromoInput('')
+    setPromoStatus({ type: '', message: '' })
+    setForm((current) => ({ ...current, name: '', email: '', phone: '', pickup: '', addOns: [], adults: '1', children: '0' }))
+  }
+
+  useEffect(() => {
+    if (!confirmation) return undefined
+    const onKey = (event) => { if (event.key === 'Escape') closeConfirmation() }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [confirmation])
 
   useEffect(() => {
     setForm((current) => ({
@@ -77,6 +140,7 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
           addOns: form.addOns,
           pickup: form.pickup,
           price: displayPrice,
+          promoCode: promo?.code || promoInput.trim(),
           name: form.name,
           adults: form.adults,
           children: form.children,
@@ -102,7 +166,23 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
         confirmationMessage += ' Your request is saved. Email confirmation is temporarily pending; our booking team will follow up.'
       }
 
+      if (promo || promoInput.trim()) {
+        forgetPromo(tourTitle)
+        confirmationMessage += ' Your promo code has been applied to this booking.'
+      }
       setStatus({ type: 'success', message: confirmationMessage })
+      setConfirmation({
+        reference: data.bookingReference || '',
+        service: form.service,
+        travelDate: form.travelDate,
+        adults: form.adults,
+        children: form.children,
+        price: promo ? `${formatAed(promo.discountedPrice)}${promo.unit ? ` ${promo.unit}` : ''}` : displayPrice,
+        promoCode: promo?.code || '',
+        email: form.email,
+        emailSent: customerEmailSent,
+        hasWhatsApp: form.hasWhatsApp,
+      })
     } catch (error) {
       setStatus({ type: 'error', message: error.message || 'Something went wrong. Please try again.' })
     } finally {
@@ -114,13 +194,20 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
     <aside className="booking-enquiry-card" data-lux-reveal>
       <div className="booking-enquiry-card__head">
         <span>BOOKING REQUEST</span>
-        <strong>{displayPrice}</strong>
+        {promo ? (
+          <strong className="booking-enquiry-card__promo-price">
+            <s>{formatAed(promo.basePrice)}</s> {formatAed(promo.discountedPrice)}
+            {promo.unit && <small>{promo.unit}</small>}
+          </strong>
+        ) : (
+          <strong>{displayPrice}</strong>
+        )}
         <p>Choose your preferred package or service, add any extras, and send your booking enquiry.</p>
       </div>
 
       <form className="booking-enquiry-form" onSubmit={submit}>
         {!hideServiceSelector && (
-          <label className="booking-enquiry-field booking-enquiry-field--full">
+          <label className="booking-enquiry-field booking-enquiry-field--full booking-enquiry-field--service">
             <span>Package / Service</span>
             <select name="service" value={form.service} onChange={update}>
               {serviceOptions.map((service) => <option key={service} value={service}>{service}</option>)}
@@ -186,6 +273,40 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
           </div>
         </fieldset>
 
+        <div className="booking-enquiry-promo booking-enquiry-field--full">
+          <span>Promo code</span>
+          <div className="booking-enquiry-promo__row">
+            <Tag size={16} aria-hidden="true" />
+            <input
+              type="text"
+              value={promoInput}
+              onChange={(event) => {
+                setPromoInput(event.target.value.toUpperCase())
+                if (promo) setPromo(null)
+                setPromoStatus({ type: '', message: '' })
+              }}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  event.preventDefault()
+                  applyPromo()
+                }
+              }}
+              placeholder="e.g. QUAD20-K7P3X"
+              aria-label="Promo code"
+              autoComplete="off"
+              spellCheck="false"
+            />
+            {promo ? (
+              <button type="button" className="booking-enquiry-promo__remove" onClick={removePromo} aria-label="Remove promo code"><X size={15} /></button>
+            ) : (
+              <button type="button" className="booking-enquiry-promo__apply" onClick={() => applyPromo()} disabled={!promoInput.trim() || checkingPromo}>
+                {checkingPromo ? 'Checking…' : 'Apply'}
+              </button>
+            )}
+          </div>
+          {promoStatus.message && <small className={`booking-enquiry-promo__status is-${promoStatus.type}`}>{promoStatus.message}</small>}
+        </div>
+
         <label className="booking-enquiry-whatsapp-check booking-enquiry-field--full">
           <input type="checkbox" name="hasWhatsApp" checked={form.hasWhatsApp} onChange={update} />
           <span>This phone number has WhatsApp</span>
@@ -209,6 +330,51 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
           </a>
         </div>
       </form>
+
+      {confirmation && createPortal(
+        <div className="booking-confirm" role="dialog" aria-modal="true" aria-labelledby="booking-confirm-title" onClick={closeConfirmation}>
+          <div className="booking-confirm__card" onClick={(event) => event.stopPropagation()}>
+            <div className="booking-confirm__confetti" aria-hidden="true">
+              {Array.from({ length: 18 }, (_, index) => <i key={index} style={{ '--i': index }} />)}
+            </div>
+
+            <svg className="booking-confirm__check" viewBox="0 0 80 80" aria-hidden="true">
+              <circle className="booking-confirm__ring" cx="40" cy="40" r="36" />
+              <path className="booking-confirm__tick" d="M24 41.5 35 52 57 29" />
+            </svg>
+
+            <span className="booking-confirm__eyebrow">Thank you, {form.name.split(' ')[0] || 'guest'}!</span>
+            <h3 id="booking-confirm-title">Booking Received!</h3>
+            <p className="booking-confirm__lead">
+              Your booking request is saved. Our team will confirm availability and pickup details shortly
+              {confirmation.hasWhatsApp ? ' on WhatsApp and email.' : ' by email.'}
+            </p>
+
+            <dl className="booking-confirm__summary">
+              {confirmation.reference && <div><dt>Reference</dt><dd>{confirmation.reference}</dd></div>}
+              <div><dt>Experience</dt><dd>{confirmation.service}</dd></div>
+              <div><dt>Travel date</dt><dd>{confirmation.travelDate}</dd></div>
+              <div><dt>Guests</dt><dd>{confirmation.adults} adult{Number(confirmation.adults) > 1 ? 's' : ''}{Number(confirmation.children) > 0 ? `, ${confirmation.children} child${Number(confirmation.children) > 1 ? 'ren' : ''}` : ''}</dd></div>
+              <div><dt>Price</dt><dd>{confirmation.price}{confirmation.promoCode && <small> · code {confirmation.promoCode}</small>}</dd></div>
+            </dl>
+
+            {confirmation.emailSent && <p className="booking-confirm__email"><Mail size={14} /> A copy has been sent to {confirmation.email}</p>}
+
+            <div className="booking-confirm__actions">
+              <button type="button" className="booking-confirm__done" onClick={closeConfirmation}>Done</button>
+              <a
+                className="booking-confirm__whatsapp"
+                href={`https://wa.me/971549930684?text=${encodeURIComponent(`Hi Tripscape, I just sent booking request ${confirmation.reference} for ${confirmation.service} on ${confirmation.travelDate}.`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <MessageCircle size={16} /> Chat on WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>,
+        document.body,
+      )}
     </aside>
   )
 }

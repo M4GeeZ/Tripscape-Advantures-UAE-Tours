@@ -5,6 +5,7 @@ import fs from 'fs/promises'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import Booking from '../models/Booking.js'
+import { normalizePromoCode, redeemPromoCode, releasePromoCode } from './promos.js'
 
 const router = Router()
 
@@ -233,6 +234,7 @@ function normalizeBooking(body = {}) {
     phoneDigits,
     travelDate: singleLine(body.travelDate),
     hasWhatsApp: body.hasWhatsApp === true || body.hasWhatsApp === 'true',
+    promoCode: normalizePromoCode(body.promoCode).slice(0, 40),
   }
 }
 
@@ -258,6 +260,7 @@ function bookingRows(booking) {
     ['Experience', booking.tourTitle],
     ['Package / Service', booking.service],
     ['Price', booking.price || 'Contact for price'],
+    ...(booking.promoCode ? [['Promo code', `${booking.promoCode} (${booking.promoPercent}% off, was ${booking.originalPrice})`]] : []),
     ['Travel date', booking.travelDate],
     ['Customer', booking.name],
     ['Adults', String(booking.adults)],
@@ -599,6 +602,42 @@ router.get('/health', (_req, res) => {
   })
 })
 
+// Public, anonymised feed of real recent bookings for the site's social-proof
+// notifications. Only first name + last initial, tour title and time leave the server.
+const RECENT_BOOKINGS_WINDOW_MS = 14 * 24 * 60 * 60 * 1000
+
+function publicBookingName(name = '') {
+  const parts = String(name).trim().split(/\s+/).filter(Boolean)
+  if (!parts.length) return 'A guest'
+  const first = parts[0].charAt(0).toUpperCase() + parts[0].slice(1).toLowerCase()
+  return parts.length > 1 ? `${first} ${parts[parts.length - 1].charAt(0).toUpperCase()}.` : first
+}
+
+router.get('/recent', async (_req, res) => {
+  if (mongoose.connection.readyState !== 1) return res.json([])
+
+  try {
+    const bookings = await Booking.find({
+      status: { $ne: 'cancelled' },
+      createdAt: { $gte: new Date(Date.now() - RECENT_BOOKINGS_WINDOW_MS) },
+    })
+      .sort({ createdAt: -1 })
+      .limit(20)
+      .select('name tourTitle createdAt')
+      .lean()
+
+    res.set('Cache-Control', 'public, max-age=60')
+    res.json(bookings.map((booking) => ({
+      name: publicBookingName(booking.name),
+      tourTitle: booking.tourTitle,
+      createdAt: booking.createdAt,
+    })))
+  } catch (error) {
+    console.error('Recent bookings error:', error.message)
+    res.json([])
+  }
+})
+
 router.post('/', async (req, res) => {
   const normalized = normalizeBooking(req.body || {})
   const validationError = validateBooking(normalized)
@@ -620,9 +659,31 @@ router.post('/', async (req, res) => {
     }
   }
 
+  const bookingReference = makeBookingReference()
+  let promoPricing = {}
+
+  // Promo codes are single-use: mark the code as used before the booking is saved.
+  if (normalized.promoCode) {
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ message: 'Promo codes are temporarily unavailable. Remove the code or try again shortly.' })
+    }
+    const promo = await redeemPromoCode(normalized.promoCode, normalized.tourTitle, bookingReference).catch(() => null)
+    if (!promo) {
+      return res.status(400).json({ message: 'This promo code is invalid, expired, already used, or not valid for this tour.' })
+    }
+    const aed = (amount) => `AED ${Math.round(amount).toLocaleString('en-US')}`
+    promoPricing = {
+      promoCode: promo.code,
+      promoPercent: promo.percent,
+      originalPrice: `${aed(promo.basePrice)}${promo.unit ? ` ${promo.unit}` : ''}`,
+      price: `${aed(promo.basePrice * (1 - promo.percent / 100))}${promo.unit ? ` ${promo.unit}` : ''} (promo ${promo.code}, ${promo.percent}% off)`,
+    }
+  }
+
   const booking = {
-    bookingReference: makeBookingReference(),
+    bookingReference,
     ...normalized,
+    ...promoPricing,
     source: 'tripscapetourism.com',
     delivery: {
       companyEmail: { status: smtpConfigured() ? 'pending' : 'not_configured', attempts: 0 },
@@ -665,6 +726,7 @@ router.post('/', async (req, res) => {
   }
 
   if (duplicateBooking && bookingDoc) {
+    if (promoPricing.promoCode && bookingDoc.promoCode !== promoPricing.promoCode) await releasePromoCode(promoPricing.promoCode)
     return res.status(200).json({
       message: 'Reservation request already received.',
       bookingReference: bookingDoc.bookingReference,
@@ -688,6 +750,7 @@ router.post('/', async (req, res) => {
   }
 
   if (storage === 'none') {
+    if (promoPricing.promoCode) await releasePromoCode(promoPricing.promoCode)
     return res.status(503).json({
       message: 'We could not safely store your reservation request right now. Please try again or contact our booking team by phone or WhatsApp.',
     })

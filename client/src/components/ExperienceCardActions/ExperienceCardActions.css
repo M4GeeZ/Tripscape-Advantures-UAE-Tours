@@ -1,37 +1,39 @@
-/* Shared card CTAs: equal size, aligned, and consistent at every breakpoint. */
+/* Shared card CTAs: full-width primary button with an outlined secondary
+   button stacked underneath, identical on every card and breakpoint. */
 .experience-card-actions {
   width: 100%;
-  margin-top: auto;
-  padding-top: 18px;
+  margin-top: 0;
+  padding-top: 16px;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: stretch;
-  gap: 16px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
 }
 
 .experience-card-action {
   width: 100%;
   min-width: 0;
-  height: 48px;
-  min-height: 48px;
+  height: 42px;
+  min-height: 42px;
   padding: 0 14px;
-  display: inline-flex;
+  display: inline-flex !important;
   align-items: center;
   justify-content: center;
-  gap: 9px;
+  gap: 8px;
   box-sizing: border-box;
   border: 1px solid var(--gold);
-  border-radius: 12px;
+  border-radius: 4px;
   background: var(--gold);
-  color: #fff;
-  box-shadow: 0 8px 18px rgba(201, 139, 46, .18);
-  font-size: 12px;
-  font-weight: 800;
+  color: #fff !important;
+  box-shadow: none;
+  font-size: 11px !important;
+  font-weight: 800 !important;
   line-height: 1;
+  letter-spacing: .14em;
   text-align: center;
   text-decoration: none;
+  text-transform: uppercase;
   white-space: nowrap;
-  transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+  transition: background-color .2s ease, border-color .2s ease, color .2s ease, transform .2s ease;
 }
 
 .experience-card-action > span {
@@ -41,17 +43,28 @@
   color: inherit !important;
   font: inherit !important;
   line-height: 1 !important;
-  letter-spacing: 0 !important;
-  text-transform: none !important;
+  letter-spacing: inherit !important;
+  text-transform: inherit !important;
   white-space: nowrap !important;
 }
 
+.experience-card-action--primary:hover {
+  border-color: #b87b22;
+  background: #b87b22;
+  color: #fff !important;
+  transform: translateY(-1px);
+}
 
-.experience-card-action:hover {
-  color: #fff;
-  transform: translateY(-2px);
-  filter: brightness(1.04);
-  box-shadow: 0 11px 24px rgba(201, 139, 46, .26);
+.experience-card-action--outline {
+  border-color: #e3dccf;
+  background: #fff;
+  color: var(--ink) !important;
+}
+
+.experience-card-action--outline:hover {
+  border-color: var(--gold);
+  background: #fff;
+  color: var(--gold) !important;
 }
 
 .experience-card-action:focus-visible {
@@ -60,9 +73,9 @@
 }
 
 .experience-card-action svg {
-  width: 17px;
-  height: 17px;
-  flex: 0 0 17px;
+  width: 15px;
+  height: 15px;
+  flex: 0 0 15px;
 }
 
 .experience-card-description {
@@ -115,27 +128,13 @@
   color: rgba(255, 255, 255, .86);
 }
 
-@media (max-width: 1200px) {
-  .experience-card-actions { gap: 14px; }
-  .experience-card-action {
-    height: 47px;
-    min-height: 47px;
-    padding-inline: 12px;
-    font-size: 11.5px;
-  }
-}
-
 @media (max-width: 760px) {
   .experience-card-actions {
-    gap: 12px;
-    padding-top: 16px;
+    padding-top: 14px;
   }
   .experience-card-action {
-    height: 46px;
-    min-height: 46px;
-    padding-inline: 10px;
-    border-radius: 11px;
-    font-size: 11.25px;
+    height: 44px;
+    min-height: 44px;
   }
   .experience-card-points {
     margin-top: 13px;
@@ -144,20 +143,5 @@
   .experience-card-points li {
     font-size: 11.25px;
     line-height: 1.45;
-  }
-}
-
-@media (max-width: 380px) {
-  .experience-card-actions { gap: 9px; }
-  .experience-card-action {
-    height: 44px;
-    min-height: 44px;
-    padding-inline: 8px;
-    font-size: 10.5px;
-  }
-  .experience-card-action svg {
-    width: 15px;
-    height: 15px;
-    flex-basis: 15px;
   }
 }

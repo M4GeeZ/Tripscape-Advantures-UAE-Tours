@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 120" role="img" aria-label="Tripscape Adventures">
+  <g fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round">
+    <path d="M32 78c20-45 75-62 128-39"/>
+    <path d="M116 24l12-10 3 15 16 1-13 9 4 15-13-9-13 9 4-15-13-9 16-1z" fill="#ffffff" stroke="none"/>
+  </g>
+  <text x="28" y="83" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="47" letter-spacing="2">TRIPSCAPE</text>
+  <text x="278" y="105" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="20" letter-spacing="3">ADVENTURES</text>
+</svg>

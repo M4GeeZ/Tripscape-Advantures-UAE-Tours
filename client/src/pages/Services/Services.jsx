@@ -1,3 +1,4 @@
+import CmsTourPlacements from '../../components/CmsTourPlacements/CmsTourPlacements'
 import { memo, useEffect, useRef } from "react";
 import {
   ArrowUpRight,
@@ -457,6 +458,7 @@ export default function Services({ menuOpen, setMenuOpen }) {
         >
           <SupportCta />
         </div>
+      <CmsTourPlacements path={window.location.pathname} />
       </main>
 
       <Footer />

@@ -1,258 +1,30 @@
+/* Styles scoped to the HelicopterSection component. Card look lives in ExperienceCard.css. */
+
 .mini-eyebrow {
   color: var(--gold);
   text-transform: uppercase;
-  letter-spacing: 3px;
+  letter-spacing: 2.25px;
   font-weight: 800;
-  font-size: 13px;
+  font-size: 9.75px;
 }
 
 .helicopter-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 34px;
-  margin-top: 62px;
-  align-items: stretch;
-}
-
-.heli-card {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  background: var(--navy);
-  color: white;
-  border-radius: 28px;
-  overflow: hidden;
-  box-shadow: var(--shadow);
-}
-
-.heli-card.premium {
-  background: white;
-  color: var(--ink);
-}
-
-.heli-image {
-  position: relative;
-  flex: 0 0 330px;
-  height: 330px;
-  overflow: hidden;
-  background: transparent;
-}
-
-.heli-image::before {
-  display: none;
-}
-
-.heli-image img {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center center;
-  transition: transform .6s ease;
-}
-
-.heli-card:hover img {
-  transform: scale(1.05);
-}
-
-.heli-image > span {
-  position: absolute;
-  z-index: 2;
-  top: 22px;
-  left: 22px;
-  padding: 10px 17px;
-  color: #ff9c19;
-  background: rgba(255,255,255,.24);
-  border-radius: 999px;
-  backdrop-filter: blur(12px);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  font-weight: 800;
-}
-
-.heli-card.premium .heli-image > span {
-  color: white;
-  background: #ff7200;
-}
-
-.heli-body {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  padding: 32px;
-}
-
-.heli-title-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 25px;
-  margin-top: 18px;
-}
-
-.heli-title-copy {
-  min-width: 0;
-  flex: 1 1 auto;
-}
-
-.heli-title-row h3 {
-  margin: 0 0 8px;
-  font-size: 30px;
-  line-height: 1.2;
-}
-
-.heli-title-row p {
-  margin: 0;
-  color: inherit;
-  opacity: .78;
-}
-
-/* Keep title + duration readable on the first 3 dark cards. */
-.heli-card:not(.premium) .heli-title-row h3,
-.heli-card:not(.premium) .heli-title-row p {
-  color: #fff;
-}
-
-.heli-price {
-  flex: 0 0 auto;
-  display: flex;
-  flex-direction: column;
-  text-align: right;
-  color: var(--gold);
-  white-space: nowrap;
-}
-
-.heli-price strong {
-  font-size: 25px;
-}
-
-.heli-price span {
-  color: inherit;
-  opacity: .85;
-}
-
-.heli-description {
-  margin: 18px 0 0;
-  color: inherit;
-  opacity: .82;
-  font-size: 17px;
-  line-height: 1.7;
-}
-
-/* Standard cards use the same clean body flow as the premium cards. */
-.heli-card:not(.premium) .heli-description {
-  position: relative;
-  margin-top: 18px;
-  padding-top: 14px;
-  color: rgba(255, 255, 255, .88);
-  opacity: 1;
-}
-
-.heli-card:not(.premium) .heli-description::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 46px;
-  height: 2px;
-  border-radius: 999px;
-  background: var(--gold);
-}
-
-.heli-card-link {
-  color: inherit;
-  text-decoration: none;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px;
+  margin-top: 56px;
 }
 
 @media (max-width: 1250px) {
   .helicopter-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 640px) {
   .helicopter-grid {
     grid-template-columns: 1fr;
-  }
-
-  .heli-image {
-    flex-basis: 260px;
-    height: 260px;
-  }
-
-  .heli-body {
-    padding-bottom: 30px;
-  }
-
-  .heli-description {
-    margin-top: 18px;
+    gap: 18px;
+    margin-top: 36px;
   }
 }
-
-@media (min-width: 901px) {
-  .mini-eyebrow {
-    letter-spacing: 2.25px;
-    font-size: 9.75px;
-  }
-
-  .heli-card {
-    border-radius: 21px;
-  }
-
-  /* Same image proportion for all six cards. */
-  .heli-image {
-    flex-basis: 248px;
-    height: 248px;
-  }
-
-  .heli-image > span {
-    top: 16.5px;
-    left: 16.5px;
-    padding: 7.5px 12.75px;
-    letter-spacing: 1.5px;
-    font-size: 12px;
-  }
-
-  /* Same body spacing/alignment for standard and premium cards. */
-  .heli-body {
-    padding: 24px;
-  }
-
-  .heli-title-row {
-    gap: 18.75px;
-    margin-top: 13.5px;
-  }
-
-  .heli-title-row h3 {
-    margin-bottom: 6px;
-    font-size: 22.5px;
-  }
-
-  .heli-price strong {
-    font-size: 18.75px;
-  }
-
-  .heli-description {
-    margin-top: 14px;
-    font-size: 12.75px;
-    line-height: 1.55;
-  }
-
-  .heli-card:not(.premium) .heli-description {
-    margin-top: 14px;
-    padding-top: 12px;
-  }
-
-  .heli-card:not(.premium) .heli-description::before {
-    width: 34px;
-  }
-}
-/* Rich helicopter card details */
-.heli-card { display: flex; flex-direction: column; }
-.heli-body { display: flex; flex: 1; flex-direction: column; }
-.heli-body h3 a { color: inherit; text-decoration: none; }
-.heli-body .experience-card-description { margin-bottom: 0; }
-.heli-card .experience-card-actions { margin-top: auto; }

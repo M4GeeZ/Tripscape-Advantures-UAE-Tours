@@ -1,4 +1,5 @@
 import { tourCatalog } from './data'
+import { applyTourPricing } from './utils/tourPricing'
 
 const findTour = (title) => tourCatalog.find((tour) => tour.title === title)
 const pickTours = (titles) => titles.map(findTour).filter(Boolean)
@@ -9,17 +10,17 @@ export const campaignPages = {
     eyebrow: 'EVENING DESERT SAFARI DUBAI',
     title: 'Evening Desert Safari Dubai',
     heroCopy: 'Dune bashing, camel riding, BBQ dinner and live desert entertainment in one easy evening experience.',
-    heroImage: '/images/top-experiences/evening-desert-safari-bbq-dinner.png',
+    heroImage: '/images/top-experiences/evening-desert-safari-bbq-dinner.webp',
     seoTitle: 'Evening Desert Safari Dubai | BBQ Dinner & Live Shows',
     seoDescription: 'Book an evening desert safari in Dubai with dune bashing, camel ride, BBQ dinner and live entertainment. Compare a few selected packages and book direct by WhatsApp.',
     packageItems: [
       {
         sourceTitle: 'Evening Desert Safari with BBQ Dinner',
-        image: '/images/top-experiences/evening-desert-safari-bbq-dinner.png'
+        image: '/images/top-experiences/evening-desert-safari-bbq-dinner.webp'
       },
       {
         sourceTitle: 'VIP Premium Desert Safari with BBQ Dinner',
-        image: '/images/top-experiences/vip-premium-desert-safari-bbq-dinner.png'
+        image: '/images/top-experiences/vip-premium-desert-safari-bbq-dinner.webp'
       },
       {
         title: 'Private Desert Safari Packages',
@@ -28,7 +29,7 @@ export const campaignPages = {
         description: 'Explore standard, premium, private family, quad-bike and dune-buggy evening safari options in one place.',
         duration: '5 package options',
         location: 'Dubai, UAE',
-        price: 'Contact for price',
+        price: '',
         unit: '',
         rating: '4.9',
         reviews: 0,
@@ -36,7 +37,7 @@ export const campaignPages = {
       },
       {
         sourceTitle: 'VIP Desert Safari with Private Seating',
-        image: '/images/top-experiences/vip-desert-safari-private-seating.png'
+        image: '/images/top-experiences/vip-desert-safari-private-seating.webp'
       },
       {
         sourceTitle: 'Private Desert Safari with Sahara Fortress Dinner',
@@ -49,7 +50,7 @@ export const campaignPages = {
         description: 'A private Hummer-style 4×4 desert safari with dune bashing, scenic desert stops and direct booking support.',
         duration: 'Private 4×4',
         location: 'Dubai, UAE',
-        price: 'Contact for price',
+        price: '',
         unit: '',
         rating: '4.9',
         reviews: 0,
@@ -110,14 +111,14 @@ export const campaignPages = {
       {
         sourceTitle: 'Evening Desert Safari with BBQ Dinner',
         title: 'Standard Package – Evening Safari with Dinner',
-        image: '/images/top-experiences/evening-desert-safari-bbq-dinner.png',
+        image: '/images/top-experiences/evening-desert-safari-bbq-dinner.webp',
         duration: 'Evening',
         href: '/tours/desert-safari/evening-desert-safari-with-bbq-dinner'
       },
       {
         sourceTitle: 'VIP Premium Desert Safari with BBQ Dinner',
         title: 'Premium Evening Desert Safari',
-        image: '/images/top-experiences/vip-premium-desert-safari-bbq-dinner.png',
+        image: '/images/top-experiences/vip-premium-desert-safari-bbq-dinner.webp',
         duration: 'Premium',
         href: '/tours/desert-safari/vip-premium-desert-safari-with-bbq-dinner'
       },
@@ -128,7 +129,7 @@ export const campaignPages = {
         description: 'A private family desert safari option for up to six guests with dedicated transport and a more personal setup.',
         duration: 'Up to 6 guests',
         location: 'Dubai, UAE',
-        price: 'Contact for price',
+        price: '',
         unit: '',
         rating: '4.9',
         reviews: 0,
@@ -300,7 +301,7 @@ export const campaignPages = {
     eyebrow: 'PRIVATE DESERT SAFARI DUBAI',
     title: 'Private Desert Safari & VIP Setup',
     heroCopy: 'Premium desert experiences for couples, families and private groups with upgraded transport, seating and service options.',
-    heroImage: '/images/top-experiences/vip-desert-safari-private-seating.png',
+    heroImage: '/images/top-experiences/vip-desert-safari-private-seating.webp',
     seoTitle: 'Private Desert Safari Dubai | VIP Desert Setup',
     seoDescription: 'Book a private desert safari in Dubai with VIP seating, private vehicle options and premium dinner experiences. Direct booking, WhatsApp and call support.',
     packageItems: [
@@ -321,7 +322,7 @@ export const campaignPages = {
         description: 'A private family desert safari option for up to six guests with dedicated transport, reserved seating and a more personal setup.',
         duration: 'Family',
         location: 'Dubai, UAE',
-        price: 'Contact for price',
+        price: '',
         unit: '',
         rating: '4.9',
         reviews: 0,
@@ -386,9 +387,9 @@ function buildPackageItem(item) {
 
 Object.values(campaignPages).forEach((page) => {
   if (page.packageItems) {
-    page.tours = page.packageItems.map(buildPackageItem).filter(Boolean)
+    page.tours = page.packageItems.map(buildPackageItem).filter(Boolean).map(applyTourPricing)
   } else {
-    page.tours = pickTours(page.packageTitles || [])
+    page.tours = pickTours(page.packageTitles || []).map(applyTourPricing)
   }
 })
 

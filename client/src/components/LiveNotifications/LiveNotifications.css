@@ -1,0 +1,333 @@
+/* Promo (bottom-right) and social-proof (bottom-left) notifications.
+   Both sit above the floating Call / WhatsApp buttons. */
+
+.live-slot {
+  position: fixed;
+  z-index: 950;
+  bottom: 104px;
+  pointer-events: none;
+}
+
+/* Keep clear of the fixed side rails (social icons left, "Enquire now" right)
+   so they stay clickable while a notification is showing. */
+.live-slot--left { left: 74px; }
+.live-slot--right { right: 74px; }
+
+@media (max-width: 1100px) {
+  .live-slot--left { left: 48px; }
+  .live-slot--right { right: 48px; }
+}
+
+.live-slot > * {
+  pointer-events: auto;
+}
+
+.live-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .1);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color .2s ease;
+}
+
+.live-close:hover { background: rgba(255, 255, 255, .2); }
+
+.live-close--light {
+  top: 14px;
+  right: 14px;
+  width: 30px;
+  height: 30px;
+  background: rgba(16, 27, 43, .06);
+  color: var(--muted);
+}
+
+.live-close--light:hover { background: rgba(16, 27, 43, .12); }
+
+/* ---- Promo card ---- */
+.live-promo {
+  position: relative;
+  width: 340px;
+  max-width: calc(100vw - 56px);
+  padding: 22px 22px 16px;
+  box-sizing: border-box;
+  border: 1px solid rgba(201, 139, 46, .55);
+  border-radius: 16px;
+  background: var(--navy, #101b2b);
+  color: #fff;
+  box-shadow: 0 24px 60px rgba(7, 14, 24, .45);
+  animation: live-in-right .45s cubic-bezier(.22, 1, .36, 1);
+}
+
+.live-promo__icon {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--gold);
+  color: #fff;
+  box-shadow: 0 0 0 7px rgba(201, 139, 46, .14);
+}
+
+.live-promo__eyebrow {
+  display: block;
+  margin-top: 16px;
+  color: var(--gold-light);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+
+.live-promo h4 {
+  margin: 8px 0 6px;
+  color: #fff;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -.3px;
+}
+
+.live-promo p {
+  margin: 0;
+  color: rgba(255, 255, 255, .74);
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.live-promo p strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+.live-promo__code {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 12px 12px 12px 16px;
+  border: 1.5px dashed rgba(201, 139, 46, .75);
+  border-radius: 10px;
+  background: rgba(201, 139, 46, .1);
+}
+
+.live-promo__code span {
+  color: var(--gold-light);
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: .14em;
+}
+
+.live-promo__code button {
+  flex: 0 0 auto;
+  padding: 8px 12px;
+  border: 1px solid rgba(242, 197, 113, .6);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--gold-light);
+  font: inherit;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color .2s ease, color .2s ease;
+}
+
+.live-promo__code button:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #fff;
+}
+
+.live-promo__applied {
+  display: block;
+  margin-top: 8px;
+  color: #7ee2a8;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.live-promo__cta {
+  width: 100%;
+  height: 46px;
+  margin-top: 14px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--gold);
+  color: #fff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color .2s ease, transform .2s ease;
+}
+
+.live-promo__cta:hover {
+  background: #b87b22;
+  transform: translateY(-1px);
+}
+
+.live-promo__timer {
+  display: block;
+  margin-top: 10px;
+  color: rgba(255, 255, 255, .5);
+  font-size: 11px;
+  text-align: center;
+}
+
+.live-promo__timer b { color: var(--gold-light); }
+
+/* ---- Social proof card (bottom-left) ---- */
+.live-social {
+  position: relative;
+  width: 420px;
+  max-width: calc(100vw - 56px);
+  padding: 18px 48px 20px 22px;
+  box-sizing: border-box;
+  border: 1px solid #ebe4d8;
+  border-left: 4px solid var(--gold);
+  border-radius: 16px;
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 24px 60px rgba(16, 27, 43, .22);
+  animation: live-in-left .45s cubic-bezier(.22, 1, .36, 1);
+}
+
+.live-social__label {
+  display: block;
+  margin-bottom: 12px;
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.live-social__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.live-social__avatar {
+  flex: 0 0 56px;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border: 2px solid rgba(201, 139, 46, .45);
+  border-radius: 50%;
+  background: var(--navy, #101b2b);
+  color: var(--gold-light);
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.live-social p {
+  margin: 0;
+  color: #2c3542;
+  font-size: 15.5px;
+  line-height: 1.5;
+}
+
+.live-social p strong {
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.live-social small {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  color: #6f7680;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.live-social small svg { color: #1aa260; }
+
+.live-social__stars {
+  display: inline-flex;
+  gap: 3px;
+  margin-bottom: 6px;
+  color: var(--gold);
+}
+
+@keyframes live-in-right {
+  from { opacity: 0; transform: translateX(40px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes live-in-left {
+  from { opacity: 0; transform: translateX(-40px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (max-width: 640px) {
+  .live-slot {
+    bottom: 88px;
+  }
+
+  .live-slot--left,
+  .live-slot--right {
+    left: 46px;
+    right: 46px;
+  }
+
+  .live-promo,
+  .live-social {
+    width: 100%;
+    max-width: none;
+  }
+
+  .live-promo {
+    padding: 18px 18px 14px;
+  }
+
+  .live-social {
+    padding: 14px 42px 16px 16px;
+  }
+
+  .live-social__avatar {
+    flex-basis: 46px;
+    width: 46px;
+    height: 46px;
+    font-size: 18px;
+  }
+
+  .live-social p {
+    font-size: 14px;
+  }
+
+  .live-promo__icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .live-promo h4 {
+    font-size: 21px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-promo,
+  .live-social {
+    animation: none;
+  }
+}
+
+.live-promo__applied--error { color: #ff9b9b; }

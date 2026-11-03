@@ -1,18 +1,37 @@
 import "./CallFloat.css";
 
 export default function CallFloat() {
+  const phoneNumber = "+971549930684";
+
   const whatsappMessage = encodeURIComponent(
     "Hello Tripscape Adventures, I would like to get more information."
   );
 
+  const handleClick = (event) => {
+    event.preventDefault();
+
+    const isMobileOrTablet = window.matchMedia(
+      "(max-width: 1024px)"
+    ).matches;
+
+    if (isMobileOrTablet) {
+      window.location.href = `tel:${phoneNumber}`;
+    } else {
+      window.open(
+        `https://wa.me/971549930684?text=${whatsappMessage}`,
+        "_blank",
+        "noopener,noreferrer"
+      );
+    }
+  };
+
   return (
     <a
       className="call-float"
-      href={`https://wa.me/971549930684?text=${whatsappMessage}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label="Contact Tripscape Adventures on WhatsApp"
-      title="Contact on WhatsApp"
+      href={`tel:${phoneNumber}`}
+      onClick={handleClick}
+      aria-label="Contact Tripscape Adventures"
+      title="Contact Tripscape Adventures"
     >
       <svg
         className="call-float__icon"

@@ -334,3 +334,11 @@
     padding-top: 14px;
   }
 }
+
+/* Tripscape published package rates */
+.tripscape-highlight-price, .tripscape-detail-price {display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;border-radius:10px;padding:12px 14px;background:#fff8ed;border:1px solid #f1dcc0;color:#263143;margin:12px 0 14px;}
+.tripscape-highlight-price small, .tripscape-detail-price small {font-size:10px;font-weight:800;letter-spacing:.09em;color:#9b7436;}
+.tripscape-highlight-price strong, .tripscape-detail-price strong {font-size:20px;font-weight:850;color:#b77c22;}
+.tripscape-highlight-price span, .tripscape-detail-price span {font-size:12px;font-weight:700;color:#55606d;}
+.tripscape-detail-price {width:max-content;max-width:100%;padding:15px 19px;margin-bottom:16px;}
+.tripscape-detail-price strong {font-size:27px;}

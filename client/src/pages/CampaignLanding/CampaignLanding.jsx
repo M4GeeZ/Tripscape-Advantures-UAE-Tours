@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Check, ChevronRight, Clock3, MapPin, MessageCircle, Phone, ShieldCheck, Star, X } from 'lucide-react'
+import { Check, Clock3, MapPin, MessageCircle, Phone, ShieldCheck, Star, X } from 'lucide-react'
 import Navbar from '../../components/Navbar/Navbar'
 import Footer from '../../components/Footer/Footer'
 import WhatsAppFloat from '../../components/WhatsAppFloat/WhatsAppFloat'
@@ -12,6 +12,10 @@ import { getTourDetailHref } from '../../tourDetails'
 import { getBookingAddOns } from '../../bookingOptions'
 import { apiUrl } from '../../utils/apiBaseUrl'
 import createSubmissionId from '../../utils/createSubmissionId'
+import { usePromo } from '../../utils/promoOffers'
+import { ExperiencePriceRow, PromoSaleBadge } from '../../components/ExperienceCard/ExperienceCard'
+import '../../components/ExperienceCardActions/ExperienceCardActions.css'
+import '../../components/ExperienceCard/ExperienceCard.css'
 import './CampaignLanding.css'
 
 const PHONE = '+971549930684'
@@ -26,28 +30,27 @@ function tomorrow() {
 function CampaignPackageCard({ tour, campaignTitle }) {
   const href = tour.href || getTourDetailHref(tour.category, tour.sourceTitle || tour.title)
   const contactPrice = /contact|aed\s*0/i.test(String(tour.price || ''))
+  const promo = usePromo(tour.title)
   return (
-    <article className="ad-package-card" data-lux-reveal>
-      <a className="ad-package-card__image" href={href}>
+    <article className="experience-card ad-package-card" data-lux-reveal>
+      <a className="experience-card-media" href={href} aria-label={`View ${tour.title}`}>
         <img src={tour.image} alt={tour.title} loading="lazy" />
-        {tour.duration && <span><Clock3 size={14} /> {tour.duration}</span>}
+        {tour.category && <span className="experience-card-badge experience-card-badge--dark">{tour.category}</span>}
+        {tour.duration && <span className="experience-card-meta"><Clock3 size={12} /> {tour.duration}</span>}
+        {!contactPrice && <PromoSaleBadge title={tour.title} price={tour.price} />}
       </a>
-      <div className="ad-package-card__body">
-        <div className="ad-package-card__rating"><Star size={14} fill="currentColor" /> 4.9 rating</div>
-        <h3>{tour.title}</h3>
-        <ul>
-          <li><Check size={15} /> Campaign-relevant package</li>
-          <li><Check size={15} /> Direct booking support</li>
-          <li><Check size={15} /> Clear package confirmation</li>
+      <div className="experience-card-body">
+        <span className="experience-card-eyebrow"><Star size={10} fill="currentColor" /> 4.9 guest rating</span>
+        <h3 className="experience-card-title"><a href={href}>{tour.title}</a></h3>
+        <ul className="experience-card-points">
+          <li>Campaign-relevant package</li>
+          <li>Direct booking support</li>
+          <li>Clear package confirmation</li>
         </ul>
-        <div className="ad-package-card__price">
-          <small>{contactPrice ? 'PRICE' : 'FROM'}</small>
-          <strong>{contactPrice ? 'Contact for price' : tour.price}</strong>
-          {tour.unit && !contactPrice && <span>{tour.unit}</span>}
-        </div>
-        <div className="ad-package-card__actions">
-          <a className="ad-package-card__whatsapp" href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(`Hi Tripscape, I am interested in ${tour.title} from the ${campaignTitle} campaign.`)}`} target="_blank" rel="noreferrer"><MessageCircle size={17} /> WhatsApp</a>
-          <a className="ad-package-card__view" href={href}>View package <ChevronRight size={17} /></a>
+        <ExperiencePriceRow title={tour.title} price={contactPrice ? '' : tour.price} priceNote={tour.unit} />
+        <div className="experience-card-actions">
+          <a className="experience-card-action experience-card-action--primary" href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(`Hi Tripscape, I am interested in ${tour.title} from the ${campaignTitle} campaign.${promo ? ` Promo code ${promo.code} (${promo.percent}% off).` : ''}`)}`} target="_blank" rel="noreferrer"><MessageCircle size={15} /> <span>Book Now</span></a>
+          <a className="experience-card-action experience-card-action--outline" href={href}><span>View Details</span></a>
         </div>
       </div>
     </article>
@@ -210,6 +213,34 @@ function BookingForm({ page }) {
 export default function CampaignLanding({ slug, menuOpen, setMenuOpen }) {
   const pageRef = useRef(null)
   const page = getCampaignPage(slug)
+  const [cmsTours, setCmsTours] = useState([])
+  useEffect(() => {
+    let active = true
+    const targetPath = window.location.pathname.replace(/\/+$/, '') || '/'
+    fetch(apiUrl('/api/tours'))
+      .then((response) => response.ok ? response.json() : [])
+      .then((items) => {
+        if (!active) return
+        setCmsTours(Array.isArray(items) ? items.filter((item) => item?._id && item?.published !== false && (item.placements?.paths || []).some((target) => {
+          try { return (new URL(target, window.location.origin).pathname.replace(/\/+$/, '') || '/') === targetPath }
+          catch { return false }
+        })) : [])
+      })
+      .catch(() => { if (active) setCmsTours([]) })
+    return () => { active = false }
+  }, [slug])
+  const packageTours = useMemo(() => {
+    const result = [...(page?.tours || [])]
+    const seen = new Set(result.map((item) => String(item.title || '').trim().toLowerCase()))
+    for (const item of cmsTours) {
+      const key = String(item.title || '').trim().toLowerCase()
+      if (!key || seen.has(key)) continue
+      seen.add(key)
+      result.push({ ...item, href: item.href || (item.categorySlug && item.slug ? '/tours/' + item.categorySlug + '/' + item.slug : '') })
+    }
+    return result
+  }, [page, cmsTours])
+
   useLuxuryReveal(pageRef)
 
   useEffect(() => {
@@ -268,14 +299,14 @@ export default function CampaignLanding({ slug, menuOpen, setMenuOpen }) {
         <section className="ad-packages" id="packages">
           <div className="container">
             <div className="ad-section-head" data-lux-reveal><span className="ad-eyebrow ad-eyebrow--dark">SELECTED PACKAGES</span><h2>{page.sectionTitle}</h2><p>{page.sectionCopy}</p></div>
-            <div className={`ad-package-grid${page.fiveCardLayout ? ' ad-package-grid--five' : ''}`}>{page.tours.map((tour) => <CampaignPackageCard key={tour.title} tour={tour} campaignTitle={page.title} />)}</div>
+            <div className={`ad-package-grid${page.fiveCardLayout ? ' ad-package-grid--five' : ''}`}>{packageTours.map((tour) => <CampaignPackageCard key={tour.title} tour={tour} campaignTitle={page.title} />)}</div>
           </div>
         </section>
 
         <section className="ad-booking-section">
           <div className="container ad-booking-section__grid">
             <div className="ad-booking-copy" data-lux-reveal><span className="ad-eyebrow">BOOK DIRECT</span><h2>Tell us your date and package.</h2><p>Complete the short form. Your request will open in WhatsApp with all booking details ready to send.</p><div className="ad-booking-contact"><a href={whatsappIntro} target="_blank" rel="noreferrer"><MessageCircle size={20} /> WhatsApp booking</a><a href={`tel:${PHONE}`}><Phone size={20} /> +971 54 993 0684</a></div></div>
-            <BookingForm page={page} />
+            <BookingForm page={{ ...page, tours: packageTours }} />
           </div>
         </section>
 

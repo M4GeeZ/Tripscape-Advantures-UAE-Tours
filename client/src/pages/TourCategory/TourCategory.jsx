@@ -7,15 +7,17 @@ import Footer from '../../components/Footer/Footer'
 import WhatsAppFloat from '../../components/WhatsAppFloat/WhatsAppFloat'
 import CallFloat from '../../components/CallFloat/CallFloat'
 import ExperienceCardActions from '../../components/ExperienceCardActions/ExperienceCardActions'
+import { ExperiencePriceRow, PromoSaleBadge } from '../../components/ExperienceCard/ExperienceCard'
 import { useLuxuryReveal } from '../../hooks/useLuxuryReveal'
 import { tourCategoryPages } from '../../tourCategoryPages'
 import { getTourDetailHref } from '../../tourDetails'
 import { getCardPoints } from '../../utils/cardContent'
 import './TourCategory.css'
+import { applyTourPricing } from '../../utils/tourPricing'
 
-function CategoryTourCard({ tour, page }) {
+function CategoryTourCard({ tour: rawTour, page }) {
+  const tour = applyTourPricing(rawTour)
   const category = tour.category || page.detailCategory || page.name
-  const hasFixedPrice = tour.price && tour.price !== 'Contact for price'
   const detailHref = getTourDetailHref(category, tour.title)
   const points = getCardPoints(category, tour.title, tour.description, 7)
 
@@ -27,6 +29,7 @@ function CategoryTourCard({ tour, page }) {
           <span className="category-tour-card__category">{page.name}</span>
           {tour.duration && <span className="category-tour-card__duration"><Clock3 size={13} /> {tour.duration}</span>}
         </div>
+        <PromoSaleBadge title={tour.title} price={tour.price} />
       </a>
 
       <div className="category-tour-card__body">
@@ -36,15 +39,7 @@ function CategoryTourCard({ tour, page }) {
           {points.map((point) => <li key={point}>{point}</li>)}
         </ul>
 
-        <div className="category-tour-card__bottom">
-          <div className="category-tour-card__price">
-            {hasFixedPrice ? (
-              <><small>FROM</small><div><strong>{tour.price}</strong>{tour.unit && <span>{tour.unit}</span>}</div></>
-            ) : (
-              <><small>PRICE</small><div><strong className="category-tour-card__contact">Contact for price</strong></div></>
-            )}
-          </div>
-        </div>
+        <ExperiencePriceRow title={tour.title} price={tour.price} priceNote={tour.unit} />
 
         <ExperienceCardActions title={tour.title} detailHref={detailHref} />
       </div>

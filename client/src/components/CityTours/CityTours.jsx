@@ -1,7 +1,6 @@
-import { Clock } from 'lucide-react'
 import { cities } from '../../data'
 import SectionHeading from '../SectionHeading/SectionHeading'
-import ExperienceCardActions from '../ExperienceCardActions/ExperienceCardActions'
+import ExperienceCard from '../ExperienceCard/ExperienceCard'
 import { getTourDetailHref } from '../../tourDetails'
 import { getCardPoints } from '../../utils/cardContent'
 import './CityTours.css'
@@ -18,28 +17,20 @@ export default function CityTours() {
         />
 
         <div className="city-grid">
-          {cities.map((city) => {
-            const detailHref = getTourDetailHref('City Tours', city.title)
-            const points = getCardPoints('City Tours', city.title, '', 5)
-
-            return (
-              <article className="city-card" key={city.title} data-reveal style={{ '--city-image': `url("${city.image}")` }}>
-                <a href={detailHref} className="city-image-shell" aria-label={`View ${city.title}`}>
-                  <img src={city.image} alt={city.title} loading="lazy" />
-                </a>
-                <div className="city-overlay" />
-                <div className="city-content">
-                  <span><Clock size={16} /> Guided tour</span>
-                  <h3><a href={detailHref}>{city.title}</a></h3>
-                  <p className="city-price">{city.price}</p>
-                  <ul className="experience-card-points experience-card-points--light">
-                    {points.map((point) => <li key={point}>{point}</li>)}
-                  </ul>
-                  <ExperienceCardActions title={city.title} detailHref={detailHref} />
-                </div>
-              </article>
-            )
-          })}
+          {cities.map((city) => (
+            <ExperienceCard
+              key={city.title}
+              data-reveal
+              image={city.image}
+              href={getTourDetailHref('City Tours', city.title)}
+              badge="Guided tour"
+              eyebrow="City tour experience"
+              title={city.title}
+              points={getCardPoints('City Tours', city.title, '', 4)}
+              price={city.price}
+              priceNote="per person"
+            />
+          ))}
         </div>
       </div>
     </section>

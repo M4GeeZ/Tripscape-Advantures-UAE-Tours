@@ -1,20 +1,27 @@
 import { MapPin, Star } from 'lucide-react'
 import ExperienceCardActions from '../ExperienceCardActions/ExperienceCardActions'
+import { ExperiencePriceRow, PromoSaleBadge } from '../ExperienceCard/ExperienceCard'
 import { getTourDetailHref } from '../../tourDetails'
 import { getCardPoints } from '../../utils/cardContent'
 import './TourCard.css'
+import { applyTourPricing } from '../../utils/tourPricing'
 
-export default function TourCard({ tour }) {
-  const hasFixedPrice = tour.price !== 'Contact for price'
+export default function TourCard({ tour: rawTour }) {
+  const tour = applyTourPricing(rawTour)
   const category = tour.category || 'Tours'
-  const detailHref = getTourDetailHref(category, tour.title)
-  const points = getCardPoints(category, tour.title, tour.description, 7)
+  const detailHref = tour.href || (tour.slug && tour.categorySlug
+    ? `/tours/${tour.categorySlug}/${tour.slug}`
+    : getTourDetailHref(category, tour.title))
+  const points = tour.included?.length
+    ? tour.included.slice(0, 7)
+    : getCardPoints(category, tour.title, tour.description, 7)
 
   return (
     <article className="tour-card-reference" data-reveal>
       <a className="tour-card-image-link" href={detailHref} aria-label={`View ${tour.title}`}>
         <div className="tour-card-image-wrap">
           <img src={tour.image} alt={tour.title} className="tour-card-image" loading="lazy" />
+          <PromoSaleBadge title={tour.title} price={tour.price} />
         </div>
       </a>
 
@@ -35,17 +42,7 @@ export default function TourCard({ tour }) {
           {points.map((point) => <li key={point}>{point}</li>)}
         </ul>
 
-        <div className="tour-card-divider" />
-
-        <div className="tour-card-price-row">
-          <div className={`tour-card-price ${hasFixedPrice ? 'fixed-price' : 'contact-price'}`}>
-            {hasFixedPrice && <small>FROM</small>}
-            <div>
-              <strong>{tour.price}</strong>
-              {hasFixedPrice && tour.unit && <span>{tour.unit}</span>}
-            </div>
-          </div>
-        </div>
+        <ExperiencePriceRow title={tour.title} price={tour.price} priceNote={tour.unit} />
 
         <ExperienceCardActions title={tour.title} detailHref={detailHref} />
       </div>

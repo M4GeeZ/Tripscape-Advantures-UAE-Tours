@@ -1,5 +1,6 @@
-import { ArrowRight } from 'lucide-react'
 import './ExperienceCardActions.css'
+import '../ExperienceCard/ExperienceCard.css'
+import { usePromo } from '../../utils/promoOffers'
 
 const WHATSAPP_NUMBER = '971549930684'
 
@@ -22,26 +23,27 @@ function WhatsAppIcon({ size = 17 }) {
 }
 
 export default function ExperienceCardActions({ title, detailHref }) {
+  const promo = usePromo(title)
   const whatsappText = encodeURIComponent(
-    `Hi Tripscape, I am interested in ${title}. Please share details and availability.`
+    `Hi Tripscape, I am interested in ${title}. Please share details and availability.` +
+      (promo ? ` Promo code: ${promo.code} (${promo.percent}% off).` : '')
   )
   const whatsappHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappText}`
 
   return (
     <div className="experience-card-actions">
       <a
-        className="experience-card-action experience-card-action--whatsapp"
+        className="experience-card-action experience-card-action--primary"
         href={whatsappHref}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label={`WhatsApp us about ${title}`}
+        aria-label={`Book ${title} on WhatsApp`}
       >
-        <WhatsAppIcon size={17} />
-        <span>WhatsApp</span>
+        <WhatsAppIcon size={15} />
+        <span>Book Now</span>
       </a>
-      <a className="experience-card-action" href={detailHref} aria-label={`View ${title} page`}>
-        <span>View Page</span>
-        <ArrowRight size={15} />
+      <a className="experience-card-action experience-card-action--outline" href={detailHref} aria-label={`View ${title} details`}>
+        <span>View Details</span>
       </a>
     </div>
   )

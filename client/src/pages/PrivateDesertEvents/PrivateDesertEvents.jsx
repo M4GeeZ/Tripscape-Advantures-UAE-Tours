@@ -1,9 +1,10 @@
 import { useEffect, useRef } from 'react'
-import { ArrowRight, Check, MessageCircle, Phone, Users } from 'lucide-react'
+import { Check, MessageCircle, Phone } from 'lucide-react'
 import Navbar from '../../components/Navbar/Navbar'
 import Footer from '../../components/Footer/Footer'
 import CallFloat from '../../components/CallFloat/CallFloat'
 import WhatsAppFloat from '../../components/WhatsAppFloat/WhatsAppFloat'
+import ExperienceCard from '../../components/ExperienceCard/ExperienceCard'
 import { useLuxuryReveal } from '../../hooks/useLuxuryReveal'
 import { privateEventExperiences } from '../../privateEventExperiences'
 import { getTourDetailHref } from '../../tourDetails'
@@ -54,6 +55,7 @@ export default function PrivateDesertEvents({ menuOpen, setMenuOpen }) {
             <div data-lux-reveal>
               <span className="private-events-kicker">FAMILY PACKAGE</span>
               <h2>Private desert setup for up to 6 guests.</h2>
+              <div className="tripscape-family-price"><span>FROM</span> <strong>AED 749</strong> <b>/car</b></div>
               <p>
                 Ideal for families and small private groups who want a more personal desert experience with reserved seating, dedicated service and the option to add a celebration setup.
               </p>
@@ -76,21 +78,18 @@ export default function PrivateDesertEvents({ menuOpen, setMenuOpen }) {
               {privateEventExperiences.map((event) => {
                 const href = getTourDetailHref('Desert Safari', event.title)
                 return (
-                  <article className="private-event-card" key={event.title} data-lux-reveal>
-                    <a className="private-event-card__image" href={href} aria-label={`View ${event.title}`}>
-                      <img src={event.image} alt={event.title} loading="lazy" />
-                      <span>{event.meta}</span>
-                    </a>
-                    <div className="private-event-card__body">
-                      <div className="private-event-card__meta"><Users size={15} /> Private event</div>
-                      <h3><a href={href}>{event.title}</a></h3>
-                      <p>{event.description}</p>
-                      <div className="private-event-card__footer">
-                        <strong>Contact for price</strong>
-                        <a href={href}>View Page <ArrowRight size={16} /></a>
-                      </div>
-                    </div>
-                  </article>
+                  <ExperienceCard
+                    key={event.title}
+                    className="private-event-card"
+                    data-lux-reveal
+                    image={event.image}
+                    href={href}
+                    badge={event.meta}
+                    eyebrow="Private event"
+                    title={event.title}
+                    description={event.description}
+                    points={(event.included || []).slice(0, 4)}
+                  />
                 )
               })}
             </div>

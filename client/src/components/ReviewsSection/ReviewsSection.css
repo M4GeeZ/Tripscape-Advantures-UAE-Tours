@@ -129,3 +129,7 @@
   .review-card { padding: 20px; }
   .google-review-card p { font-size: 13px; }
 }
+
+.google-review-source.is-customer {
+  color: #3b8b61;
+}

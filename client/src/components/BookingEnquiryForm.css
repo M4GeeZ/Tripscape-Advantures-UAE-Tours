@@ -448,3 +448,116 @@
     grid-column: auto;
   }
 }
+
+/* Promo code */
+.booking-enquiry-card__promo-price {
+  display: flex !important;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.booking-enquiry-card__promo-price s {
+  color: #a3a7ad;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.booking-enquiry-card__promo-price small {
+  color: #7a818b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.booking-enquiry-promo {
+  display: grid;
+  gap: 7px;
+}
+
+.booking-enquiry-promo > span {
+  color: #3a4350;
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.booking-enquiry-promo__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 46px;
+  padding: 0 5px 0 12px;
+  border: 1.5px dashed rgba(201, 138, 46, .55);
+  border-radius: 10px;
+  background: #fffaf1;
+  color: var(--gold);
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.booking-enquiry-promo__row:focus-within {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201, 138, 46, .12);
+}
+
+.booking-enquiry-promo__row input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: #111b2b;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .1em;
+}
+
+.booking-enquiry-promo__row input::placeholder {
+  color: #a7abb2;
+  font-weight: 500;
+  letter-spacing: .04em;
+}
+
+.booking-enquiry-promo__apply,
+.booking-enquiry-promo__remove {
+  flex: 0 0 auto;
+  height: 36px;
+  border: 0;
+  border-radius: 8px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.booking-enquiry-promo__apply {
+  padding: 0 16px;
+  background: var(--gold);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.booking-enquiry-promo__apply:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.booking-enquiry-promo__remove {
+  width: 36px;
+  display: grid;
+  place-items: center;
+  background: rgba(16, 27, 43, .06);
+  color: #5f6874;
+}
+
+.booking-enquiry-promo__status {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.booking-enquiry-promo__status.is-success { color: #1a8f55; }
+.booking-enquiry-promo__status.is-error { color: #c62a3c; }

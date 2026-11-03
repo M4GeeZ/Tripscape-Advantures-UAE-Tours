@@ -24,3 +24,13 @@ export function apiUrl(pathname) {
   const path = pathname.startsWith('/') ? pathname : `/${pathname}`
   return `${getApiBaseUrl()}${path}`
 }
+
+export function mediaUrl(value) {
+  const source = String(value || '').trim()
+  if (!source) return ''
+  if (/^data:image\//i.test(source)) return source
+  if (/^https?:\/\//i.test(source)) return source
+  if (source.startsWith('/api/uploads/')) return apiUrl(source)
+  if (source.startsWith('/uploads/')) return apiUrl(`/api${source}`)
+  return source
+}

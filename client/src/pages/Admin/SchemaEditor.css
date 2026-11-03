@@ -1,0 +1,9 @@
+
+.admin-schema-panel{margin:25px 0 12px;padding:22px;border:1px solid rgba(201,139,46,.25);border-radius:16px;background:#fffcf7;display:grid;gap:16px}
+.admin-schema-panel__head span{font-size:10px;letter-spacing:.12em;color:#a67c3e;font-weight:900}
+.admin-schema-panel__head h3{margin:6px 0;font-size:20px;color:#1d2b3a}
+.admin-schema-panel__head p,.admin-schema-note{font-size:12px;line-height:1.6;color:#737b84;margin:0}
+.admin-schema-json{min-height:240px;font:12px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;resize:vertical;white-space:pre;tab-size:2}
+.admin-schema-actions{display:flex;flex-wrap:wrap;gap:10px}
+.admin-schema-message{font-size:12px;font-weight:700;margin:0;color:#8a6427}
+.admin-schema-preview{max-height:350px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;padding:15px;border:1px solid #e0e5e9;border-radius:10px;background:#162233;color:#f6eedf;font:11px/1.6 ui-monospace,Consolas,monospace}

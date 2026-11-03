@@ -1,0 +1,627 @@
+/* Shared experience card – Tripscape fonts & colours, editorial card layout. */
+
+.experience-card,
+.tour-card,
+.tour-card-reference,
+.private-event-card,
+.ad-package-card {
+  --card-border: #ebe4d8;
+  --card-divider: #e7dfd2;
+}
+
+.experience-card {
+  position: relative;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 1px 2px rgba(16, 27, 43, .04), 0 10px 28px rgba(16, 27, 43, .05);
+  transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+}
+
+.experience-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(201, 139, 46, .35);
+  box-shadow: 0 2px 4px rgba(16, 27, 43, .04), 0 18px 40px rgba(16, 27, 43, .1);
+}
+
+/* Media */
+.experience-card-media {
+  position: relative;
+  display: block;
+  flex: 0 0 auto;
+  aspect-ratio: 16 / 11;
+  overflow: hidden;
+  background: var(--cream);
+}
+
+.experience-card-media img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: center;
+  transition: transform .6s cubic-bezier(.22, 1, .36, 1);
+}
+
+.experience-card:hover .experience-card-media img {
+  transform: scale(1.04);
+}
+
+.experience-card-badge,
+.experience-card-meta {
+  position: absolute;
+  z-index: 2;
+  top: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  max-width: calc(100% - 24px);
+  padding: 6px 11px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.experience-card-badge {
+  left: 12px;
+}
+
+.experience-card-badge--dark {
+  background: rgba(16, 27, 43, .88);
+  color: #fff;
+}
+
+.experience-card-badge--gold {
+  background: var(--gold);
+  color: #fff;
+}
+
+.experience-card-meta {
+  right: 12px;
+  background: #fff;
+  color: var(--ink);
+  letter-spacing: .06em;
+}
+
+.experience-card-meta svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* Body */
+.experience-card-body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  padding: 20px 18px 18px;
+}
+
+.experience-card-eyebrow {
+  display: block;
+  color: var(--gold);
+  font-size: 9.5px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.experience-card-title {
+  margin: 10px 0 0;
+  color: var(--ink);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -.2px;
+}
+
+.experience-card-title a {
+  color: inherit;
+  text-decoration: none;
+  transition: color .2s ease;
+}
+
+.experience-card-title a:hover {
+  color: var(--gold);
+}
+
+.experience-card .experience-card-description {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.6;
+  -webkit-line-clamp: 3;
+}
+
+.experience-card .experience-card-points {
+  margin: 16px 0 0;
+  gap: 8px;
+  color: #2c3542;
+}
+
+.experience-card .experience-card-points li {
+  padding-left: 17px;
+  font-size: 11.5px;
+  line-height: 1.45;
+}
+
+/* Divider + price row */
+.experience-card-price-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--card-divider);
+}
+
+.experience-card-body > .experience-card-points {
+  margin-bottom: 22px;
+}
+
+.experience-card-price {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+
+.experience-card-price strong {
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.experience-card-price s {
+  color: #a3a7ad;
+  font-size: 12px;
+}
+
+.experience-card-price-note {
+  flex: 0 0 auto;
+  color: #8a9099;
+  font-size: 10.5px;
+  text-align: right;
+}
+
+/* Grids using the shared card stretch every row evenly. */
+.tour-grid,
+.city-grid,
+.adventure-grid,
+.helicopter-grid,
+.attractions-grid,
+.private-events-grid,
+.ad-package-grid,
+.tours-card-grid {
+  align-items: stretch;
+}
+
+@media (max-width: 640px) {
+  .experience-card-body {
+    padding: 18px 16px 16px;
+  }
+
+  .experience-card-title {
+    font-size: 18px;
+  }
+}
+
+/* ==========================================================================
+   Same look for cards whose markup lives outside this component
+   (TourCarousel "Top experiences" grid and TourCard on the Tours page).
+   ========================================================================== */
+.tour-card,
+.tour-card-reference {
+  display: flex !important;
+  height: 100%;
+  flex-direction: column;
+  border: 1px solid var(--card-border) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 1px 2px rgba(16, 27, 43, .04), 0 10px 28px rgba(16, 27, 43, .05) !important;
+}
+
+.tour-card:hover,
+.tour-card-reference:hover {
+  transform: translateY(-4px) !important;
+  border-color: rgba(201, 139, 46, .35) !important;
+  box-shadow: 0 2px 4px rgba(16, 27, 43, .04), 0 18px 40px rgba(16, 27, 43, .1) !important;
+}
+
+.tour-card .tour-image-wrap,
+.tour-card-reference .tour-card-image-wrap {
+  height: auto !important;
+  aspect-ratio: 16 / 11;
+}
+
+.tour-card .card-tag {
+  top: 12px;
+  left: 12px;
+  padding: 6px 11px;
+  background: rgba(16, 27, 43, .88);
+  color: #fff;
+  font-size: 9px;
+  letter-spacing: .14em;
+}
+
+.tour-card .card-meta {
+  top: 12px;
+  right: 12px;
+  padding: 6px 11px;
+  font-size: 9px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.tour-card .tour-card-body,
+.tour-card-reference .tour-card-body {
+  flex: 1 1 auto;
+  min-height: 0 !important;
+  padding: 20px 18px 18px !important;
+}
+
+/* Rating line doubles as the gold eyebrow. */
+.tour-card .rating,
+.tour-card-reference .tour-card-rating {
+  color: var(--gold);
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.tour-card .rating svg,
+.tour-card-reference .tour-card-rating svg {
+  width: 11px;
+  height: 11px;
+}
+
+.tour-card h3,
+.tour-card-reference .tour-card-body h3 {
+  min-height: 2.6em !important;
+  margin: 10px 0 0 !important;
+  color: var(--ink);
+  font-size: 19px !important;
+  font-weight: 600 !important;
+  line-height: 1.3 !important;
+  letter-spacing: -.2px !important;
+}
+
+.tour-card-reference:hover .tour-card-body h3 {
+  color: var(--ink);
+}
+
+.tour-card h3 a:hover,
+.tour-card-reference .tour-card-body h3 a:hover {
+  color: var(--gold);
+}
+
+.tour-card-reference .tour-card-location {
+  margin-top: 8px;
+}
+
+.tour-card .experience-card-points,
+.tour-card-reference .experience-card-points {
+  margin: 16px 0 22px !important;
+  gap: 8px;
+  color: #2c3542;
+}
+
+/* Price row: divider above, price on the left. */
+.tour-card .tour-card-price-line,
+.tour-card .tripscape-highlight-price,
+.tour-card-reference .tour-card-price-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: auto 0 0 !important;
+  padding: 16px 0 0 !important;
+  border: 0 !important;
+  border-top: 1px solid var(--card-divider) !important;
+  border-radius: 0 !important;
+  background: none !important;
+  color: var(--ink) !important;
+}
+
+.tour-card .tour-card-price-line strong,
+.tour-card .tripscape-highlight-price strong,
+.tour-card-reference .tour-card-price strong {
+  color: var(--ink) !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+}
+
+/* "FROM" label rendered inline as "From" before the price. */
+.tour-card .tripscape-highlight-price small,
+.tour-card-reference .tour-card-price small {
+  display: inline-block;
+  margin: 0;
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: lowercase;
+}
+
+.tour-card .tripscape-highlight-price small::first-letter,
+.tour-card-reference .tour-card-price small::first-letter {
+  text-transform: uppercase;
+}
+
+.tour-card .tripscape-highlight-price span,
+.tour-card-reference .tour-card-price span {
+  margin-left: auto;
+  color: #8a9099 !important;
+  font-size: 10.5px !important;
+  font-weight: 500 !important;
+}
+
+.tour-card-reference .tour-card-divider {
+  display: none;
+}
+
+.tour-card-reference .tour-card-price > div {
+  display: inline-flex;
+}
+
+.tour-card-reference .tour-card-price {
+  display: flex;
+  width: 100%;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.experience-card-eyebrow svg {
+  margin-right: 4px;
+  vertical-align: -1px;
+}
+
+/* Category pages (/desert-safari etc.) */
+.category-tour-card {
+  display: flex !important;
+  height: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #ebe4d8 !important;
+  border-radius: 10px !important;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(16, 27, 43, .04), 0 10px 28px rgba(16, 27, 43, .05) !important;
+}
+
+.category-tour-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(201, 139, 46, .35) !important;
+}
+
+.category-tour-card__image {
+  height: auto !important;
+  aspect-ratio: 16 / 11;
+}
+
+.category-tour-card__badges {
+  top: 12px !important;
+  right: 12px !important;
+  left: 12px !important;
+}
+
+.category-tour-card__category,
+.category-tour-card__duration {
+  padding: 6px 11px !important;
+  font-size: 9px !important;
+  letter-spacing: .14em !important;
+  text-transform: uppercase;
+}
+
+.category-tour-card__category {
+  background: rgba(16, 27, 43, .88) !important;
+  color: #fff !important;
+}
+
+.category-tour-card__body {
+  flex: 1 1 auto;
+  min-height: 0 !important;
+  padding: 20px 18px 18px !important;
+}
+
+.category-tour-card__rating {
+  color: var(--gold) !important;
+  font-size: 9.5px !important;
+  font-weight: 800;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.category-tour-card__body h3 {
+  min-height: 2.6em !important;
+  margin: 10px 0 0 !important;
+  font-size: 19px !important;
+  font-weight: 600 !important;
+  line-height: 1.3 !important;
+}
+
+.category-tour-card__body h3 a:hover {
+  color: var(--gold);
+}
+
+.category-tour-card .experience-card-points {
+  margin: 16px 0 22px !important;
+  color: #2c3542;
+}
+
+.category-tour-card__bottom {
+  margin-top: auto !important;
+  padding: 16px 0 0 !important;
+  border: 0 !important;
+  border-top: 1px solid #e7dfd2 !important;
+  background: none !important;
+}
+
+.category-tour-card__price {
+  display: flex !important;
+  align-items: baseline;
+  gap: 6px;
+  padding: 0 !important;
+  border: 0 !important;
+  background: none !important;
+}
+
+.category-tour-card__price small {
+  display: inline-block !important;
+  margin: 0 !important;
+  color: var(--ink) !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+  text-transform: lowercase;
+}
+
+.category-tour-card__price small::first-letter {
+  text-transform: uppercase;
+}
+
+.category-tour-card__price > div {
+  display: flex;
+  flex: 1;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.category-tour-card__price strong {
+  color: var(--ink) !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+}
+
+.category-tour-card__price span {
+  margin-left: auto;
+  color: #8a9099 !important;
+  font-size: 10.5px !important;
+  font-weight: 500 !important;
+}
+
+.category-tour-card__price:has(.category-tour-card__contact) small {
+  display: none !important;
+}
+
+/* ==========================================================================
+   Row alignment: two-line title slot, and the price row + buttons always
+   pinned to the bottom so every card in a row lines up.
+   ========================================================================== */
+.experience-card-title {
+  min-height: 2.6em;
+}
+
+.experience-card-body > .experience-card-price-row,
+.tour-card-body > .experience-card-price-row,
+.tour-card-body > .tour-card-price-row,
+.category-tour-card__body > .category-tour-card__bottom {
+  margin-top: auto !important;
+}
+
+.experience-card-body > .experience-card-points,
+.tour-card-body > .experience-card-points,
+.category-tour-card__body > .experience-card-points {
+  margin-bottom: 22px !important;
+}
+
+.tour-card .experience-card-actions,
+.tour-card-reference .experience-card-actions,
+.category-tour-card .experience-card-actions,
+.experience-card .experience-card-actions {
+  margin-top: 0 !important;
+  padding-top: 16px !important;
+}
+
+/* Price row polish */
+.experience-card-price strong {
+  letter-spacing: -.2px;
+}
+
+.experience-card-price-note {
+  font-weight: 500;
+  letter-spacing: .02em;
+}
+
+/* Buttons: same size everywhere */
+.experience-card-actions .experience-card-action {
+  height: 44px;
+  min-height: 44px;
+}
+
+.experience-card-action--primary {
+  box-shadow: 0 6px 14px rgba(201, 139, 46, .18);
+}
+
+.experience-card-action--primary:hover {
+  box-shadow: 0 9px 20px rgba(201, 139, 46, .26);
+}
+
+@media (max-width: 640px) {
+  .experience-card-title,
+  .tour-card h3,
+  .tour-card-reference .tour-card-body h3,
+  .category-tour-card__body h3 {
+    min-height: 0 !important;
+  }
+}
+
+/* ==========================================================================
+   Promo discount (after a visitor copies a code from the offer popup)
+   ========================================================================== */
+.experience-card-sale {
+  position: absolute;
+  z-index: 3;
+  top: 12px;
+  right: 12px;
+  padding: 6px 11px;
+  border-radius: 6px;
+  background: #d1243a;
+  color: #fff;
+  font-size: 9.5px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  box-shadow: 0 6px 14px rgba(209, 36, 58, .3);
+}
+
+/* The sale badge takes the top-right slot from the duration pill. */
+.tour-image-wrap:has(.experience-card-sale) .card-meta,
+.category-tour-card__image:has(.experience-card-sale) .category-tour-card__duration {
+  display: none !important;
+}
+
+.experience-card-price-row {
+  flex-wrap: wrap;
+}
+
+.experience-card-price s {
+  color: #a3a7ad;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.experience-card-code {
+  flex: 1 0 100%;
+  margin-top: 6px;
+  color: #1a8f55;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .04em;
+}
