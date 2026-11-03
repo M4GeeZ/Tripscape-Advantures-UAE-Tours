@@ -667,7 +667,7 @@ router.post('/', async (req, res) => {
     if (mongoose.connection.readyState !== 1) {
       return res.status(503).json({ message: 'Promo codes are temporarily unavailable. Remove the code or try again shortly.' })
     }
-    const promo = await redeemPromoCode(normalized.promoCode, normalized.tourTitle, bookingReference).catch(() => null)
+    const promo = await redeemPromoCode(normalized.promoCode, normalized.tourTitle, bookingReference, normalized.service).catch(() => null)
     if (!promo) {
       return res.status(400).json({ message: 'This promo code is invalid, expired, already used, or not valid for this tour.' })
     }

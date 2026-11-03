@@ -21,11 +21,23 @@
   gap: 40px;
 }
 
-/* Static 4 × 2 desktop grid */
+/* Three cards per row on desktop, in a narrower column so cards keep a balanced size. */
+#tours > .container {
+  width: min(1140px, calc(100% - 88px));
+}
+
+@media (max-width: 900px) {
+  #tours > .container { width: calc(100% - 48px); }
+}
+
+@media (max-width: 640px) {
+  #tours > .container { width: calc(100% - 30px); }
+}
+
 .tour-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 28px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 26px;
   margin-top: 44px;
 }
 

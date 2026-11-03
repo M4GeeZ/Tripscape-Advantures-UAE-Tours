@@ -19,6 +19,9 @@
   border: 1px solid var(--card-border);
   border-radius: 10px;
   background: #fff;
+  /* Keep the white card background out from under the border, so on dark
+     sections the photo isn't framed by a thin white line. */
+  background-clip: padding-box;
   color: var(--ink);
   box-shadow: 0 1px 2px rgba(16, 27, 43, .04), 0 10px 28px rgba(16, 27, 43, .05);
   transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;

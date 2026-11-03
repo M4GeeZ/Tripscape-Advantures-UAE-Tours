@@ -1,2 +1,3 @@
-/* Home page keeps its visual styling inside the individual section components. */
+/* Home page keeps its visual styling inside the individual section components.
+   Card section width and cards-per-row are shared site-wide in styles/cardSections.css. */
 .home-page { min-height: 100vh; }

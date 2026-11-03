@@ -7,16 +7,18 @@ import Footer from '../../components/Footer/Footer'
 import WhatsAppFloat from '../../components/WhatsAppFloat/WhatsAppFloat'
 import CallFloat from '../../components/CallFloat/CallFloat'
 import ExperienceCardActions from '../../components/ExperienceCardActions/ExperienceCardActions'
-import { ExperiencePriceRow, PromoSaleBadge } from '../../components/ExperienceCard/ExperienceCard'
+import { ExperiencePriceRow } from '../../components/ExperienceCard/ExperienceCard'
 import { useLuxuryReveal } from '../../hooks/useLuxuryReveal'
 import { tourCategoryPages } from '../../tourCategoryPages'
 import { getTourDetailHref } from '../../tourDetails'
 import { getCardPoints } from '../../utils/cardContent'
 import './TourCategory.css'
 import { applyTourPricing } from '../../utils/tourPricing'
+import { useTourCardImage } from '../../utils/tourImages'
 
 function CategoryTourCard({ tour: rawTour, page }) {
   const tour = applyTourPricing(rawTour)
+  const cardImage = useTourCardImage(tour.title, tour.image, tour.slug)
   const category = tour.category || page.detailCategory || page.name
   const detailHref = getTourDetailHref(category, tour.title)
   const points = getCardPoints(category, tour.title, tour.description, 7)
@@ -24,12 +26,11 @@ function CategoryTourCard({ tour: rawTour, page }) {
   return (
     <article className="category-tour-card" data-lux-reveal>
       <a className="category-tour-card__image" href={detailHref} aria-label={`View ${tour.title}`}>
-        <img src={tour.image} alt={tour.title} loading="lazy" />
+        <img src={cardImage} alt={tour.title} loading="lazy" />
         <div className="category-tour-card__badges">
           <span className="category-tour-card__category">{page.name}</span>
           {tour.duration && <span className="category-tour-card__duration"><Clock3 size={13} /> {tour.duration}</span>}
         </div>
-        <PromoSaleBadge title={tour.title} price={tour.price} />
       </a>
 
       <div className="category-tour-card__body">
@@ -39,7 +40,7 @@ function CategoryTourCard({ tour: rawTour, page }) {
           {points.map((point) => <li key={point}>{point}</li>)}
         </ul>
 
-        <ExperiencePriceRow title={tour.title} price={tour.price} priceNote={tour.unit} />
+        <ExperiencePriceRow price={tour.price} priceNote={tour.unit} />
 
         <ExperienceCardActions title={tour.title} detailHref={detailHref} />
       </div>

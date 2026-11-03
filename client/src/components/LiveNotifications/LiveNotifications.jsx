@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { BadgeCheck, Gift, Star, X } from 'lucide-react'
 import { apiUrl } from '../../utils/apiBaseUrl'
 import { claimPromo, fetchOffer, formatAed } from '../../utils/promoOffers'
+import { isDisplayableReview } from '../../utils/reviews'
+import { googleReviews } from '../../data/googleReviews'
 import './LiveNotifications.css'
 
 const MIN_GAP_MS = 5000
@@ -52,7 +54,11 @@ function useSocialFeed() {
     Promise.all([load('/api/bookings/recent'), load('/api/reviews')]).then(([bookings, reviews]) => {
       setFeed({
         bookings: Array.isArray(bookings) ? bookings.filter((item) => item?.name && item?.tourTitle) : [],
-        reviews: Array.isArray(reviews) ? reviews.filter((item) => item?.name && item?.text && Number(item.rating) >= 4) : [],
+        // Admin-published reviews plus the real Google reviews already shown on the site.
+        reviews: [
+          ...(Array.isArray(reviews) ? reviews : []),
+          ...googleReviews.map((item) => ({ ...item, rating: item.stars, source: 'Google' })),
+        ].filter((item) => Number(item.rating) >= 4 && isDisplayableReview(item)),
       })
     })
   }, [])
@@ -88,9 +94,9 @@ function PromoToast({ offer, secondsLeft, onClose }) {
         <span>{offer.code}</span>
         <button type="button" onClick={handleCopy}>{copied ? 'Copied ✓' : 'Copy code'}</button>
       </div>
-      {copied && !claimError && <small className="live-promo__applied">Copied! Discount applied to this tour’s price and booking form.</small>}
+      {copied && !claimError && <small className="live-promo__applied">Code copied! Paste it in the “Promo code” box of this tour’s booking form and press Apply.</small>}
       {claimError && <small className="live-promo__applied live-promo__applied--error">{claimError}</small>}
-      <button type="button" className="live-promo__cta" onClick={handleBook}>Book with code</button>
+      <button type="button" className="live-promo__cta" onClick={handleBook}>View this tour</button>
       <small className="live-promo__timer">Auto-hides in <b>{secondsLeft}</b>s</small>
     </div>
   )

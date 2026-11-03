@@ -5,11 +5,12 @@ import Footer from '../../components/Footer/Footer'
 import WhatsAppFloat from '../../components/WhatsAppFloat/WhatsAppFloat'
 import CallFloat from '../../components/CallFloat/CallFloat'
 import BookingEnquiryForm from '../../components/BookingEnquiryForm'
-import { usePromoPrice } from '../../components/ExperienceCard/ExperienceCard'
 import { useLuxuryReveal } from '../../hooks/useLuxuryReveal'
 import { tourCatalog } from '../../data'
 import { getTourDetail, getTourDetailHref } from '../../tourDetails'
 import { apiUrl } from '../../utils/apiBaseUrl'
+import { isDisplayableReview } from '../../utils/reviews'
+import { MAX_TOUR_IMAGES, getTourImages, orderedImages, useTourImages } from '../../utils/tourImages'
 import './TourDetail.css'
 import './TourDetailPage.css'
 import { applyTourPricing } from '../../utils/tourPricing'
@@ -62,7 +63,7 @@ function useFeaturedReview() {
     fetch(apiUrl('/api/reviews'))
       .then((res) => (res.ok ? res.json() : []))
       .then((items) => {
-        const best = (Array.isArray(items) ? items : []).filter((item) => Number(item.rating) >= 5 && String(item.text || '').length > 40)
+        const best = (Array.isArray(items) ? items : []).filter((item) => Number(item.rating) >= 5 && isDisplayableReview(item))
         if (active && best.length) setReview(best[Math.floor(Math.random() * best.length)])
       })
       .catch(() => {})
@@ -75,7 +76,6 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
   const pageRef = useRef(null)
   const tour = applyTourPricing(tourOverride || getTourDetail(categorySlug, tourSlug))
   const [lightbox, setLightbox] = useState(null)
-  const deal = usePromoPrice(tour?.title, tour?.price)
   const review = useFeaturedReview()
 
   useLuxuryReveal(pageRef)
@@ -101,7 +101,11 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
     writePageSchema(resolveSchema(tour, 'tour', `/tours/${categorySlug}/${tour.slug || tourSlug}`))
   }, [tour, categorySlug, tourSlug])
 
-  const gallery = tour?.gallery?.length ? tour.gallery : [tour?.image].filter(Boolean)
+  // Photos from the admin panel in order: 1 = hero + cards, 2 = intro, 3–10 = gallery.
+  const adminImages = useTourImages(tour?.title, tour?.slug || tourSlug)
+  const gallery = adminImages || orderedImages(tour?.image, tour?.gallery)
+  // Images 1 and 2 are already shown in the hero and intro, so the gallery starts at image 3.
+  const galleryPhotos = gallery.slice(2, MAX_TOUR_IMAGES)
 
   // Other tours from the same category for "You may also love".
   const related = useMemo(() => {
@@ -124,12 +128,12 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
     if (lightbox === null) return undefined
     const onKey = (event) => {
       if (event.key === 'Escape') setLightbox(null)
-      if (event.key === 'ArrowRight') setLightbox((index) => (index + 1) % gallery.length)
-      if (event.key === 'ArrowLeft') setLightbox((index) => (index - 1 + gallery.length) % gallery.length)
+      if (event.key === 'ArrowRight') setLightbox((index) => (index + 1) % galleryPhotos.length)
+      if (event.key === 'ArrowLeft') setLightbox((index) => (index - 1 + galleryPhotos.length) % galleryPhotos.length)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [lightbox, gallery.length])
+  }, [lightbox, galleryPhotos.length])
 
   if (!tour) return null
 
@@ -141,7 +145,7 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
   const subtitle = tour.shortDescription || paragraphs[0] || ''
   const introImage = gallery[1] || gallery[0]
   const categoryLabel = tour.categoryLabel || tour.category || 'Experience'
-  const whatsappHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hi Tripscape, I would like to book ${tour.title}. Please share availability.${deal ? ` Promo code: ${deal.code}.` : ''}`)}`
+  const whatsappHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hi Tripscape, I would like to book ${tour.title}. Please share availability.`)}`
 
   const scrollToBooking = (event) => {
     event.preventDefault()
@@ -196,8 +200,8 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
                   <dd>{tour.rating || '4.9'} <Star size={15} fill="currentColor" /></dd>
                 </div>
                 <div>
-                  <dt>{deal ? 'Your price' : 'From'}</dt>
-                  <dd>{deal ? deal.price : displayContactPrice}{hasPrice && tour.unit ? ` ${tour.unit}` : ''}</dd>
+                  <dt>From</dt>
+                  <dd>{displayContactPrice}{hasPrice && tour.unit ? ` ${tour.unit}` : ''}</dd>
                 </div>
               </dl>
             </div>
@@ -264,12 +268,12 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
         </section>
 
         {/* ============ GALLERY ============ */}
-        {gallery.length > 1 && (
+        {galleryPhotos.length > 0 && (
           <section className="td-gallery-section">
             <div className="container">
               <SectionHead eyebrow="Gallery" title="Moments worth remembering." />
-              <div className="td-gallery">
-                {gallery.slice(0, 8).map((image, index) => (
+              <div className={`td-gallery ${galleryPhotos.length > 6 ? 'td-gallery--four' : ''}`}>
+                {galleryPhotos.map((image, index) => (
                   <button key={`${image}-${index}`} type="button" onClick={() => setLightbox(index)} aria-label={`Open image ${index + 1}`} data-lux-reveal>
                     <img src={image} alt={`${tour.title} ${index + 1}`} loading="lazy" />
                   </button>
@@ -351,7 +355,7 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
               <div className="td-related__grid">
                 {related.map((item) => (
                   <a key={item.title} href={getTourDetailHref(item.category, item.title)} className="td-related__card" data-lux-reveal>
-                    <div className="td-related__image"><img src={item.image} alt={item.title} loading="lazy" /></div>
+                    <div className="td-related__image"><img src={getTourImages(item.title)?.[0] || item.image} alt={item.title} loading="lazy" /></div>
                     <div className="td-related__body">
                       <span className="td-related__category">{item.category}</span>
                       <h3>{item.title}</h3>
@@ -384,14 +388,14 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
       {lightbox !== null && (
         <div className="td-lightbox" role="dialog" aria-modal="true" aria-label={`${tour.title} gallery`} onClick={() => setLightbox(null)}>
           <button type="button" className="td-lightbox__close" onClick={() => setLightbox(null)} aria-label="Close gallery"><X size={22} /></button>
-          {gallery.length > 1 && (
-            <button type="button" className="td-lightbox__nav td-lightbox__nav--prev" onClick={(event) => { event.stopPropagation(); setLightbox((lightbox - 1 + gallery.length) % gallery.length) }} aria-label="Previous image"><ChevronLeft size={26} /></button>
+          {galleryPhotos.length > 1 && (
+            <button type="button" className="td-lightbox__nav td-lightbox__nav--prev" onClick={(event) => { event.stopPropagation(); setLightbox((lightbox - 1 + galleryPhotos.length) % galleryPhotos.length) }} aria-label="Previous image"><ChevronLeft size={26} /></button>
           )}
-          <img src={gallery[lightbox]} alt={`${tour.title} ${lightbox + 1}`} onClick={(event) => event.stopPropagation()} />
-          {gallery.length > 1 && (
-            <button type="button" className="td-lightbox__nav td-lightbox__nav--next" onClick={(event) => { event.stopPropagation(); setLightbox((lightbox + 1) % gallery.length) }} aria-label="Next image"><ChevronRight size={26} /></button>
+          <img src={galleryPhotos[lightbox]} alt={`${tour.title} ${lightbox + 1}`} onClick={(event) => event.stopPropagation()} />
+          {galleryPhotos.length > 1 && (
+            <button type="button" className="td-lightbox__nav td-lightbox__nav--next" onClick={(event) => { event.stopPropagation(); setLightbox((lightbox + 1) % galleryPhotos.length) }} aria-label="Next image"><ChevronRight size={26} /></button>
           )}
-          <span className="td-lightbox__count">{lightbox + 1} / {gallery.length}</span>
+          <span className="td-lightbox__count">{lightbox + 1} / {galleryPhotos.length}</span>
         </div>
       )}
 

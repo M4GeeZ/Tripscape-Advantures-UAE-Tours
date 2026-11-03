@@ -1,13 +1,15 @@
 import { MapPin, Star } from 'lucide-react'
 import ExperienceCardActions from '../ExperienceCardActions/ExperienceCardActions'
-import { ExperiencePriceRow, PromoSaleBadge } from '../ExperienceCard/ExperienceCard'
+import { ExperiencePriceRow } from '../ExperienceCard/ExperienceCard'
 import { getTourDetailHref } from '../../tourDetails'
 import { getCardPoints } from '../../utils/cardContent'
 import './TourCard.css'
 import { applyTourPricing } from '../../utils/tourPricing'
+import { useTourCardImage } from '../../utils/tourImages'
 
 export default function TourCard({ tour: rawTour }) {
   const tour = applyTourPricing(rawTour)
+  const cardImage = useTourCardImage(tour.title, tour.image, tour.slug)
   const category = tour.category || 'Tours'
   const detailHref = tour.href || (tour.slug && tour.categorySlug
     ? `/tours/${tour.categorySlug}/${tour.slug}`
@@ -20,8 +22,7 @@ export default function TourCard({ tour: rawTour }) {
     <article className="tour-card-reference" data-reveal>
       <a className="tour-card-image-link" href={detailHref} aria-label={`View ${tour.title}`}>
         <div className="tour-card-image-wrap">
-          <img src={tour.image} alt={tour.title} className="tour-card-image" loading="lazy" />
-          <PromoSaleBadge title={tour.title} price={tour.price} />
+          <img src={cardImage} alt={tour.title} className="tour-card-image" loading="lazy" />
         </div>
       </a>
 
@@ -42,7 +43,7 @@ export default function TourCard({ tour: rawTour }) {
           {points.map((point) => <li key={point}>{point}</li>)}
         </ul>
 
-        <ExperiencePriceRow title={tour.title} price={tour.price} priceNote={tour.unit} />
+        <ExperiencePriceRow price={tour.price} priceNote={tour.unit} />
 
         <ExperienceCardActions title={tour.title} detailHref={detailHref} />
       </div>

@@ -53,3 +53,40 @@
   .service-mini-grid article {border-radius: 10.5px; padding: 14.25px;}
   .service-mini-grid p {font-size: 10.5px;}
 }
+
+/* Dark band, same colour as the footer. */
+.section.about-section {
+  background: #0f1a2b;
+  color: #fff;
+}
+
+.about-section .section-heading h2 {
+  color: #fff;
+}
+
+.about-section .section-heading p {
+  color: rgba(255, 255, 255, .72);
+}
+
+.about-section .about-list span {
+  color: rgba(255, 255, 255, .88);
+}
+
+/* White cards on the dark band. */
+.about-section .service-mini-grid article {
+  border-color: #fff;
+  background: #fff;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, .28);
+}
+
+.about-section .service-mini-grid h4 {
+  color: var(--ink);
+}
+
+.about-section .service-mini-grid p {
+  color: var(--muted);
+}
+
+.about-section .about-badge {
+  box-shadow: 0 24px 50px rgba(0, 0, 0, .45);
+}

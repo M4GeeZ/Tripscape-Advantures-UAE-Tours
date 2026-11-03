@@ -5,7 +5,7 @@ import CountryCodeSelect from './CountryCodeSelect/CountryCodeSelect'
 import { getBookingAddOns, getBookingServices } from '../bookingOptions'
 import { apiUrl } from '../utils/apiBaseUrl'
 import createSubmissionId from '../utils/createSubmissionId'
-import { forgetPromo, formatAed, getActivePromo, rememberPromo, usePromo, validatePromo } from '../utils/promoOffers'
+import { formatAed, normalizeTourName, validatePromo } from '../utils/promoOffers'
 import './BookingEnquiryForm.css'
 import './BookingConfirm.css'
 
@@ -37,8 +37,7 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
   const [status, setStatus] = useState({ type: '', message: '' })
   const [submitting, setSubmitting] = useState(false)
   const submissionIdRef = useRef('')
-  const activePromo = usePromo(tourTitle)
-  const [promoInput, setPromoInput] = useState(() => getActivePromo(tourTitle)?.code || '')
+  const [promoInput, setPromoInput] = useState('')
   const [confirmation, setConfirmation] = useState(null)
   const [promo, setPromo] = useState(null)
   const [promoStatus, setPromoStatus] = useState({ type: '', message: '' })
@@ -50,14 +49,12 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
     setCheckingPromo(true)
     setPromoStatus({ type: '', message: '' })
     try {
-      const data = await validatePromo(code, tourTitle)
+      const data = await validatePromo(code, tourTitle, form.service)
       setPromo(data)
       setPromoInput(data.code)
-      rememberPromo(data)
       setPromoStatus({ type: 'success', message: `${data.percent}% off applied — you save ${formatAed(data.basePrice - data.discountedPrice)}.` })
     } catch (error) {
       setPromo(null)
-      if (activePromo?.code === code) forgetPromo(tourTitle)
       setPromoStatus({ type: 'error', message: error.message })
     } finally {
       setCheckingPromo(false)
@@ -69,15 +66,6 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
     setPromoInput('')
     setPromoStatus({ type: '', message: '' })
   }
-
-  // Code copied from the offer popup for this tour: fill it in and apply it.
-  useEffect(() => {
-    if (activePromo?.code && !promo && (!promoInput || promoInput === activePromo.code)) {
-      setPromoInput(activePromo.code)
-      applyPromo(activePromo.code)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activePromo?.code, tourTitle])
 
   // Close the confirmation and get the form ready for a new booking.
   const closeConfirmation = () => {
@@ -104,10 +92,17 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
       service: hideServiceSelector ? tourTitle : (serviceOptions[0] || tourTitle),
       addOns: [],
     }))
+    setPromo(null)
+    setPromoInput('')
+    setPromoStatus({ type: '', message: '' })
   }, [hideServiceSelector, serviceOptions, tourTitle])
 
   const update = (event) => {
     const { name, value, type, checked } = event.target
+    if (name === 'service' && (promo || promoInput.trim()) && normalizeTourName(value) !== normalizeTourName(tourTitle)) {
+      setPromo(null)
+      setPromoStatus({ type: 'error', message: `Promo codes work with “${tourTitle}” only. Choose that package to use your code.` })
+    }
     setForm((current) => ({ ...current, [name]: type === 'checkbox' ? checked : value }))
   }
 
@@ -167,7 +162,6 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
       }
 
       if (promo || promoInput.trim()) {
-        forgetPromo(tourTitle)
         confirmationMessage += ' Your promo code has been applied to this booking.'
       }
       setStatus({ type: 'success', message: confirmationMessage })

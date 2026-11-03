@@ -166,16 +166,23 @@ router.get('/validate', async (req, res) => {
   if (req.query.tour && promo.tourKey !== normalizeTourTitle(req.query.tour)) {
     return res.status(422).json({ message: `This code is only valid for ${promo.tourTitle}.` })
   }
+  // The discount is calculated on the tour's own price, so it also needs the tour's own package.
+  if (req.query.service && promo.tourKey !== normalizeTourTitle(req.query.service)) {
+    return res.status(422).json({ message: `This code works with “${promo.tourTitle}” only. Choose that package to use it.` })
+  }
   return res.json(promoSummary(promo))
 })
 
 // Used by the booking route: atomically marks a valid code as used.
-export async function redeemPromoCode(rawCode, tourTitle, bookingReference) {
+// The code must match both the tour page and the selected package.
+export async function redeemPromoCode(rawCode, tourTitle, bookingReference, service = tourTitle) {
   const code = normalizePromoCode(rawCode)
+  const tourKey = normalizeTourTitle(tourTitle)
+  if (normalizeTourTitle(service) !== tourKey) return null
   return PromoCode.findOneAndUpdate(
     {
       code,
-      tourKey: normalizeTourTitle(tourTitle),
+      tourKey,
       status: { $in: ['issued', 'claimed'] },
       expiresAt: { $gt: new Date() },
     },

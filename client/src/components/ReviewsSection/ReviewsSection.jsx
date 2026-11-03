@@ -3,6 +3,7 @@ import SectionHeading from '../SectionHeading/SectionHeading'
 import { apiUrl } from '../../utils/apiBaseUrl'
 import './ReviewsSection.css'
 import { GOOGLE_REVIEWS_URL, googleReviews } from '../../data/googleReviews'
+import { isDisplayableReview } from '../../utils/reviews'
 
 function Stars({ count = 5 }) {
   return <span className="google-review-stars" aria-label={`${count} out of 5 stars`}>{'★'.repeat(count)}</span>
@@ -23,7 +24,7 @@ export default function ReviewsSection() {
   }, [])
 
   const displayReviews = useMemo(() => {
-    const editable = manualReviews.map((review) => ({
+    const editable = manualReviews.filter(isDisplayableReview).map((review) => ({
       id: review.id || review._id,
       name: review.name,
       stars: Number(review.rating) || 5,

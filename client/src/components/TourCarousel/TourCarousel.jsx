@@ -4,12 +4,13 @@ import { tours, tourCatalog } from '../../data'
 import { images } from '../../generatedImages'
 import SectionHeading from '../SectionHeading/SectionHeading'
 import ExperienceCardActions from '../ExperienceCardActions/ExperienceCardActions'
-import { ExperiencePriceRow, PromoSaleBadge } from '../ExperienceCard/ExperienceCard'
+import { ExperiencePriceRow } from '../ExperienceCard/ExperienceCard'
 import { getTourDetailHref } from '../../tourDetails'
 import { getCardPoints } from '../../utils/cardContent'
 import './TourCarousel.css'
 import { apiUrl } from '../../utils/apiBaseUrl'
 import { applyTourPricing } from '../../utils/tourPricing'
+import { getTourImages, useTourImageIndex } from '../../utils/tourImages'
 
 const fallbackTour = {
   image: images.adventureEvening,
@@ -28,24 +29,46 @@ const featuredImagesByTitle = {
   'Desert Safari with Dinner at Caravanserai': '/images/top-experiences/desert-safari-dinner-caravanserai.webp'
 }
 
-function getStaticFallback() {
-  const seen = new Set()
-  const result = []
+// Fixed order of the "Top-rated tours" cards on the home page.
+const HOME_TOUR_ORDER = [
+  'Morning Desert Safari with Quad Bike',
+  'VIP Premium Desert Safari with BBQ Dinner',
+  'Evening Desert Safari with BBQ Dinner',
+  'Hummer Desert Safari',
+  'The Desert Dreamscape',
+  'Sunrise Camel Trekking',
+  'Desert Safari with Dinner at Caravanserai',
+  'Desert Safari with VIP Setup',
+  'Noble Camp Private Desert Safari',
+  'Private Dune Buggy Tour',
+  'Sunset Dune Buggy Ride',
+  'Morning Dune Buggy Tour',
+]
 
-  for (const item of [...tours, ...tourCatalog, fallbackTour]) {
-    const key = String(item.sourceTitle || item.title || '').trim().toLowerCase()
-    if (!key || seen.has(key)) continue
-    seen.add(key)
-    result.push(item)
-    if (result.length === 8) break
+const tourKey = (item) => String(item?.sourceTitle || item?.title || '').trim().toLowerCase()
+
+// Cards in HOME_TOUR_ORDER first (admin data wins over static data for the same tour),
+// then any other featured admin tours in their admin sort order.
+function orderHomeTours(dynamicTours = []) {
+  const byKey = new Map()
+  for (const item of [...tourCatalog, ...tours]) {
+    if (tourKey(item)) byKey.set(tourKey(item), item)
+  }
+  for (const item of dynamicTours) {
+    if (tourKey(item)) byKey.set(tourKey(item), { ...byKey.get(tourKey(item)), ...item })
   }
 
-  return result
+  const ordered = HOME_TOUR_ORDER.map((title) => byKey.get(title.toLowerCase())).filter(Boolean)
+  const listed = new Set(HOME_TOUR_ORDER.map((title) => title.toLowerCase()))
+  const extras = dynamicTours.filter((item) => !listed.has(tourKey(item)))
+  const result = [...ordered, ...extras]
+  return result.length ? result : [fallbackTour]
 }
 
 export default function TourCarousel() {
   const [dynamicTours, setDynamicTours] = useState([])
   const [dynamicLoaded, setDynamicLoaded] = useState(false)
+  const tourImageIndex = useTourImageIndex()
 
   useEffect(() => {
     fetch(apiUrl('/api/tours'))
@@ -58,7 +81,7 @@ export default function TourCarousel() {
   }, [])
 
   const displayedTours = useMemo(() => {
-    const source = dynamicLoaded && dynamicTours.length ? dynamicTours.slice(0, 8) : getStaticFallback()
+    const source = orderHomeTours(dynamicLoaded ? dynamicTours : [])
 
     return source.map((rawTour) => {
       const tour = applyTourPricing(rawTour)
@@ -77,12 +100,13 @@ export default function TourCarousel() {
         ...tour,
         detailHref,
         points,
-        image: tour.featuredImage || featuredImagesByTitle[sourceTitle] || tour.image,
+        // Image 1 from the admin panel first, then the built-in card image.
+        image: (getTourImages(tour.title, tour.slug) || getTourImages(sourceTitle))?.[0] || tour.featuredImage || featuredImagesByTitle[sourceTitle] || tour.image,
         displayTitle: isDreamscape ? 'The Desert Dreamscape Ultra Romantic Private Setup' : tour.title,
         isDreamscape,
       }
     })
-  }, [dynamicLoaded, dynamicTours])
+  }, [dynamicLoaded, dynamicTours, tourImageIndex])
 
   return (
     <section id="tours" className="section white-section">
@@ -91,7 +115,7 @@ export default function TourCarousel() {
           <SectionHeading
             eyebrow="Top experiences"
             title="Top-rated tours, hand-picked."
-            copy="Our most-booked experiences this month â€” verified guides, instant confirmations, free WhatsApp re-scheduling."
+            copy="Our most-booked experiences this month — verified guides, instant confirmations, free WhatsApp re-scheduling."
           />
         </div>
 
@@ -112,7 +136,6 @@ export default function TourCarousel() {
                   {!tour.hideTag && <span className="card-tag">{tour.tag || tour.category || 'Tour'}</span>}
                   {tour.meta && !tour.isDreamscape && <span className="card-meta"><Clock size={15} />{tour.meta}</span>}
                   {!tour.meta && tour.duration && !tour.isDreamscape && <span className="card-meta"><Clock size={15} />{tour.duration}</span>}
-                  <PromoSaleBadge title={tour.title} price={tour.price} />
                 </div>
               </a>
 
@@ -122,7 +145,7 @@ export default function TourCarousel() {
                 <ul className="experience-card-points">
                   {tour.points.map((point) => <li key={point}>{point}</li>)}
                 </ul>
-                <ExperiencePriceRow title={tour.title} price={tour.price} priceNote={tour.unit} />
+                <ExperiencePriceRow price={tour.price} priceNote={tour.unit} />
                 <ExperienceCardActions title={tour.title} detailHref={tour.detailHref} />
               </div>
             </article>

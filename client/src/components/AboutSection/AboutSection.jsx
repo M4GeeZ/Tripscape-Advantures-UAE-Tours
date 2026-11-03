@@ -9,7 +9,7 @@ export default function AboutSection() {
     <section id="about" className="section cream-section about-section">
       <div className="container about-grid">
         <div className="about-collage" data-reveal>
-          <img src={images.aboutPrimary} alt="Dubai experience" />
+          <img src="/images/about-atlantis.jpg" alt="Atlantis The Palm, Dubai" />
           <img src={images.cityBurj} alt="Dubai skyline and Burj Khalifa" />
           <div className="about-badge"><strong>Tripscape Adventures</strong><span>Creating unforgettable travel experiences.</span></div>
         </div>

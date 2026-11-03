@@ -1,6 +1,5 @@
 import './ExperienceCardActions.css'
 import '../ExperienceCard/ExperienceCard.css'
-import { usePromo } from '../../utils/promoOffers'
 
 const WHATSAPP_NUMBER = '971549930684'
 
@@ -23,10 +22,8 @@ function WhatsAppIcon({ size = 17 }) {
 }
 
 export default function ExperienceCardActions({ title, detailHref }) {
-  const promo = usePromo(title)
   const whatsappText = encodeURIComponent(
-    `Hi Tripscape, I am interested in ${title}. Please share details and availability.` +
-      (promo ? ` Promo code: ${promo.code} (${promo.percent}% off).` : '')
+    `Hi Tripscape, I am interested in ${title}. Please share details and availability.`
   )
   const whatsappHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappText}`
 

@@ -12,8 +12,8 @@ import { getTourDetailHref } from '../../tourDetails'
 import { getBookingAddOns } from '../../bookingOptions'
 import { apiUrl } from '../../utils/apiBaseUrl'
 import createSubmissionId from '../../utils/createSubmissionId'
-import { usePromo } from '../../utils/promoOffers'
-import { ExperiencePriceRow, PromoSaleBadge } from '../../components/ExperienceCard/ExperienceCard'
+import { ExperiencePriceRow } from '../../components/ExperienceCard/ExperienceCard'
+import { useTourCardImage } from '../../utils/tourImages'
 import '../../components/ExperienceCardActions/ExperienceCardActions.css'
 import '../../components/ExperienceCard/ExperienceCard.css'
 import './CampaignLanding.css'
@@ -30,14 +30,13 @@ function tomorrow() {
 function CampaignPackageCard({ tour, campaignTitle }) {
   const href = tour.href || getTourDetailHref(tour.category, tour.sourceTitle || tour.title)
   const contactPrice = /contact|aed\s*0/i.test(String(tour.price || ''))
-  const promo = usePromo(tour.title)
+  const cardImage = useTourCardImage(tour.sourceTitle || tour.title, tour.image, tour.slug)
   return (
     <article className="experience-card ad-package-card" data-lux-reveal>
       <a className="experience-card-media" href={href} aria-label={`View ${tour.title}`}>
-        <img src={tour.image} alt={tour.title} loading="lazy" />
+        <img src={cardImage} alt={tour.title} loading="lazy" />
         {tour.category && <span className="experience-card-badge experience-card-badge--dark">{tour.category}</span>}
         {tour.duration && <span className="experience-card-meta"><Clock3 size={12} /> {tour.duration}</span>}
-        {!contactPrice && <PromoSaleBadge title={tour.title} price={tour.price} />}
       </a>
       <div className="experience-card-body">
         <span className="experience-card-eyebrow"><Star size={10} fill="currentColor" /> 4.9 guest rating</span>
@@ -47,9 +46,9 @@ function CampaignPackageCard({ tour, campaignTitle }) {
           <li>Direct booking support</li>
           <li>Clear package confirmation</li>
         </ul>
-        <ExperiencePriceRow title={tour.title} price={contactPrice ? '' : tour.price} priceNote={tour.unit} />
+        <ExperiencePriceRow price={contactPrice ? '' : tour.price} priceNote={tour.unit} />
         <div className="experience-card-actions">
-          <a className="experience-card-action experience-card-action--primary" href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(`Hi Tripscape, I am interested in ${tour.title} from the ${campaignTitle} campaign.${promo ? ` Promo code ${promo.code} (${promo.percent}% off).` : ''}`)}`} target="_blank" rel="noreferrer"><MessageCircle size={15} /> <span>Book Now</span></a>
+          <a className="experience-card-action experience-card-action--primary" href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(`Hi Tripscape, I am interested in ${tour.title} from the ${campaignTitle} campaign.`)}`} target="_blank" rel="noreferrer"><MessageCircle size={15} /> <span>Book Now</span></a>
           <a className="experience-card-action experience-card-action--outline" href={href}><span>View Details</span></a>
         </div>
       </div>

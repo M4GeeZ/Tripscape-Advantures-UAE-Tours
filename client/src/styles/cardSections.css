@@ -1,0 +1,170 @@
+/* =====================================================================
+   One layout for every card section on the website:
+   1140px wide column, 3 cards per row (2 on tablets, 1 on phones), 26px gap.
+   Each section keeps its own place, background and card design — only the
+   column width and the number of cards per row are shared.
+   (Top-rated tours on the home page uses the same values in TourCarousel.css.)
+   ===================================================================== */
+
+:root {
+  --card-section-width: 1140px;
+}
+
+/* Section columns: heading and cards line up on the same edges. */
+.section > .container:has(> .city-grid),            /* Home: city tours */
+.section > .container:has(> .adventure-grid),       /* Home: adventures */
+.section > .container:has(> .helicopter-grid),      /* Home: helicopter */
+.section > .container:has(> .attractions-grid),     /* Home: attractions */
+.section > .container:has(> .blog-grid),            /* Home: blog */
+.container.tours-catalog-inner,                     /* /tours */
+.container.category-experiences__heading,           /* Category pages: heading */
+.category-tour-grid,                                /* Category pages: cards */
+.private-events-packages > .container,              /* Private events */
+.ad-packages > .container,                          /* Campaign landing pages */
+.services-catalogue .services-container,            /* /services */
+.container.blog-filter-row,                         /* /blog: filters */
+.container.blog-lux-grid,                           /* /blog: cards */
+.container.blog-related,                            /* Blog article: more guides */
+.cms-placement-section > .container,                /* Admin-placed tours */
+.td-page main .td-related > .container {            /* Tour page: you may also love */
+  width: min(var(--card-section-width), calc(100% - 88px));
+  margin-inline: auto;
+}
+
+/* Three cards per row. */
+.city-grid,
+.adventure-grid,
+.helicopter-grid,
+.attractions-grid,
+.blog-grid,
+.tours-card-grid,
+.category-tour-grid,
+.private-events-grid,
+.ad-package-grid:not(.ad-package-grid--five),
+.services-grid,
+.blog-lux-grid,
+.blog-related-grid,
+.cms-placement-grid,
+.td-related__grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 26px;
+}
+
+@media (min-width: 901px) {
+  /* Older page rules stretched the last card or hid the third one on mid-size screens. */
+  .ad-package-grid:not(.ad-package-grid--five) .ad-package-card:last-child {
+    grid-column: auto;
+    max-width: none;
+  }
+
+  .td-related__grid > :nth-child(3) {
+    display: flex;
+  }
+}
+
+/* Tablets: two cards per row. */
+@media (max-width: 900px) {
+  .section > .container:has(> .city-grid),
+  .section > .container:has(> .adventure-grid),
+  .section > .container:has(> .helicopter-grid),
+  .section > .container:has(> .attractions-grid),
+  .section > .container:has(> .blog-grid),
+  .container.tours-catalog-inner,
+  .container.category-experiences__heading,
+  .category-tour-grid,
+  .private-events-packages > .container,
+  .ad-packages > .container,
+  .services-catalogue .services-container,
+  .container.blog-filter-row,
+  .container.blog-lux-grid,
+  .container.blog-related,
+  .cms-placement-section > .container,
+  .td-page main .td-related > .container {
+    width: calc(100% - 48px);
+  }
+
+  .city-grid,
+  .adventure-grid,
+  .helicopter-grid,
+  .attractions-grid,
+  .blog-grid,
+  .tours-card-grid,
+  .category-tour-grid,
+  .private-events-grid,
+  .ad-package-grid:not(.ad-package-grid--five),
+  .services-grid,
+  .blog-lux-grid,
+  .blog-related-grid,
+  .cms-placement-grid,
+  .td-related__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+  }
+}
+
+/* Phones: one card per row. */
+@media (max-width: 640px) {
+  .section > .container:has(> .city-grid),
+  .section > .container:has(> .adventure-grid),
+  .section > .container:has(> .helicopter-grid),
+  .section > .container:has(> .attractions-grid),
+  .section > .container:has(> .blog-grid),
+  .container.tours-catalog-inner,
+  .container.category-experiences__heading,
+  .category-tour-grid,
+  .private-events-packages > .container,
+  .ad-packages > .container,
+  .services-catalogue .services-container,
+  .container.blog-filter-row,
+  .container.blog-lux-grid,
+  .container.blog-related,
+  .cms-placement-section > .container,
+  .td-page main .td-related > .container {
+    width: calc(100% - 30px);
+  }
+
+  .city-grid,
+  .adventure-grid,
+  .helicopter-grid,
+  .attractions-grid,
+  .blog-grid,
+  .tours-card-grid,
+  .category-tour-grid,
+  .private-events-grid,
+  .ad-package-grid:not(.ad-package-grid--five),
+  .services-grid,
+  .blog-lux-grid,
+  .blog-related-grid,
+  .cms-placement-grid,
+  .td-related__grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+}
+
+/* Tour page gallery (images 3–10): same 1140px column.
+   Up to 6 photos -> 3 per row; 7 or more -> 4 per row. Tablets 2, phones 1. */
+.td-page main .td-gallery-section > .container {
+  width: min(var(--card-section-width), calc(100% - 88px));
+}
+
+.td-gallery {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 26px;
+}
+
+.td-gallery.td-gallery--four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 900px) {
+  .td-page main .td-gallery-section > .container { width: calc(100% - 48px); }
+  .td-gallery,
+  .td-gallery.td-gallery--four { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+}
+
+@media (max-width: 640px) {
+  .td-page main .td-gallery-section > .container { width: calc(100% - 30px); }
+  .td-gallery,
+  .td-gallery.td-gallery--four { grid-template-columns: 1fr; gap: 18px; }
+}

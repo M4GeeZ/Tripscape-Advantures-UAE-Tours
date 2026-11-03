@@ -62,24 +62,145 @@ function TextArea(props) {
   return <textarea className="admin-input admin-textarea" {...props} />
 }
 
+// Uploads one image file and returns its public URL.
+async function uploadAdminImage(file) {
+  if (!file.type.startsWith('image/')) throw new Error('Please choose an image file.')
+  if (file.size > 8 * 1024 * 1024) throw new Error(`"${file.name}" is larger than 8 MB.`)
+  const data = await new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(reader.result)
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+  const result = await api('/api/admin/upload', { method: 'POST', body: JSON.stringify({ data }) })
+  return result.url
+}
+
+const MAX_TOUR_IMAGES = 10
+const TOUR_IMAGE_ROLES = ['Card + page hero', 'Intro photo']
+
+// Ordered tour photos: 1 = cards + hero, 2 = intro, 3–10 = gallery on the tour page.
+function TourImagesEditor({ image, gallery, onChange }) {
+  const images = useMemo(() => {
+    const seen = new Set()
+    return [image, ...(gallery || [])]
+      .map((src) => String(src || '').trim())
+      .filter((src) => src && !seen.has(src) && seen.add(src))
+      .slice(0, MAX_TOUR_IMAGES)
+  }, [image, gallery])
+  const [busy, setBusy] = useState('')
+  const [urlDraft, setUrlDraft] = useState('')
+  const addInput = useRef(null)
+  const replaceInput = useRef(null)
+  const replaceIndex = useRef(-1)
+
+  const commit = (list) => onChange(list.filter(Boolean).slice(0, MAX_TOUR_IMAGES))
+  const free = MAX_TOUR_IMAGES - images.length
+
+  const addFiles = async (files) => {
+    const picked = [...(files || [])].slice(0, free)
+    if (!picked.length) return
+    if (files.length > free) alert(`Only ${free} more image${free === 1 ? '' : 's'} can be added (maximum ${MAX_TOUR_IMAGES}).`)
+    let list = [...images]
+    for (const [index, file] of picked.entries()) {
+      setBusy(`Uploading ${index + 1} of ${picked.length}...`)
+      try {
+        list = [...list, await uploadAdminImage(file)]
+        commit(list)
+      } catch (error) {
+        alert(error.message)
+      }
+    }
+    setBusy('')
+  }
+
+  const replaceFile = async (file) => {
+    const index = replaceIndex.current
+    if (!file || index < 0) return
+    setBusy(`Replacing image ${index + 1}...`)
+    try {
+      const url = await uploadAdminImage(file)
+      commit(images.map((src, i) => (i === index ? url : src)))
+    } catch (error) {
+      alert(error.message)
+    } finally {
+      setBusy('')
+    }
+  }
+
+  const move = (index, step) => {
+    const target = index + step
+    if (target < 0 || target >= images.length) return
+    const list = [...images]
+    ;[list[index], list[target]] = [list[target], list[index]]
+    commit(list)
+  }
+
+  const addUrl = () => {
+    const url = urlDraft.trim()
+    if (!url || images.length >= MAX_TOUR_IMAGES) return
+    if (!images.includes(url)) commit([...images, url])
+    setUrlDraft('')
+  }
+
+  return (
+    <div className="admin-upload-field admin-tour-images">
+      <div className="admin-tour-images__head">
+        <div>
+          <span className="admin-upload-label">Tour images ({images.length}/{MAX_TOUR_IMAGES})</span>
+          <small>Image 1 shows on every card and as the page background. Image 2 is the intro photo. Images 3–10 make the page gallery, in this order.</small>
+        </div>
+        <button type="button" className="admin-secondary" onClick={() => addInput.current?.click()} disabled={Boolean(busy) || free <= 0}>
+          <Upload size={16} /> {busy || 'Upload images'}
+        </button>
+        <input ref={addInput} type="file" multiple accept="image/jpeg,image/png,image/webp,image/gif" hidden onChange={(event) => { addFiles(event.target.files); event.target.value = '' }} />
+        <input ref={replaceInput} type="file" accept="image/jpeg,image/png,image/webp,image/gif" hidden onChange={(event) => { replaceFile(event.target.files?.[0]); event.target.value = '' }} />
+      </div>
+
+      <div className="admin-tour-images__grid">
+        {Array.from({ length: MAX_TOUR_IMAGES }, (_, index) => {
+          const src = images[index]
+          return (
+            <div key={index} className={`admin-tour-image ${src ? '' : 'is-empty'} ${index === 0 ? 'is-main' : ''}`}>
+              <span className="admin-tour-image__number">{index + 1}</span>
+              {src ? (
+                <>
+                  <img src={adminMediaUrl(src)} alt={`Tour image ${index + 1}`} />
+                  <div className="admin-tour-image__tools">
+                    <button type="button" title="Move earlier" onClick={() => move(index, -1)} disabled={index === 0}><ChevronLeft size={14} /></button>
+                    <button type="button" title="Replace image" onClick={() => { replaceIndex.current = index; replaceInput.current?.click() }}><Upload size={13} /></button>
+                    <button type="button" title="Move later" onClick={() => move(index, 1)} disabled={index === images.length - 1}><ChevronLeft size={14} style={{ transform: 'rotate(180deg)' }} /></button>
+                    <button type="button" title="Remove image" className="danger" onClick={() => commit(images.filter((_, i) => i !== index))}><Trash2 size={13} /></button>
+                  </div>
+                </>
+              ) : (
+                <button type="button" className="admin-tour-image__add" onClick={() => addInput.current?.click()} disabled={Boolean(busy) || index !== images.length}>
+                  <Plus size={16} />
+                </button>
+              )}
+              <small className="admin-tour-image__role">{TOUR_IMAGE_ROLES[index] || 'Gallery'}</small>
+            </div>
+          )
+        })}
+      </div>
+
+      <div className="admin-tour-images__url">
+        <TextInput value={urlDraft} onChange={(event) => setUrlDraft(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); addUrl() } }} placeholder="Or paste an image URL and press Add" disabled={free <= 0} />
+        <button type="button" className="admin-secondary" onClick={addUrl} disabled={!urlDraft.trim() || free <= 0}><Plus size={15} /> Add</button>
+      </div>
+    </div>
+  )
+}
+
 function ImageUpload({ value, onChange, label = 'Image' }) {
   const [uploading, setUploading] = useState(false)
   const inputRef = useRef(null)
 
   const upload = async (file) => {
     if (!file) return
-    if (!file.type.startsWith('image/')) return alert('Please choose an image file.')
-    if (file.size > 8 * 1024 * 1024) return alert('Image must be smaller than 8 MB.')
     setUploading(true)
     try {
-      const reader = new FileReader()
-      const data = await new Promise((resolve, reject) => {
-        reader.onload = () => resolve(reader.result)
-        reader.onerror = reject
-        reader.readAsDataURL(file)
-      })
-      const result = await api('/api/admin/upload', { method: 'POST', body: JSON.stringify({ data }) })
-      onChange(result.url)
+      onChange(await uploadAdminImage(file))
     } catch (error) {
       alert(error.message)
     } finally {
@@ -409,7 +530,11 @@ function TourForm({ initial, onSaved, onCancel, notify }) {
         <Field label="Robots"><select className="admin-input" value={form.robots || 'index,follow'} onChange={e => update('robots',e.target.value)}><option>index,follow</option><option>noindex,follow</option><option>noindex,nofollow</option><option>index,nofollow</option></select></Field>
       </div>
       <SchemaEditor form={form} update={update} kind="tour" path={`/tours/${slugify(form.category)}/${form.slug || slugify(form.title)}`} />
-      <ImageUpload label="Main image" value={form.image} onChange={(value) => update('image', value)} />
+      <TourImagesEditor
+        image={form.image}
+        gallery={form.gallery}
+        onChange={(list) => setForm((current) => ({ ...current, image: list[0] || '', gallery: list }))}
+      />
       <div className="admin-form-grid admin-form-grid--full"><Field label="Full description"><TextArea className="admin-description-textarea" rows={12} value={form.description} onChange={(e) => update('description', e.target.value)} /></Field></div>
       <div className="admin-form-two"><ListEditor label="Inclusions" items={form.included} onChange={(value) => update('included', value)} placeholder="What is included?" /><ListEditor label="Exclusions" items={form.excluded} onChange={(value) => update('excluded', value)} placeholder="What is not included?" /></div>
       <FaqEditor faqs={form.faqs} onChange={(value) => update('faqs', value)} />
