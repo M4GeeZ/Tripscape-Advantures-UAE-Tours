@@ -6,3 +6,9 @@ client/dist
 server/data/bookings.ndjson
 server/data/booking-notification-queue/
 tripscape-server-source.txt
+
+# Deployment keys and SSH files must never be committed
+.deployment/
+.ssh-hostinger-known_hosts
+*.pem
+id_rsa*

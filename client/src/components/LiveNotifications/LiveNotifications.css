@@ -56,7 +56,7 @@
 .live-promo {
   position: relative;
   width: 340px;
-  max-width: calc(100vw - 56px);
+  max-width: calc(100vw - 148px);
   padding: 22px 22px 16px;
   box-sizing: border-box;
   border: 1px solid rgba(201, 139, 46, .55);
@@ -194,7 +194,7 @@
 .live-social {
   position: relative;
   width: 420px;
-  max-width: calc(100vw - 56px);
+  max-width: calc(100vw - 148px);
   padding: 18px 48px 20px 22px;
   box-sizing: border-box;
   border: 1px solid #ebe4d8;
