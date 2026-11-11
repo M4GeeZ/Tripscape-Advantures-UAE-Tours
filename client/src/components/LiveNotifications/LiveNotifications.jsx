@@ -131,6 +131,32 @@ function SocialToast({ item, onClose }) {
   )
 }
 
+// On tour pages the toasts stay hidden until the visitor has scrolled past the booking form,
+// so they never cover the hero video or the form itself.
+function usePastBookingForm() {
+  const [past, setPast] = useState(false)
+  useEffect(() => {
+    let frame = 0
+    const check = () => {
+      frame = 0
+      const form = document.getElementById('book')
+      setPast(!form || form.getBoundingClientRect().bottom < 0)
+    }
+    const onScroll = () => { if (!frame) frame = window.requestAnimationFrame(check) }
+    check()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+    const poll = window.setInterval(check, 1000) // also catches client-side route changes
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+      window.clearInterval(poll)
+      if (frame) window.cancelAnimationFrame(frame)
+    }
+  }, [])
+  return past
+}
+
 export default function LiveNotifications() {
   const feed = useSocialFeed()
   const [offer, setOffer] = useState(null)
@@ -138,6 +164,14 @@ export default function LiveNotifications() {
   const [social, setSocial] = useState(null)
   const visible = useRef({ promo: false, social: false })
   const lastOfferTitle = useRef('')
+  const allowed = usePastBookingForm()
+  const allowedRef = useRef(allowed)
+  allowedRef.current = allowed
+
+  // Leaving the allowed zone (back up to the form/hero) hides anything on screen.
+  useEffect(() => {
+    if (!allowed) { setOffer(null); setSocial(null) }
+  }, [allowed])
 
   visible.current = { promo: Boolean(offer), social: Boolean(social) }
 
@@ -147,7 +181,7 @@ export default function LiveNotifications() {
     let cancelled = false
     const schedule = () => {
       timer = window.setTimeout(async () => {
-        if (document.hidden || (isMobile() && visible.current.social)) return schedule()
+        if (document.hidden || !allowedRef.current || (isMobile() && visible.current.social)) return schedule()
         // Each popup gets a brand-new single-use code from the server.
         const next = await fetchOffer(lastOfferTitle.current)
         if (cancelled) return
@@ -187,7 +221,7 @@ export default function LiveNotifications() {
     let lastItem = null
     const schedule = () => {
       gapTimer = window.setTimeout(() => {
-        if (document.hidden || (isMobile() && visible.current.promo)) return schedule()
+        if (document.hidden || !allowedRef.current || (isMobile() && visible.current.promo)) return schedule()
         const choices = pool.length > 1 ? pool.filter((item) => item !== lastItem) : pool
         lastItem = pick(choices)
         setSocial(lastItem)

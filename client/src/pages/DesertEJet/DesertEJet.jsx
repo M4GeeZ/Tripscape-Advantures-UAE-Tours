@@ -1,6 +1,7 @@
 import { claimPageMeta } from '../../utils/metaOwner'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Check, MessageCircle, Phone, PlayCircle, ShieldCheck, Star, X } from 'lucide-react'
+import { Check, Phone, PlayCircle, ShieldCheck, Star, X } from 'lucide-react'
+import WhatsAppIcon from '../../components/WhatsAppIcon'
 import Navbar from '../../components/Navbar/Navbar'
 import Footer from '../../components/Footer/Footer'
 import WhatsAppFloat from '../../components/WhatsAppFloat/WhatsAppFloat'
@@ -125,7 +126,7 @@ export default function DesertEJet({ menuOpen, setMenuOpen }) {
             <p>Defy the desert heat with a splash of speed. Race across a shimmering desert lagoon in high-powered mini water karts designed for aquatic thrills.</p>
             <div className="ejet-hero__actions">
               <a href="#ejet-book" className="ejet-btn ejet-btn--gold">Book from AED 250</a>
-              <a href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent('Hi Tripscape, I want details for Desert E-Jet Water Go Kart Dubai.')}`} target="_blank" rel="noreferrer" className="ejet-btn ejet-btn--dark"><MessageCircle size={18}/> WhatsApp</a>
+              <a href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent('Hi Tripscape, I want details for Desert E-Jet Water Go Kart Dubai.')}`} target="_blank" rel="noreferrer" className="ejet-btn ejet-btn--dark"><WhatsAppIcon size={18}/> WhatsApp</a>
               <a href={`tel:${PHONE}`} className="ejet-btn ejet-btn--dark"><Phone size={18}/> Call</a>
             </div>
           </div>
@@ -207,7 +208,7 @@ export default function DesertEJet({ menuOpen, setMenuOpen }) {
               </fieldset>
               <div className="ejet-form__total"><span>Estimated activity price</span><strong>AED {selected.price * Number(form.riders || 1)}</strong></div>
               {status.message && <div className={`ejet-form-status is-${status.type}`}>{status.message}</div>}
-              <button type="submit" disabled={submitting}><MessageCircle size={18}/> {submitting ? 'Sending...' : 'Book Enquiry Now'}</button>
+              <button type="submit" disabled={submitting}><WhatsAppIcon size={18}/> {submitting ? 'Sending...' : 'Book Enquiry Now'}</button>
               <a href={`tel:${PHONE}`}><Phone size={17}/> Call +971 54 993 0684</a>
             </form>
           </div>

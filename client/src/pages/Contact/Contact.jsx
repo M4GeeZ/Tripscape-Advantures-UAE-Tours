@@ -1,5 +1,6 @@
 import { useRef } from 'react'
-import { Mail, MapPin, MessageCircle, Phone, Send } from 'lucide-react'
+import { Mail, MapPin, Phone, Send } from 'lucide-react'
+import WhatsAppIcon from '../../components/WhatsAppIcon'
 import Navbar from '../../components/Navbar/Navbar'
 import Footer from '../../components/Footer/Footer'
 import WhatsAppFloat from '../../components/WhatsAppFloat/WhatsAppFloat'
@@ -11,7 +12,7 @@ const WHATSAPP_NUMBER = '+971 54 993 0684'
 const LANDLINE_NUMBER = '+971 43 945 676'
 
 const contactItems = [
-  { label: 'WhatsApp', value: WHATSAPP_NUMBER, icon: MessageCircle, tone: 'green' },
+  { label: 'WhatsApp', value: WHATSAPP_NUMBER, icon: WhatsAppIcon, tone: 'green' },
   { label: 'Phone', value: LANDLINE_NUMBER, icon: Phone },
   { label: 'Email', value: 'info@tripscapetourism.com', icon: Mail },
   { label: 'Address', value: 'Office 58, 2nd Floor, Dubai Shopping Centre, Deira Port Saeed, Dubai', icon: MapPin }

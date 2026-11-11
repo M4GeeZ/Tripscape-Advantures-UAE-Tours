@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Clock3, MessageCircle, ArrowLeft } from 'lucide-react'
+import { Clock3, ArrowLeft } from 'lucide-react'
+import WhatsAppIcon from '../../components/WhatsAppIcon'
 import Navbar from '../../components/Navbar/Navbar'
 import Footer from '../../components/Footer/Footer'
 import WhatsAppFloat from '../../components/WhatsAppFloat/WhatsAppFloat'
@@ -82,7 +83,7 @@ export default function BlogDetail({ slug, menuOpen, setMenuOpen }) {
                 <span>TRIPSCAPE SUPPORT</span>
                 <h3>Planning a UAE experience?</h3>
                 <p>Ask the team about availability, pickup details, related tours or a custom itinerary.</p>
-                <a href={whatsappHref} target="_blank" rel="noopener noreferrer"><MessageCircle size={17} /> Ask on WhatsApp</a>
+                <a href={whatsappHref} target="_blank" rel="noopener noreferrer"><WhatsAppIcon size={17} /> Ask on WhatsApp</a>
               </div>
             </aside>
           </div>

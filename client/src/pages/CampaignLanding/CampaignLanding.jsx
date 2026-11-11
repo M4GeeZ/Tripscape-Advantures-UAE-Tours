@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Armchair, CalendarCheck, Car, Check, Clock3, Headphones, MapPin, MessageCircle, Phone, ShieldCheck, Smile, Star, Wallet, X } from 'lucide-react'
+import { Armchair, CalendarCheck, Car, Check, Clock3, Headphones, MapPin, Phone, ShieldCheck, Smile, Star, Wallet, X } from 'lucide-react'
+import WhatsAppIcon from '../../components/WhatsAppIcon'
 import Navbar from '../../components/Navbar/Navbar'
 import Footer from '../../components/Footer/Footer'
 import WhatsAppFloat from '../../components/WhatsAppFloat/WhatsAppFloat'
@@ -51,7 +52,7 @@ function CampaignPackageCard({ tour, campaignTitle }) {
         </ul>
         <ExperiencePriceRow price={contactPrice ? '' : tour.price} priceNote={tour.unit} />
         <div className="experience-card-actions">
-          <a className="experience-card-action experience-card-action--primary" href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(`Hi Tripscape, I am interested in ${tour.title} from the ${campaignTitle} campaign.`)}`} target="_blank" rel="noreferrer"><MessageCircle size={15} /> <span>Book Now</span></a>
+          <a className="experience-card-action experience-card-action--primary" href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(`Hi Tripscape, I am interested in ${tour.title} from the ${campaignTitle} campaign.`)}`} target="_blank" rel="noreferrer"><WhatsAppIcon size={15} /> <span>Book Now</span></a>
           <a className="experience-card-action experience-card-action--outline" href={href}><span>View Details</span></a>
         </div>
       </div>
@@ -206,7 +207,7 @@ function BookingForm({ page }) {
 
       <label className="ad-field ad-field--full ad-whatsapp-check"><input type="checkbox" name="hasWhatsApp" checked={form.hasWhatsApp} onChange={update} /><span>This phone number has WhatsApp</span></label>
       {status.message && <div className={`ad-booking-status is-${status.type}`}>{status.message}</div>}
-      <button type="submit" disabled={submitting} className="ad-booking-submit"><MessageCircle size={18} /> {submitting ? 'Sending...' : 'Book Enquiry Now'}</button>
+      <button type="submit" disabled={submitting} className="ad-booking-submit"><WhatsAppIcon size={18} /> {submitting ? 'Sending...' : 'Book Enquiry Now'}</button>
       <a className="ad-booking-call" href={`tel:${PHONE}`}><Phone size={17} /> Call +971 54 993 0684</a>
     </form>
   )
@@ -270,7 +271,7 @@ export default function CampaignLanding({ slug, menuOpen, setMenuOpen }) {
             <div className="ad-hero__trust"><span><ShieldCheck size={17} /> UAE booking support</span><span><Star size={16} fill="currentColor" /> 4.9 guest rating</span></div>
             <div className="ad-hero__actions">
               <a className="ad-btn ad-btn--gold" href="#booking-form">Book now</a>
-              <a className="ad-btn ad-btn--outline" href={whatsappIntro} target="_blank" rel="noreferrer"><MessageCircle size={18} /> WhatsApp</a>
+              <a className="ad-btn ad-btn--outline" href={whatsappIntro} target="_blank" rel="noreferrer"><WhatsAppIcon size={18} /> WhatsApp</a>
               <a className="ad-btn ad-btn--outline" href={`tel:${PHONE}`}><Phone size={18} /> Call now</a>
             </div>
           </div>
@@ -313,7 +314,7 @@ export default function CampaignLanding({ slug, menuOpen, setMenuOpen }) {
 
         <section className="ad-booking-section">
           <div className="container ad-booking-section__grid">
-            <div className="ad-booking-copy" data-lux-reveal><span className="ad-eyebrow">BOOK DIRECT</span><h2>Tell us your date and package.</h2><p>Complete the short form. Your request will open in WhatsApp with all booking details ready to send.</p><div className="ad-booking-contact"><a href={whatsappIntro} target="_blank" rel="noreferrer"><MessageCircle size={20} /> WhatsApp booking</a><a href={`tel:${PHONE}`}><Phone size={20} /> +971 54 993 0684</a></div></div>
+            <div className="ad-booking-copy" data-lux-reveal><span className="ad-eyebrow">BOOK DIRECT</span><h2>Tell us your date and package.</h2><p>Complete the short form. Your request will open in WhatsApp with all booking details ready to send.</p><div className="ad-booking-contact"><a href={whatsappIntro} target="_blank" rel="noreferrer"><WhatsAppIcon size={20} /> WhatsApp booking</a><a href={`tel:${PHONE}`}><Phone size={20} /> +971 54 993 0684</a></div></div>
             <BookingForm page={{ ...page, tours: packageTours }} />
           </div>
         </section>
@@ -345,7 +346,7 @@ export default function CampaignLanding({ slug, menuOpen, setMenuOpen }) {
       <Footer />
       <CallFloat />
       <WhatsAppFloat />
-      <div className="ad-mobile-bar"><a href={`tel:${PHONE}`}><Phone size={17} /> Call</a><a href={whatsappIntro} target="_blank" rel="noreferrer"><MessageCircle size={17} /> WhatsApp</a><a href="#booking-form">Book now</a></div>
+      <div className="ad-mobile-bar"><a href={`tel:${PHONE}`}><Phone size={17} /> Call</a><a href={whatsappIntro} target="_blank" rel="noreferrer"><WhatsAppIcon size={17} /> WhatsApp</a><a href="#booking-form">Book now</a></div>
     </div>
   )
 }

@@ -1,6 +1,7 @@
 import { claimPageMeta } from '../../utils/metaOwner'
 import { useEffect, useRef } from 'react'
-import { Check, MessageCircle, Phone } from 'lucide-react'
+import { Check, Phone } from 'lucide-react'
+import WhatsAppIcon from '../../components/WhatsAppIcon'
 import Navbar from '../../components/Navbar/Navbar'
 import Footer from '../../components/Footer/Footer'
 import CallFloat from '../../components/CallFloat/CallFloat'
@@ -46,7 +47,7 @@ export default function PrivateDesertEvents({ menuOpen, setMenuOpen }) {
             </p>
             <div className="private-events-hero__actions" data-hero-reveal>
               <a className="private-events-primary" href="#event-packages">Book now</a>
-              <a className="private-events-secondary" href="https://wa.me/971549930684?text=Hi%20Tripscape%2C%20I%20want%20to%20plan%20a%20VIP%20private%20desert%20event." target="_blank" rel="noopener noreferrer"><MessageCircle size={18} /> WhatsApp</a>
+              <a className="private-events-secondary" href="https://wa.me/971549930684?text=Hi%20Tripscape%2C%20I%20want%20to%20plan%20a%20VIP%20private%20desert%20event." target="_blank" rel="noopener noreferrer"><WhatsAppIcon size={18} /> WhatsApp</a>
               <a className="private-events-secondary" href="tel:+971549930684"><Phone size={18} /> Call now</a>
             </div>
           </div>
@@ -105,7 +106,7 @@ export default function PrivateDesertEvents({ menuOpen, setMenuOpen }) {
               <h2>Tell us the date, occasion and guest count.</h2>
               <p>We’ll confirm the available setup and provide a tailored quote on WhatsApp.</p>
             </div>
-            <a href="https://wa.me/971549930684?text=Hi%20Tripscape%2C%20I%20want%20a%20quote%20for%20a%20private%20desert%20event." target="_blank" rel="noopener noreferrer"><MessageCircle size={18} /> Get a quote</a>
+            <a href="https://wa.me/971549930684?text=Hi%20Tripscape%2C%20I%20want%20a%20quote%20for%20a%20private%20desert%20event." target="_blank" rel="noopener noreferrer"><WhatsAppIcon size={18} /> Get a quote</a>
           </div>
         </section>
       </main>

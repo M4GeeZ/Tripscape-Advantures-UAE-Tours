@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { ArrowRight, CalendarDays, Check, ChevronDown, CreditCard, Mail, MapPin, MessageCircle, Minus, Phone, Plus, Send, ShieldCheck, Tag, Umbrella, X, Zap } from 'lucide-react'
+import { ArrowRight, CalendarDays, Check, ChevronDown, CreditCard, Mail, MapPin, Minus, Phone, Plus, Send, ShieldCheck, Tag, Umbrella, X, Zap } from 'lucide-react'
+import WhatsAppIcon from './WhatsAppIcon'
 import CountryCodeSelect from './CountryCodeSelect/CountryCodeSelect'
 import { getBookingServices, getPricedAddOns } from '../bookingOptions'
 import { apiUrl } from '../utils/apiBaseUrl'
@@ -425,7 +426,7 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
 
         <div className="booking-enquiry-actions booking-enquiry-field--full">
           <button type="submit" disabled={submitting} className="booking-enquiry-submit">
-            {form.hasWhatsApp ? <MessageCircle size={18} /> : <Mail size={18} />}
+            {form.hasWhatsApp ? <WhatsAppIcon size={18} /> : <Mail size={18} />}
             {submitting ? 'Sending...' : 'Book Enquiry Now'}
             {!submitting && <ArrowRight size={16} />}
           </button>
@@ -440,7 +441,7 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
         <li><ShieldCheck size={13} /> Licensed DTCM Operator</li>
         <li><CreditCard size={13} /> Pay On Arrival Option</li>
         <li><Umbrella size={13} /> Passenger Insurance</li>
-        <li><MessageCircle size={13} /> Instant Reply via WhatsApp</li>
+        <li><WhatsAppIcon size={13} /> Instant Reply via WhatsApp</li>
       </ul>
 
       {confirmation && createPortal(
@@ -481,7 +482,7 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <MessageCircle size={16} /> Chat on WhatsApp
+                <WhatsAppIcon size={16} /> Chat on WhatsApp
               </a>
             </div>
           </div>

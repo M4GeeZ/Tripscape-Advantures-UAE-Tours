@@ -2,8 +2,10 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   ArrowRight, ArrowUpRight, BadgeCheck, Camera, Check,
   CheckCircle2, ChevronLeft, ChevronRight, Clock3, Compass, Headphones,
-  MapPin, MessageCircle, Minus, ShieldCheck, Sparkles, Star, Users, X,
+  MapPin, Minus, ShieldCheck, Sparkles, Star, Users, X,
 } from 'lucide-react'
+import WhatsAppIcon from '../../components/WhatsAppIcon'
+import HeroVideo from '../../components/HeroVideo'
 import Navbar from '../../components/Navbar/Navbar'
 import Footer from '../../components/Footer/Footer'
 import WhatsAppFloat from '../../components/WhatsAppFloat/WhatsAppFloat'
@@ -24,6 +26,8 @@ import { getSeoPage } from '../../seoPages'
 import './TourDetail.css' // Retains existing loading / shared styles used by dynamic pages.
 import './TourDetailPremium.css'
 
+// Plays behind every tour hero (client/public/videos/hero/desert-safari.mp4); falls back to the photo if missing.
+const HERO_VIDEO = '/videos/hero/desert-safari.mp4'
 const WHATSAPP_NUMBER = '971549930684'
 const normalize = (value) => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
 const asArray = (value) => Array.isArray(value) ? value.filter(Boolean) : []
@@ -83,10 +87,23 @@ function usePublishedReviews() {
 
 function HeroPreview({ tour, images, price }) {
   const items = asArray(tour.included).slice(0, 4)
+  // Slide through the same photos shown in the gallery, one every 3 seconds, looping.
+  // Keyed by the photo list's content: `images` is rebuilt on every parent render and must not restart the timer.
+  const slidesKey = getGalleryPhotos(images).join('|')
+  const slides = useMemo(() => (slidesKey ? slidesKey.split('|') : []), [slidesKey])
+  const [active, setActive] = useState(0)
+  useEffect(() => {
+    setActive(0)
+    if (slides.length < 2) return undefined
+    const timer = setInterval(() => setActive((current) => (current + 1) % slides.length), 3000)
+    return () => clearInterval(timer)
+  }, [slides])
   return (
     <aside className="tp-preview" aria-label="Experience preview">
       <div className="tp-preview__image">
-        <img src={images[1] || images[0]} alt={`${tour.title} experience`} />
+        {(slides.length ? slides : [images[1] || images[0]]).map((src, i) => (
+          <img key={`${i}-${src}`} src={src} alt={`${tour.title} experience ${i + 1}`} className={`tp-preview__slide${i === active ? ' is-active' : i === (active - 1 + slides.length) % slides.length ? ' is-prev' : ''}`} loading={i === 0 ? 'eager' : 'lazy'} />
+        ))}
         <span className="tp-preview__tag"><Camera size={12} /> Experience preview</span>
         <span className="tp-preview__photo-label">Explore the experience <ArrowUpRight size={14} /></span>
       </div>
@@ -230,12 +247,12 @@ function ExperienceFlow({ tour }) {
   )
 }
 
-// Always 4 photos (2x2 grid): prefer images after the hero pair, then reuse earlier ones.
+// Always 6 photos (3 per row): prefer images after the hero pair, then reuse earlier ones.
 function getGalleryPhotos(images) {
   const pool = [...images.slice(2, MAX_TOUR_IMAGES), ...images.slice(0, 2)].filter(Boolean)
   const unique = [...new Set(pool)]
   if (!unique.length) return []
-  return Array.from({ length: 4 }, (_, i) => unique[i % unique.length])
+  return Array.from({ length: 6 }, (_, i) => unique[i % unique.length])
 }
 
 function Gallery({ images, tour, onOpen }) {
@@ -397,6 +414,7 @@ function RelatedTours({ tour }) {
 export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOpen, tourOverride = null }) {
   const tour = applyTourPricing(tourOverride || getTourDetail(categorySlug, tourSlug))
   const [lightbox, setLightbox] = useState(null)
+  const [heroVideoOk, setHeroVideoOk] = useState(true)
   const reviews = usePublishedReviews()
   const adminImages = useTourImages(tour?.title, tour?.slug || tourSlug)
   // Content written by the SEO team for this page (see seoPages.js), if any.
@@ -447,6 +465,7 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
       <main>
         <section className="tp-hero">
           {images[0] && <div className="tp-hero__bg" style={{ backgroundImage: `url("${images[0]}")` }} aria-hidden="true" />}
+          {heroVideoOk && <HeroVideo src={HERO_VIDEO} poster={images[0]} onError={() => setHeroVideoOk(false)} />}
           <div className="tp-container tp-hero__grid">
             <div className="tp-hero__content">
               <nav className="tp-breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/tours">Tours</a><span>/</span><span aria-current="page">{tour.title}</span></nav>
@@ -459,7 +478,7 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
                 {tour.rating && <div><Star size={19} fill="currentColor" /><span><small>Guest rating</small><strong>{tour.rating} / 5</strong></span></div>}
                 <div><BadgeCheck size={19} /><span><small>Price</small><strong>{price}</strong></span></div>
               </div>
-              <div className="tp-hero__actions"><a href="#book" className="tp-button tp-button--gold">{ctaBook} <ArrowRight size={16} /></a><a href={whatsappHref} className="tp-button tp-button--green" target="_blank" rel="noopener noreferrer"><MessageCircle size={17} /> {ctaWhatsapp}</a></div>
+              <div className="tp-hero__actions"><a href="#book" className="tp-button tp-button--gold">{ctaBook} <ArrowRight size={16} /></a><a href={whatsappHref} className="tp-button tp-button--green" target="_blank" rel="noopener noreferrer"><WhatsAppIcon size={17} /> {ctaWhatsapp}</a></div>
               <p className="tp-hero__hint"><ShieldCheck size={14} /> Request your preferred date. Our team will confirm availability.</p>
             </div>
             {images[0] && <HeroPreview tour={tour} images={images} price={price} />}
@@ -499,7 +518,7 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
         <Reviews reviews={reviews} />
         <Faqs tour={seo ? { ...tour, faqs: seoFaqs } : tour} title={seo?.faqsTitle} />
         <RelatedTours tour={tour} />
-        <section className="tp-final-cta"><div className="tp-container tp-final-cta__inner"><div><span>READY FOR YOUR NEXT ADVENTURE?</span><h2>Book {tour.title} Today</h2><p>Choose your preferred date or ask our team for help planning your experience.</p></div><div className="tp-final-cta__actions"><a href="#book" className="tp-button tp-button--white">Book This Experience <ArrowRight size={16} /></a><a href={whatsappHref} target="_blank" rel="noopener noreferrer" className="tp-button tp-button--green"><MessageCircle size={17} /> WhatsApp Concierge</a></div></div></section>
+        <section className="tp-final-cta"><div className="tp-container tp-final-cta__inner"><div><span>READY FOR YOUR NEXT ADVENTURE?</span><h2>Book {tour.title} Today</h2><p>Choose your preferred date or ask our team for help planning your experience.</p></div><div className="tp-final-cta__actions"><a href="#book" className="tp-button tp-button--white">Book This Experience <ArrowRight size={16} /></a><a href={whatsappHref} target="_blank" rel="noopener noreferrer" className="tp-button tp-button--green"><WhatsAppIcon size={17} /> WhatsApp Concierge</a></div></div></section>
       </main>
 
       {lightbox !== null && galleryPhotos[lightbox] && <div className="tp-lightbox" role="dialog" aria-modal="true" aria-label={`${tour.title} image gallery`} onClick={() => setLightbox(null)}><button type="button" className="tp-lightbox__close" onClick={() => setLightbox(null)} aria-label="Close gallery"><X size={23} /></button>{galleryPhotos.length > 1 && <button type="button" className="tp-lightbox__previous" onClick={(event) => { event.stopPropagation(); setLightbox((lightbox - 1 + galleryPhotos.length) % galleryPhotos.length) }} aria-label="Previous photo"><ChevronLeft size={27} /></button>}<img src={galleryPhotos[lightbox]} alt={`${tour.title} photo ${lightbox + 1}`} onClick={(event) => event.stopPropagation()} />{galleryPhotos.length > 1 && <button type="button" className="tp-lightbox__next" onClick={(event) => { event.stopPropagation(); setLightbox((lightbox + 1) % galleryPhotos.length) }} aria-label="Next photo"><ChevronRight size={27} /></button>}<span className="tp-lightbox__count">{lightbox + 1} / {galleryPhotos.length}</span></div>}

@@ -393,10 +393,11 @@
 .tp-page .bk-trust li { display: flex; align-items: center; gap: 5px; font-size: 9px; font-weight: 700; line-height: 1.3; color: #5b6778; }
 .tp-page .bk-trust li svg { flex: 0 0 auto; color: #26966c; }
 
-/* Gallery: always four equal tiles, two on top and two below */
-.tp-page .tp-gallery, .tp-page .tp-gallery--1, .tp-page .tp-gallery--2, .tp-page .tp-gallery--3, .tp-page .tp-gallery--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 240px; gap: 14px; }
+/* Gallery: six equal tiles, three per row */
+.tp-page .tp-gallery, .tp-page .tp-gallery--1, .tp-page .tp-gallery--2, .tp-page .tp-gallery--3, .tp-page .tp-gallery--4, .tp-page .tp-gallery--5, .tp-page .tp-gallery--6 { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 240px; gap: 16px; }
 .tp-page .tp-gallery .tp-gallery__item, .tp-page .tp-gallery .tp-gallery__item:first-child, .tp-page .tp-gallery .tp-gallery__item:nth-child(4) { grid-row: auto; grid-column: auto; height: auto; }
-@media (max-width: 640px) { .tp-page .tp-gallery { grid-auto-rows: 150px; gap: 8px; } }
+@media (max-width: 900px) { .tp-page .tp-gallery { grid-auto-rows: 190px; gap: 10px; } }
+@media (max-width: 640px) { .tp-page .tp-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 150px; gap: 8px; } }
 
 /* Keep full-width fields full width at every breakpoint */
 .tp-page .booking-enquiry-field.booking-enquiry-field--full { grid-column: 1 / -1; }
@@ -666,3 +667,49 @@
 .tp-page .tp-seo-block + .tp-seo-block { margin-top: 30px; padding-top: 26px; border-top: 1px solid #eef1f6; }
 .tp-page .tp-seo-block__cta { margin-top: 16px; width: fit-content; }
 .tp-faq-list summary h3 { margin: 0; flex: 1; min-width: 0; font: inherit; color: inherit; letter-spacing: inherit; }
+
+/* ---- Hero polish: more breathing room, cleaner hierarchy (desktop/tablet) ---- */
+@media (min-width: 901px) {
+  .tp-page .tp-hero__grid { min-height: 600px; padding-top: 72px; padding-bottom: 76px; gap: clamp(48px, 6vw, 96px); grid-template-columns: minmax(0, 1fr) minmax(320px, 400px); }
+  .tp-page .tp-breadcrumb { margin-bottom: 28px; gap: 12px; }
+  .tp-page .tp-hero__pills { gap: 10px; margin-bottom: 24px; }
+  .tp-page .tp-hero__pills span { padding: 8px 14px; border-radius: 999px; }
+  .tp-page .tp-hero h1 { margin-bottom: 24px; font-size: clamp(36px, 3.6vw, 56px); line-height: 1.08; }
+  .tp-page .tp-hero__description { margin-bottom: 34px; line-height: 1.85; -webkit-line-clamp: 5; color: #dbe4ee; }
+  .tp-page .tp-hero__facts { gap: 14px; margin-bottom: 34px; }
+  .tp-page .tp-hero__facts > div { min-height: 76px; padding: 14px 16px; gap: 12px; border-radius: 12px; }
+  .tp-page .tp-hero__facts span { gap: 4px; }
+  .tp-page .tp-hero__actions { gap: 16px; }
+  .tp-page .tp-hero__actions .tp-button { min-height: 52px; padding-left: 26px; padding-right: 26px; }
+  .tp-page .tp-hero__hint { margin-top: 24px; }
+  .tp-page .tp-preview { padding: 16px; border-radius: 20px; }
+  .tp-page .tp-preview__image { height: 210px; border-radius: 14px; }
+  .tp-page .tp-preview__body { padding: 20px 4px 4px; }
+  .tp-page .tp-preview__title { margin-bottom: 12px; }
+  .tp-page .tp-preview__body li { padding: 9px 0; }
+  .tp-page .tp-preview__footer { margin-top: 18px; }
+  .tp-page .tp-preview__link { min-height: 40px; padding: 10px 18px; }
+}
+@media (max-width: 900px) {
+  .tp-page .tp-hero__facts { gap: 10px; }
+  .tp-page .tp-hero__pills { gap: 8px; }
+}
+.tp-page .tp-hero .wa-icon, .tp-page .tp-button .wa-icon { width: 19px; height: 19px; }
+
+/* Hero preview card: photos slide in from the right every 3s (see HeroPreview in TourDetail.jsx) */
+.tp-preview__image .tp-preview__slide { position: absolute; inset: 0; transform: translateX(100%); transition: none; }
+.tp-preview__image .tp-preview__slide.is-active { transform: translateX(0); transition: transform .8s cubic-bezier(.65,0,.35,1); }
+.tp-preview__image .tp-preview__slide.is-prev { transform: translateX(-100%); transition: transform .8s cubic-bezier(.65,0,.35,1); }
+
+/* Hero background video (sits above the photo, below the dark overlay) */
+.tp-hero__video { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .tp-hero__video { display: none; } }
+
+/* Neutral (black) overlay instead of navy, so the video/photo keep their original colors */
+.tp-page .tp-hero { background: #0b0b0c; }
+.tp-page .tp-hero::before { background: linear-gradient(90deg, rgba(0,0,0,.72) 0%, rgba(0,0,0,.5) 55%, rgba(0,0,0,.34) 100%); }
+.tp-page .tp-hero__bg { transform: none; }
+
+/* Seamless loop: two stacked copies cross-fade into each other (see HeroVideo.jsx) */
+.tp-hero__video { opacity: 0; transition: opacity 1.5s linear; }
+.tp-hero__video.is-active { opacity: 1; }
