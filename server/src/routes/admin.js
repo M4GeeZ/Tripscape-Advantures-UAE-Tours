@@ -8,6 +8,7 @@ import Tour from '../models/Tour.js'
 import Blog from '../models/Blog.js'
 import Review from '../models/Review.js'
 import { requireAdmin } from '../utils/security.js'
+import { publicMediaHtml, publicMediaUrl, saveUpload } from '../utils/uploadStore.js'
 import { slugify } from '../utils/slugify.js'
 import { sanitizeHtml } from '../utils/sanitizeHtml.js'
 import SeoPage from '../models/SeoPage.js'
@@ -59,10 +60,9 @@ async function uniqueSlug(Model, requested, id = null) {
   }
 }
 
+// Uploaded images go out as /api/media/<id> (see utils/uploadStore.js).
 function mediaUrl(value) {
-  const source = String(value || '')
-  if (source.startsWith('/uploads/')) return `/api${source}`
-  return source
+  return publicMediaUrl(value)
 }
 
 function mediaSafeUrl(value) {
@@ -98,7 +98,7 @@ function mapReview(review) {
 }
 
 function normalizeContentImages(value) {
-  return String(value || '').replace(/(src|href)=(["'])\/uploads\//g, '$1=$2/api/uploads/')
+  return publicMediaHtml(String(value || '').replace(/(src|href)=(["'])\/uploads\//g, '$1=$2/api/uploads/'))
 }
 
 function mapTour(tour) {
@@ -380,7 +380,9 @@ router.post('/upload', async (req, res) => {
   await fs.mkdir(uploadsDir, { recursive: true })
   const filename = `${crypto.randomUUID()}.${extension}`
   await fs.writeFile(path.join(uploadsDir, filename), buffer, { flag: 'wx', mode: 0o640 })
-  res.status(201).json({ url: `/api/uploads/${filename}` })
+  // Database copy so every server (local, VPS) can serve this image.
+  await saveUpload(filename, buffer).catch((error) => console.error('Upload DB copy failed:', error.message))
+  res.status(201).json({ url: publicMediaUrl(`/api/uploads/${filename}`) })
 })
 
 router.get('/meta', (_req, res) => res.json({ categories, destinations, blogCategories: ['Tips', 'Guides', 'Reviews', 'News', 'Destinations'] }))

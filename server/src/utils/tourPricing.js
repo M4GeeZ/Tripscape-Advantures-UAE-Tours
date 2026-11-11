@@ -6,7 +6,7 @@ const priceMap = new Map([
   ['private desert safari with sahara fortress dinner', [2949, '/car']],
   ['single and double quad bike', [249, '/bike']],
   ['evening quad bike with dinner', [299, '/person']],
-  ['morning desert safari with quad bike', [255, '/person']],
+  ['morning desert safari with quad bike', [299, '/person']],
   ['can am buggy tour with dinner', [1249, '/person']],
 ])
 const normalize = v => String(v || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()

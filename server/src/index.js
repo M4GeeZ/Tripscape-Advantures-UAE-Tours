@@ -15,6 +15,7 @@ import seoRouter from './routes/seo.js'
 import promosRouter from './routes/promos.js'
 import { securityHeaders } from './middleware/security.js'
 import { seedInitialBlogs, seedInitialTours } from './data/seedCms.js'
+import { serveMedia, serveUploadFromDb } from './utils/uploadStore.js'
 
 const app = express()
 app.set('trust proxy', 1)
@@ -64,6 +65,10 @@ app.use('/api/admin/auth', adminAuthRouter)
 app.use('/api/admin', adminRouter)
 app.use('/api/uploads', express.static(path.resolve(__dirname, '../uploads'), { maxAge: '7d', immutable: true }))
 app.use('/uploads', express.static(path.resolve(__dirname, '../uploads'), { maxAge: '7d', immutable: true }))
+// Not on this server's disk (e.g. uploaded from another server): serve the database copy.
+app.get(['/api/uploads/:name', '/uploads/:name'], serveUploadFromDb)
+// Extension-less image URLs: nginx on the VPS intercepts *.jpg / *.png paths before they reach Node.
+app.get('/api/media/:id', serveMedia)
 app.get('/api/health', (_req, res) => res.json({ ok: true, service: 'tripscape-api' }))
 app.post('/api/contact', (req, res) => {
   const { name, email, message } = req.body || {}

@@ -2,15 +2,14 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   AlignCenter, AlignLeft, AlignRight, BookOpen, Check, CheckCircle2, ChevronDown, ChevronLeft, Edit3, Eye, EyeOff, FileText, Image as ImageIcon, LayoutDashboard, Link2, List, ListOrdered, LogOut, LoaderCircle, Menu, Plus, Redo2, RemoveFormatting, Save, Settings, ShieldCheck, Star, Trash2, Undo2, Upload, X
 } from 'lucide-react'
-import { apiUrl } from '../../utils/apiBaseUrl'
+import { apiUrl, mediaUrl } from '../../utils/apiBaseUrl'
 import SchemaEditor from './SchemaEditor'
 import SeoPagesManager from './SeoPagesManager'
 import { validateJsonLd } from '../../utils/schemaManager'
 
+// Same rule as the public site: uploads are shown through /api/media/<id>.
 function adminMediaUrl(value) {
-  const source = String(value || '')
-  if (source.startsWith('/uploads/')) return apiUrl(`/uploads/${source.slice('/uploads/'.length)}`)
-  return source
+  return mediaUrl(value)
 }
 
 import './Admin.css'

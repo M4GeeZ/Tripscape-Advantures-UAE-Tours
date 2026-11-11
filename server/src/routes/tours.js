@@ -2,13 +2,13 @@ import { Router } from 'express'
 import Tour from '../models/Tour.js'
 import { fallbackTours } from '../data/fallbackTours.js'
 import { withTourRate } from '../utils/tourPricing.js'
+import { publicMediaUrl } from '../utils/uploadStore.js'
 
 const router = Router()
 
+// Uploaded images go out as /api/media/<id> (see utils/uploadStore.js).
 function mediaUrl(value) {
-  const source = String(value || '')
-  if (source.startsWith('/uploads/')) return `/api${source}`
-  return source
+  return publicMediaUrl(value)
 }
 
 function mapTour(tour) {

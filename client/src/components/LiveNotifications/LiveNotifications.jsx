@@ -8,11 +8,14 @@ import './LiveNotifications.css'
 
 const MIN_GAP_MS = 5000
 const MAX_GAP_MS = 20000
+const PROMO_MIN_GAP_MS = 30000
+const PROMO_MAX_GAP_MS = 40000
 const PROMO_VISIBLE_SECONDS = 10
 const SOCIAL_VISIBLE_MS = 6500
 const MOBILE_QUERY = '(max-width: 640px)'
 
 const randomGap = () => MIN_GAP_MS + Math.floor(Math.random() * (MAX_GAP_MS - MIN_GAP_MS + 1))
+const randomPromoGap = () => PROMO_MIN_GAP_MS + Math.floor(Math.random() * (PROMO_MAX_GAP_MS - PROMO_MIN_GAP_MS + 1))
 const pick = (items) => items[Math.floor(Math.random() * items.length)]
 const isMobile = () => window.matchMedia?.(MOBILE_QUERY).matches
 
@@ -138,7 +141,7 @@ export default function LiveNotifications() {
 
   visible.current = { promo: Boolean(offer), social: Boolean(social) }
 
-  // Promo loop (bottom-right): random 5–20s gap, then a 10s offer with countdown.
+  // Promo loop (bottom-right): random 30–40s gap (max ~2 per minute), then a 10s offer with countdown.
   useEffect(() => {
     let timer
     let cancelled = false
@@ -152,7 +155,7 @@ export default function LiveNotifications() {
         lastOfferTitle.current = next.title
         setSecondsLeft(PROMO_VISIBLE_SECONDS)
         setOffer(next)
-      }, randomGap())
+      }, randomPromoGap())
     }
     if (!offer) schedule()
     return () => {

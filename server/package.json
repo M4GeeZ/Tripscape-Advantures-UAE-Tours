@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
-    "smtp:check": "node scripts/smtp-doctor.js"
+    "smtp:check": "node scripts/smtp-doctor.js",
+    "uploads:sync": "node scripts/sync-uploads-to-db.mjs"
   },
   "dependencies": {
     "cors": "^2.8.5",

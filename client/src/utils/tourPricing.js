@@ -8,7 +8,7 @@ const rates = [
   { keys: ['Private Desert Safari with Sahara Fortress Dinner'], amount: 2949, unit: '/car', image: '/images/private-desert-setup/private-sahara-fortress-dinner.jpg' },
   { keys: ['Single and Double Quad Bike', 'Single and Double Quad bike'], amount: 249, unit: '/bike' },
   { keys: ['Evening Quad Bike with Dinner'], amount: 299, unit: '/person' },
-  { keys: ['Morning Desert Safari with Quad Bike', 'Morning Safari with Quad Bike'], amount: 255, unit: '/person' },
+  { keys: ['Morning Desert Safari with Quad Bike', 'Morning Safari with Quad Bike'], amount: 299, unit: '/person' },
   { keys: ['CAN-AM Buggy Tour with Dinner'], amount: 1249, unit: '/person' },
 ]
 const normalize = (text) => String(text || '').normalize('NFKC').toLowerCase()

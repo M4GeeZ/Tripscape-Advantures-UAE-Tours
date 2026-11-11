@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Mail, MessageCircle, Phone, Send, Tag, X } from 'lucide-react'
+import { ArrowRight, CalendarDays, Check, ChevronDown, CreditCard, Mail, MapPin, MessageCircle, Minus, Phone, Plus, Send, ShieldCheck, Tag, Umbrella, X, Zap } from 'lucide-react'
 import CountryCodeSelect from './CountryCodeSelect/CountryCodeSelect'
 import { getBookingAddOns, getBookingServices } from '../bookingOptions'
 import { apiUrl } from '../utils/apiBaseUrl'
@@ -17,7 +17,51 @@ function tomorrow() {
   return date.toISOString().slice(0, 10)
 }
 
-export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact for price', hideServiceSelector = false }) {
+// Custom dropdown so the arrow can rotate while the list is open.
+function PackageSelect({ value, options, onChange }) {
+  const [open, setOpen] = useState(false)
+  const rootRef = useRef(null)
+
+  useEffect(() => {
+    if (!open) return undefined
+    const onDown = (event) => { if (rootRef.current && !rootRef.current.contains(event.target)) setOpen(false) }
+    const onKey = (event) => { if (event.key === 'Escape') setOpen(false) }
+    document.addEventListener('mousedown', onDown)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('mousedown', onDown)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [open])
+
+  const choose = (option) => {
+    onChange(option)
+    setOpen(false)
+  }
+
+  return (
+    <div className={`bk-select${open ? ' is-open' : ''}`} ref={rootRef}>
+      <button type="button" className="bk-select__button" aria-haspopup="listbox" aria-expanded={open} onClick={() => setOpen((current) => !current)}>
+        <span>{value}</span>
+        <ChevronDown size={16} strokeWidth={2.6} className="bk-select__arrow" aria-hidden="true" />
+      </button>
+      {open && (
+        <ul className="bk-select__list" role="listbox">
+          {options.map((option) => (
+            <li key={option} role="option" aria-selected={option === value}>
+              <button type="button" className={option === value ? 'is-selected' : ''} onClick={() => choose(option)}>
+                <span>{option}</span>
+                {option === value && <Check size={14} strokeWidth={3} aria-hidden="true" />}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
+
+export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact for price', unit = '', hideServiceSelector = false }) {
   const serviceOptions = useMemo(() => getBookingServices(tourTitle), [tourTitle])
   const addOnOptions = useMemo(() => getBookingAddOns(tourTitle), [tourTitle])
 
@@ -106,6 +150,27 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
     setForm((current) => ({ ...current, [name]: type === 'checkbox' ? checked : value }))
   }
 
+  const priceParts = useMemo(() => {
+    const match = String(displayPrice).match(/^(?:from\s*)?([A-Za-z]{3})\s*([\d,.]+)/i)
+    return match ? { currency: match[1].toUpperCase(), amount: match[2] } : { currency: '', amount: displayPrice }
+  }, [displayPrice])
+
+  // Per-person tours scale with the number of adults (children are free); add-ons are added on top.
+  const pricing = useMemo(() => {
+    const baseAmount = Number(String(displayPrice).replace(/[^\d.]/g, ''))
+    if (!baseAmount) return null
+    const perPerson = !unit || /person|pax|guest/i.test(unit)
+    const adults = Math.max(1, Number(form.adults) || 1)
+    const unitAmount = promo ? promo.discountedPrice : baseAmount
+    const addOnTotal = 0
+    const total = unitAmount * (perPerson ? adults : 1) + addOnTotal
+    return { perPerson, adults, unitAmount, addOnTotal, total }
+  }, [displayPrice, unit, form.adults, form.addOns, promo, tourTitle])
+
+  const stepGuests = (field, delta, min) => {
+    setForm((current) => ({ ...current, [field]: String(Math.max(min, (Number(current[field]) || 0) + delta)) }))
+  }
+
   const toggleAddOn = (addOn) => {
     setForm((current) => ({
       ...current,
@@ -134,7 +199,8 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
           service: form.service,
           addOns: form.addOns,
           pickup: form.pickup,
-          price: displayPrice,
+          price: pricing ? `AED ${pricing.total}${pricing.perPerson ? ` (${pricing.adults} adult${pricing.adults > 1 ? "s" : ""} × AED ${pricing.unitAmount})` : ""}` : displayPrice,
+          totalPrice: pricing ? `AED ${pricing.total}` : displayPrice,
           promoCode: promo?.code || promoInput.trim(),
           name: form.name,
           adults: form.adults,
@@ -186,28 +252,91 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
 
   return (
     <aside className="booking-enquiry-card" data-lux-reveal>
-      <div className="booking-enquiry-card__head">
-        <span>BOOKING REQUEST</span>
-        {promo ? (
-          <strong className="booking-enquiry-card__promo-price">
-            <s>{formatAed(promo.basePrice)}</s> {formatAed(promo.discountedPrice)}
-            {promo.unit && <small>{promo.unit}</small>}
-          </strong>
-        ) : (
-          <strong>{displayPrice}</strong>
-        )}
-        <p>Choose your preferred package or service, add any extras, and send your booking enquiry.</p>
+      <div className="booking-enquiry-card__head bk-head">
+        <div className="bk-head__text">
+          <span className="bk-head__eyebrow"><Zap size={11} /> INSTANT RESERVATION</span>
+          <h3 className="bk-head__title">Reserve Your Date</h3>
+        </div>
+        <div className="bk-head__price">
+          {pricing ? (
+            <strong><small>AED</small>{pricing.total.toLocaleString('en-US')}</strong>
+          ) : (
+            <strong className="is-text">{priceParts.currency && <small>{priceParts.currency}</small>}{priceParts.amount}</strong>
+          )}
+          {pricing && <em>
+            {pricing.perPerson && (pricing.adults > 1 || pricing.addOnTotal)
+                ? `Total · AED ${pricing.unitAmount.toLocaleString('en-US')} × ${pricing.adults} adult${pricing.adults > 1 ? 's' : ''}${pricing.addOnTotal ? ' + add-ons' : ''}`
+                : pricing.perPerson ? 'per person base' : (unit ? `per ${unit.replace('/', '')}` : 'total')}
+          </em>}
+          {promo && <em className="bk-head__was">was AED {promo.basePrice.toLocaleString('en-US')} · promo applied</em>}
+          <span className="bk-head__badge"><Check size={10} /> No immediate payment needed</span>
+        </div>
       </div>
 
       <form className="booking-enquiry-form" onSubmit={submit}>
         {!hideServiceSelector && (
-          <label className="booking-enquiry-field booking-enquiry-field--full booking-enquiry-field--service">
-            <span>Package / Service</span>
-            <select name="service" value={form.service} onChange={update}>
-              {serviceOptions.map((service) => <option key={service} value={service}>{service}</option>)}
-            </select>
-          </label>
+          <div className="booking-enquiry-field booking-enquiry-field--full booking-enquiry-field--service">
+            <span>Choose Package / Service</span>
+            <PackageSelect value={form.service} options={serviceOptions} onChange={(service) => update({ target: { name: 'service', value: service, type: 'select' } })} />
+          </div>
         )}
+
+        <label className="booking-enquiry-field booking-enquiry-field--full booking-enquiry-field--date">
+          <span><CalendarDays size={12} /> Select Travel Date</span>
+          <input type="date" name="travelDate" value={form.travelDate} onChange={update} required />
+        </label>
+
+        <div className="bk-guests booking-enquiry-field--full">
+          <div className="bk-stepper">
+            <span>Adults <small>Age 12+</small></span>
+            <div className="bk-stepper__control">
+              <button type="button" onClick={() => stepGuests('adults', -1, 1)} aria-label="Decrease adults" disabled={Number(form.adults) <= 1}><Minus size={13} /></button>
+              <strong aria-live="polite">{form.adults}</strong>
+              <button type="button" className="is-plus" onClick={() => stepGuests('adults', 1, 1)} aria-label="Increase adults"><Plus size={13} /></button>
+            </div>
+          </div>
+          <div className="bk-stepper">
+            <span>Children <small>Age 3-11 (Free)</small></span>
+            <div className="bk-stepper__control">
+              <button type="button" onClick={() => stepGuests('children', -1, 0)} aria-label="Decrease children" disabled={Number(form.children) <= 0}><Minus size={13} /></button>
+              <strong aria-live="polite">{form.children}</strong>
+              <button type="button" className="is-plus" onClick={() => stepGuests('children', 1, 0)} aria-label="Increase children"><Plus size={13} /></button>
+            </div>
+          </div>
+        </div>
+
+        <label className="booking-enquiry-field booking-enquiry-field--full booking-enquiry-field--pickup">
+          <span><MapPin size={12} /> Pickup Hotel / Residence in Dubai</span>
+          <input type="text" name="pickup" value={form.pickup} onChange={update} placeholder="e.g. Atlantis The Palm, or Downtown Address" />
+        </label>
+
+        <fieldset className="booking-enquiry-addons booking-enquiry-field--full">
+          <legend>Select Optional Add-ons</legend>
+          <div className="bk-addons">
+            {addOnOptions.map((addOn) => {
+              return (
+                <label key={addOn} className={`bk-addon${form.addOns.includes(addOn) ? ' is-selected' : ''}`}>
+                  <input type="checkbox" checked={form.addOns.includes(addOn)} onChange={() => toggleAddOn(addOn)} />
+                  <span className="bk-addon__name">{addOn}</span>
+                </label>
+              )
+            })}
+          </div>
+        </fieldset>
+
+        <div className="bk-phone booking-enquiry-field--full">
+          <div className="bk-phone__label">
+            <span>Phone / WhatsApp Number</span>
+          </div>
+          <div className="booking-enquiry-phone-group">
+            <div className="booking-enquiry-field">
+              <CountryCodeSelect value={form.countryCode} onChange={(countryCode) => setForm((current) => ({ ...current, countryCode }))} />
+            </div>
+            <label className="booking-enquiry-field">
+              <input type="tel" name="phone" value={form.phone} onChange={update} placeholder="54 993 0684" inputMode="tel" minLength="7" maxLength="20" required aria-label="Phone number" />
+            </label>
+          </div>
+        </div>
 
         <label className="booking-enquiry-field booking-enquiry-field--name">
           <span>Full name</span>
@@ -218,54 +347,6 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
           <span>Email</span>
           <input type="email" name="email" value={form.email} onChange={update} placeholder="you@example.com" required />
         </label>
-
-        <label className="booking-enquiry-field booking-enquiry-field--date">
-          <span>Travel date</span>
-          <input type="date" name="travelDate" value={form.travelDate} onChange={update} required />
-        </label>
-
-        <label className="booking-enquiry-field booking-enquiry-field--guest">
-          <span>Adults</span>
-          <input type="number" min="1" name="adults" value={form.adults} onChange={update} required />
-        </label>
-
-        <label className="booking-enquiry-field booking-enquiry-field--guest">
-          <span>Children</span>
-          <input type="number" min="0" name="children" value={form.children} onChange={update} />
-        </label>
-
-        <label className="booking-enquiry-field booking-enquiry-field--pickup">
-          <span>Pickup / hotel</span>
-          <input type="text" name="pickup" value={form.pickup} onChange={update} placeholder="Hotel or area" />
-        </label>
-
-        <div className="booking-enquiry-phone-group booking-enquiry-field--full">
-          <div className="booking-enquiry-field">
-            <span>Country code</span>
-            <CountryCodeSelect value={form.countryCode} onChange={(countryCode) => setForm((current) => ({ ...current, countryCode }))} />
-          </div>
-          <label className="booking-enquiry-field">
-            <span>Phone number</span>
-            <input type="tel" name="phone" value={form.phone} onChange={update} placeholder="50 123 4567" inputMode="tel" minLength="7" maxLength="20" required />
-          </label>
-        </div>
-
-        <fieldset className="booking-enquiry-addons booking-enquiry-field--full">
-          <legend>Add-ons</legend>
-          <p>Select any extra services you want with this booking.</p>
-          <div className="booking-enquiry-addons__grid">
-            {addOnOptions.map((addOn) => (
-              <label key={addOn} className="booking-enquiry-addon-option">
-                <input
-                  type="checkbox"
-                  checked={form.addOns.includes(addOn)}
-                  onChange={() => toggleAddOn(addOn)}
-                />
-                <span>{addOn}</span>
-              </label>
-            ))}
-          </div>
-        </fieldset>
 
         <div className="booking-enquiry-promo booking-enquiry-field--full">
           <span>Promo code</span>
@@ -301,11 +382,6 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
           {promoStatus.message && <small className={`booking-enquiry-promo__status is-${promoStatus.type}`}>{promoStatus.message}</small>}
         </div>
 
-        <label className="booking-enquiry-whatsapp-check booking-enquiry-field--full">
-          <input type="checkbox" name="hasWhatsApp" checked={form.hasWhatsApp} onChange={update} />
-          <span>This phone number has WhatsApp</span>
-        </label>
-
         {status.message && (
           <div className={`booking-enquiry-status is-${status.type}`} role="status">
             {status.type === 'success' ? <Mail size={16} /> : <Send size={16} />}
@@ -317,13 +393,21 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
           <button type="submit" disabled={submitting} className="booking-enquiry-submit">
             {form.hasWhatsApp ? <MessageCircle size={18} /> : <Mail size={18} />}
             {submitting ? 'Sending...' : 'Book Enquiry Now'}
+            {!submitting && <ArrowRight size={16} />}
           </button>
           <a href={`tel:${COMPANY_PHONE}`} className="booking-enquiry-call">
-            <Phone size={18} />
-            Call Now
+            <Phone size={16} />
+            Direct Hotline: +971 54 993 0684
           </a>
         </div>
       </form>
+
+      <ul className="bk-trust" aria-label="Booking assurances">
+        <li><ShieldCheck size={13} /> Licensed DTCM Operator</li>
+        <li><CreditCard size={13} /> Pay On Arrival Option</li>
+        <li><Umbrella size={13} /> Passenger Insurance</li>
+        <li><MessageCircle size={13} /> Instant Reply via WhatsApp</li>
+      </ul>
 
       {confirmation && createPortal(
         <div className="booking-confirm" role="dialog" aria-modal="true" aria-labelledby="booking-confirm-title" onClick={closeConfirmation}>

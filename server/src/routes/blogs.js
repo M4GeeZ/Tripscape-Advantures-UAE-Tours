@@ -1,16 +1,16 @@
 import { Router } from 'express'
 import Blog from '../models/Blog.js'
+import { publicMediaHtml, publicMediaUrl } from '../utils/uploadStore.js'
 
 const router = Router()
 
+// Uploaded images go out as /api/media/<id> (see utils/uploadStore.js).
 function mediaUrl(value) {
-  const source = String(value || '')
-  if (source.startsWith('/uploads/')) return `/api${source}`
-  return source
+  return publicMediaUrl(value)
 }
 
 function normalizeContentImages(value) {
-  return String(value || '').replace(/(src|href)=(["'])\/uploads\//g, '$1=$2/api/uploads/')
+  return publicMediaHtml(String(value || '').replace(/(src|href)=(["'])\/uploads\//g, '$1=$2/api/uploads/'))
 }
 
 function mapBlog(blog) {

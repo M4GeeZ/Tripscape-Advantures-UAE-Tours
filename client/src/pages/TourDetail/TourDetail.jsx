@@ -1,88 +1,405 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { BadgeCheck, CalendarCheck, ChevronLeft, ChevronRight, Headphones, MessageCircle, RefreshCcw, Star, X } from 'lucide-react'
+import {
+  ArrowRight, ArrowUpRight, BadgeCheck, Camera, Check,
+  CheckCircle2, ChevronLeft, ChevronRight, Clock3, Compass, Headphones,
+  MapPin, MessageCircle, Minus, ShieldCheck, Sparkles, Star, Users, X,
+} from 'lucide-react'
 import Navbar from '../../components/Navbar/Navbar'
 import Footer from '../../components/Footer/Footer'
 import WhatsAppFloat from '../../components/WhatsAppFloat/WhatsAppFloat'
 import CallFloat from '../../components/CallFloat/CallFloat'
 import BookingEnquiryForm from '../../components/BookingEnquiryForm'
-import { useLuxuryReveal } from '../../hooks/useLuxuryReveal'
 import { tourCatalog } from '../../data'
 import { getTourDetail, getTourDetailHref } from '../../tourDetails'
 import { apiUrl } from '../../utils/apiBaseUrl'
 import { isDisplayableReview } from '../../utils/reviews'
-import { MAX_TOUR_IMAGES, getTourImages, orderedImages, useTourImages } from '../../utils/tourImages'
-import './TourDetail.css'
-import './TourDetailPage.css'
+import { googleReviews } from '../../data/googleReviews'
+import { reviews as siteReviews } from '../../data'
+import { getTourImages, MAX_TOUR_IMAGES, orderedImages, useTourImages } from '../../utils/tourImages'
 import { applyTourPricing } from '../../utils/tourPricing'
 import { resolveSchema, writePageSchema } from '../../utils/schemaManager'
+import './TourDetail.css' // Retains existing loading / shared styles used by dynamic pages.
+import './TourDetailPremium.css'
 
 const WHATSAPP_NUMBER = '971549930684'
+const normalize = (value) => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
+const asArray = (value) => Array.isArray(value) ? value.filter(Boolean) : []
 
-// Same promises the site already makes on the home page.
-const TRUST_ITEMS = [
-  { icon: BadgeCheck, title: 'Verified guides', copy: 'Experienced local team' },
-  { icon: CalendarCheck, title: 'Instant confirmation', copy: 'Booking details by email' },
-  { icon: Headphones, title: 'WhatsApp support', copy: 'Fast replies before your trip' },
-  { icon: RefreshCcw, title: 'Free re-scheduling', copy: 'Change dates on WhatsApp' },
-]
+function displayPriceOf(tour) {
+  const raw = String(tour?.price || '').trim()
+  return !raw || /^contact( for)? price$/i.test(raw) || /^(from\s*)?aed\s*0(?:\.0+)?$/i.test(raw)
+    ? 'Contact for price'
+    : raw
+}
 
-// How booking works on this site (the enquiry form → team confirms → trip).
-const BOOKING_STEPS = [
-  { title: 'Send your request', copy: 'Choose your date, guests and add-ons in the booking form below.' },
-  { title: 'We confirm', copy: 'Our team checks availability and confirms the details by email or WhatsApp.' },
-  { title: 'Pickup details', copy: 'You receive pickup timing and everything you need before the day.' },
-  { title: 'Enjoy the experience', copy: 'Relax — our local team takes care of the rest on the day.' },
-]
-
-function SectionHead({ eyebrow, title, copy, align = 'center' }) {
+function SectionTitle({ kicker, title, copy, centered = false }) {
   return (
-    <div className={`td-head td-head--${align}`}>
-      <span className="td-eyebrow">{eyebrow}</span>
+    <header className={`tp-section-title${centered ? ' tp-section-title--center' : ''}`}>
+      {kicker && <span className="tp-kicker">{kicker}</span>}
       <h2>{title}</h2>
       {copy && <p>{copy}</p>}
+    </header>
+  )
+}
+
+// Existing, already-published reviews: Google reviews first, then the site's other traveller reviews.
+const MAX_REVIEWS = 15
+const fallbackReviews = (() => {
+  const seen = new Set()
+  const siteList = siteReviews.map((item, index) => ({
+    id: `site-${index}`,
+    name: String(item.name || '').replace(/â€™/g, "'"),
+    rating: 5,
+    text: item.text,
+    source: [item.source === 'Google' ? 'Google review' : item.source, item.place].filter(Boolean).join(' · '),
+  }))
+  return [...googleReviews.map((item) => ({ ...item, rating: item.stars })), ...siteList].filter((item) => {
+    const key = String(item.name).toLowerCase()
+    if (seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
+})()
+
+function usePublishedReviews() {
+  const [reviews, setReviews] = useState(() => fallbackReviews.slice(0, MAX_REVIEWS))
+  useEffect(() => {
+    let active = true
+    fetch(apiUrl('/api/reviews'))
+      .then((response) => response.ok ? response.json() : [])
+      .then((data) => {
+        if (!active) return
+        const published = asArray(data).filter(isDisplayableReview)
+        setReviews([...published, ...fallbackReviews].slice(0, MAX_REVIEWS))
+      })
+      .catch(() => { if (active) setReviews(fallbackReviews.slice(0, MAX_REVIEWS)) })
+    return () => { active = false }
+  }, [])
+  return reviews
+}
+
+function HeroPreview({ tour, images, price }) {
+  const items = asArray(tour.included).slice(0, 4)
+  return (
+    <aside className="tp-preview" aria-label="Experience preview">
+      <div className="tp-preview__image">
+        <img src={images[1] || images[0]} alt={`${tour.title} experience`} />
+        <span className="tp-preview__tag"><Camera size={12} /> Experience preview</span>
+        <span className="tp-preview__photo-label">Explore the experience <ArrowUpRight size={14} /></span>
+      </div>
+      <div className="tp-preview__body">
+        <strong className="tp-preview__title">Your experience at a glance</strong>
+        <ul>
+          {(items.length ? items : ['Tour details confirmed with our team', 'Select your preferred date', 'Local booking support']).map((item, i) => (
+            <li key={`${i}-${item}`}><CheckCircle2 size={13} /> <span>{item}</span></li>
+          ))}
+        </ul>
+        <div className="tp-preview__footer">
+          <span><small>Starting from</small><strong>{price}</strong></span>
+          <a href="#book" className="tp-preview__link">Book Now <ArrowRight size={15} /></a>
+        </div>
+      </div>
+    </aside>
+  )
+}
+
+function IntroHighlights({ tour }) {
+  const highlights = asArray(tour.included).slice(0, 3)
+  const icons = [Compass, Camera, ShieldCheck]
+  return (
+    <div className="tp-highlights">
+      {(highlights.length ? highlights : [
+        'A memorable Dubai experience',
+        'Dedicated booking assistance',
+        'Information before your trip',
+      ]).map((label, index) => {
+        const Icon = icons[index % icons.length]
+        return <div className="tp-highlight" key={`${index}-${label}`}><span><Icon size={19} /></span><strong>{label}</strong></div>
+      })}
     </div>
   )
 }
 
-const splitSentences = (text = '') => String(text).match(/[^.!?]+[.!?]+(\s|$)|[^.!?]+$/g)?.map((item) => item.trim()) || []
+const BOOKING_STEPS = [
+  { title: 'Choose your experience', description: 'Review the experience, select your travel date and add optional extras.' },
+  { title: 'Send your booking request', description: 'Enter your guest and contact details using our secure enquiry form.' },
+  { title: 'Our team confirms', description: 'We check availability, confirm arrangements and share the next steps.' },
+  { title: 'Enjoy your adventure', description: 'Arrive with the booking details provided and enjoy your selected experience.' },
+]
 
-// Splits a description into short readable paragraphs (two sentences each).
-function toParagraphs(text = '') {
-  const sentences = splitSentences(text)
-  const paragraphs = []
-  for (let index = 0; index < sentences.length; index += 2) paragraphs.push(sentences.slice(index, index + 2).join(' '))
-  return paragraphs
+function BookingProcess() {
+  return (
+    <div className="tp-process">
+      <SectionTitle centered kicker="Effortless planning" title="How It Works: From Booking to the Desert" copy="A simple, guided booking journey with our team handling the details." />
+      <div className="tp-process__steps">
+        {BOOKING_STEPS.map((step, i) => (
+          <div className="tp-process__step" key={step.title}>
+            <span className="tp-process__number">{String(i + 1).padStart(2, '0')}</span>
+            <span className="tp-process__dot" aria-hidden="true" />
+            <strong>{step.title}</strong>
+            <p>{step.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
 }
 
-const normalize = (text) => String(text || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
+// "Title: description" items render with a bold title; plain items render as one line.
+function splitItem(text) {
+  const value = String(text || '').trim()
+  const match = value.match(/^([^:]{3,60}):s+(S[sS]*)$/)
+  return match ? { title: match[1].trim(), detail: match[2].trim() } : { title: '', detail: value }
+}
 
-function useFeaturedReview() {
-  const [review, setReview] = useState(null)
+function InclusionItem({ text, excluded = false }) {
+  const { title, detail } = splitItem(text)
+  return (
+    <li>
+      {excluded
+        ? <span className="tp-inclusions__cross" aria-hidden="true"><X size={10} strokeWidth={3} /></span>
+        : <span className="tp-inclusions__tick" aria-hidden="true"><Check size={12} strokeWidth={3} /></span>}
+      <span className="tp-inclusions__text">{title && <strong>{title}:</strong>} {detail}</span>
+    </li>
+  )
+}
+
+function Included({ tour }) {
+  const included = asArray(tour.included)
+  const excluded = asArray(tour.excluded)
+  return (
+    <section className="tp-inclusions" aria-label="Included and not included">
+      <SectionTitle kicker="Transparent inclusions" title="Everything Included in Your Booking" copy="No hidden charges or mandatory resort fees. Every listed item below is guaranteed." />
+      <div className="tp-inclusions__grid">
+        <div className="tp-inclusions__box tp-inclusions__box--yes">
+          <h3><span className="tp-inclusions__badge tp-inclusions__badge--yes"><Check size={14} strokeWidth={3} /></span> What is Included</h3>
+          {included.length ? (
+            <ul>{included.map((item, index) => <InclusionItem key={`${index}-${item}`} text={item} />)}</ul>
+          ) : <p className="tp-inclusions__empty">Please ask our team for the confirmed inclusions of this experience.</p>}
+        </div>
+        <div className="tp-inclusions__box tp-inclusions__box--no">
+          <h3><span className="tp-inclusions__badge tp-inclusions__badge--no"><Minus size={14} strokeWidth={3} /></span> Not Included (Optional)</h3>
+          {excluded.length ? (
+            <ul>{excluded.map((item, index) => <InclusionItem key={`${index}-${item}`} text={item} excluded />)}</ul>
+          ) : <p className="tp-inclusions__empty">Optional extras and exclusions depend on the selected package. Contact our team for details.</p>}
+          <div className="tp-inclusions__help"><Headphones size={20} /><span><strong>Need a tailored experience?</strong> Our team can help with special requests and custom arrangements.</span></div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function getExperienceFlow(tour) {
+  const items = asArray(tour.included)
+  const name = tour.title || 'your experience'
+  const isMorning = /morning|sunrise/i.test(name)
+  const isEvening = /evening|sunset/i.test(name)
+  const when = isMorning ? 'Morning' : isEvening ? 'Evening' : 'Your travel day'
+  return [
+    { title: `${when} · Arrival and welcome`, detail: 'Follow the meeting or pickup instructions confirmed by the booking team.', tip: 'Keep your booking details handy' },
+    { title: 'Meet your local team', detail: 'Check in, review the experience plan and receive any applicable safety guidance.', tip: 'Ask questions before the experience' },
+    { title: `${name} begins`, detail: items[0] || 'Enjoy the activities included in your selected package.', tip: 'Enjoy your selected tour activities' },
+    { title: 'Experience the highlights', detail: items[1] || 'Take in the sights, attractions and special moments of your experience.', tip: 'Bring your camera for memories' },
+    { title: 'Finish and onward arrangements', detail: 'Wrap up your adventure according to the confirmed tour schedule and arrangements.', tip: 'Check any return or drop-off details' },
+  ]
+}
+
+function ExperienceFlow({ tour }) {
+  const flow = getExperienceFlow(tour)
+  return (
+    <section className="tp-flow-section">
+      <div className="tp-container">
+        <SectionTitle centered kicker="Your experience timeline" title="Your Adventure Flow" copy="An overview of the journey. Exact timings and activities are confirmed for your selected package." />
+        <ol className="tp-flow">
+          {flow.map((step, index) => (
+            <li key={step.title} className={`tp-flow__item${index % 2 ? ' tp-flow__item--right' : ''}`}>
+              <div className="tp-flow__text"><span>STEP {String(index + 1).padStart(2, '0')}</span><h3>{step.title}</h3><p>{step.detail}</p></div>
+              <span className="tp-flow__node"><Compass size={18} /></span>
+              <div className="tp-flow__tip"><CheckCircle2 size={16} /><span>{step.tip}</span></div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  )
+}
+
+// Always 4 photos (2x2 grid): prefer images after the hero pair, then reuse earlier ones.
+function getGalleryPhotos(images) {
+  const pool = [...images.slice(2, MAX_TOUR_IMAGES), ...images.slice(0, 2)].filter(Boolean)
+  const unique = [...new Set(pool)]
+  if (!unique.length) return []
+  return Array.from({ length: 4 }, (_, i) => unique[i % unique.length])
+}
+
+function Gallery({ images, tour, onOpen }) {
+  const photos = getGalleryPhotos(images)
+  if (!photos.length) return null
+  return (
+    <section className="tp-gallery-section">
+      <div className="tp-container">
+        <SectionTitle kicker="Visual journey" title="Moments Worth Remembering" copy="A glimpse into this experience." />
+        <div className={`tp-gallery tp-gallery--${Math.min(photos.length, 4)}`}>
+          {photos.map((image, index) => (
+            <button type="button" key={`${image}-${index}`} className="tp-gallery__item" onClick={() => onOpen(index)} aria-label={`View ${tour.title} gallery photo ${index + 1}`}>
+              <img src={image} alt={`${tour.title} gallery image ${index + 1}`} loading="lazy" />
+              <span>Explore photo <ArrowUpRight size={16} /></span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Comparison({ tour }) {
+  const included = asArray(tour.included)
+  const rows = [
+    ['Experience details', 'Tour-specific inclusions listed clearly', 'Details depend on the operator'],
+    ['Booking assistance', 'WhatsApp and booking enquiry support', 'Support varies by operator'],
+    ['Travel arrangements', 'Confirmed with your selected package', 'Conditions vary by package'],
+    ['Optional extras', included.length ? 'Inclusions and add-ons presented upfront' : 'Ask for applicable extras before booking', 'Extra charges vary by operator'],
+    ['Change requests', 'Contact the Tripscape team for options', 'Policies depend on the operator'],
+  ]
+  return (
+    <section className="tp-comparison-section">
+      <div className="tp-container tp-comparison-shell">
+        <SectionTitle centered kicker="Compare your options" title="The Tripscape Difference" copy="Know what to check when comparing providers. Individual packages and policies may vary." />
+        <div className="tp-comparison-scroll">
+          <table className="tp-comparison">
+            <thead><tr><th scope="col">Service & experience</th><th scope="col"><BadgeCheck size={18} /> Tripscape Adventures</th><th scope="col">Other operators</th></tr></thead>
+            <tbody>{rows.map(([label, us, other]) => (
+              <tr key={label}><th scope="row">{label}</th><td><CheckCircle2 size={16} /> {us}</td><td>{other}</td></tr>
+            ))}</tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// Placeholder profile photos (stored locally) keyed by reviewer first name; others fall back to an initial.
+const REVIEWER_PHOTOS = ['ravindu', 'cara', 'davide', 'babita', 'oneil', 'ardelia', 'simon', 'priya', 'james', 'sophie', 'daniel']
+function reviewerPhoto(name) {
+  const first = String(name || '').trim().split(' ')[0].toLowerCase().replace(/[^a-z]/g, '')
+  return REVIEWER_PHOTOS.includes(first) ? `/images/reviewers/${first}.jpg` : ''
+}
+
+function Reviews({ reviews }) {
+  const trackRef = useRef(null)
+  const [progress, setProgress] = useState(25)
+
+  const updateEdge = () => {
+    const track = trackRef.current
+    if (!track) return
+    setProgress(Math.min(100, Math.round(((track.scrollLeft + track.clientWidth) / track.scrollWidth) * 100)))
+  }
+
   useEffect(() => {
-    let active = true
-    fetch(apiUrl('/api/reviews'))
-      .then((res) => (res.ok ? res.json() : []))
-      .then((items) => {
-        const best = (Array.isArray(items) ? items : []).filter((item) => Number(item.rating) >= 5 && isDisplayableReview(item))
-        if (active && best.length) setReview(best[Math.floor(Math.random() * best.length)])
-      })
-      .catch(() => {})
-    return () => { active = false }
-  }, [])
-  return review
+    updateEdge()
+    window.addEventListener('resize', updateEdge)
+    return () => window.removeEventListener('resize', updateEdge)
+  }, [reviews.length])
+
+  const slide = (direction) => {
+    const track = trackRef.current
+    if (!track) return
+    const card = track.querySelector('.tp-review-card')
+    const step = card ? card.getBoundingClientRect().width + 15 : track.clientWidth
+    const atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 4
+    if (direction > 0 && atEnd) track.scrollTo({ left: 0, behavior: 'smooth' })
+    else if (direction < 0 && track.scrollLeft <= 4) track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' })
+    else track.scrollBy({ left: direction * step, behavior: 'smooth' })
+  }
+
+  if (!reviews.length) return null
+  return (
+    <section className="tp-reviews-section">
+      <div className="tp-container">
+        <SectionTitle centered kicker="Authentic guest experiences" title="Verified Explorer Reviews" copy="Published feedback shared by Tripscape customers." />
+        <div className="tp-reviews-badge"><span className="tp-rating-label"><Star size={16} fill="currentColor" /> Guest experiences</span></div>
+        <div className="tp-reviews" ref={trackRef} onScroll={updateEdge} tabIndex={0} aria-label="Customer reviews">
+          {reviews.map((review, index) => (
+            <article className="tp-review-card" key={review._id || `${review.name}-${index}`} style={{ '--i': index }}>
+              <span className="tp-review-card__quote" aria-hidden="true">“</span>
+              <div className="tp-review-card__top"><span className="tp-review-card__avatar">{reviewerPhoto(review.name) ? <img src={reviewerPhoto(review.name)} alt="" loading="lazy" width="46" height="46" /> : String(review.name || 'G').charAt(0)}</span><div><strong>{review.name || 'Guest'}</strong>{review.source && <small>{review.source}</small>}</div></div>
+              {Number.isFinite(Number(review.rating)) && <div className="tp-review-card__stars" aria-label={`${review.rating} out of 5 stars`}>{'★'.repeat(Math.max(0, Math.min(5, Math.round(Number(review.rating)))))}</div>}
+              <p>{review.text}</p>
+            </article>
+          ))}
+        </div>
+        <div className="tp-reviews-nav">
+          <button type="button" onClick={() => slide(-1)} aria-label="Previous reviews"><ChevronLeft size={20} /></button>
+          <div className="tp-reviews-progress" aria-hidden="true"><span style={{ width: `${progress}%` }} /></div>
+          <button type="button" onClick={() => slide(1)} aria-label="Next reviews"><ChevronRight size={20} /></button>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+const GENERAL_FAQS = [
+  { question: 'How do I book this experience?', answer: 'Choose your preferred date and guests in the booking form. Our team will then confirm availability and the next steps.' },
+  { question: 'When will my booking be confirmed?', answer: 'After your enquiry is submitted, the Tripscape team checks the request and follows up with booking details.' },
+  { question: 'Can I request additional services?', answer: 'Yes. Select applicable add-ons in the enquiry form, or contact our team to discuss a customized arrangement.' },
+  { question: 'How can I check pickup or meeting details?', answer: 'Pickup and meeting arrangements are confirmed with our team for your selected package.' },
+]
+
+function Faqs({ tour }) {
+  const faqs = asArray(tour.faqs).filter((faq) => faq && faq.question && faq.answer)
+  return (
+    <section className="tp-faq-section">
+      <div className="tp-container">
+        <SectionTitle centered kicker="Clear answers, better planning" title="Frequently Asked Questions" copy={`Helpful answers before you book ${tour.title}.`} />
+        <div className="tp-faq-list">
+          {(faqs.length ? faqs : GENERAL_FAQS).map((faq, i) => (
+            <details key={`${i}-${faq.question}`}><summary>{faq.question}<span aria-hidden="true">+</span></summary><p>{faq.answer}</p></details>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function RelatedTours({ tour }) {
+  const related = useMemo(() => {
+    const targetCategory = normalize(tour.categoryLabel || tour.category)
+    const used = new Set([normalize(tour.title)])
+    return tourCatalog.filter((item) => normalize(item.category) === targetCategory && item.image)
+      .map(applyTourPricing)
+      .filter((item) => { const key = normalize(item.title); if (used.has(key)) return false; used.add(key); return true })
+      .slice(0, 3)
+  }, [tour.title, tour.category, tour.categoryLabel])
+  if (!related.length) return null
+  return (
+    <section className="tp-related-section">
+      <div className="tp-container">
+        <div className="tp-title-row"><SectionTitle kicker="More from Tripscape" title="You May Also Love These Adventures" copy="Discover similar experiences selected from our tour collection." /><a className="tp-text-link" href="/tours">View all tours <ArrowRight size={17} /></a></div>
+        <div className="tp-related">
+          {related.map((item) => (
+            <a className="tp-related__card" href={getTourDetailHref(item.category, item.title)} key={item.title}>
+              <div className="tp-related__photo"><img src={getTourImages(item.title)?.[0] || item.image} alt={item.title} loading="lazy" /><span>{item.category}</span></div>
+              <div className="tp-related__body"><h3>{item.title}</h3><p>{item.description || 'Explore this experience with Tripscape Adventures.'}</p><div><span><small>PRICE</small><strong>{displayPriceOf(item)}</strong></span><span className="tp-related__button">View details <ArrowRight size={15} /></span></div></div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
 }
 
 export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOpen, tourOverride = null }) {
-  const pageRef = useRef(null)
   const tour = applyTourPricing(tourOverride || getTourDetail(categorySlug, tourSlug))
   const [lightbox, setLightbox] = useState(null)
-  const review = useFeaturedReview()
-
-  useLuxuryReveal(pageRef)
+  const reviews = usePublishedReviews()
+  const adminImages = useTourImages(tour?.title, tour?.slug || tourSlug)
+  const images = adminImages || orderedImages(tour?.image, tour?.gallery)
+  const galleryPhotos = getGalleryPhotos(images)
+  const pageRef = useRef(null)
 
   useEffect(() => {
     setLightbox(null)
-    window.scrollTo(0, 0)
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
   }, [categorySlug, tourSlug])
 
   useEffect(() => {
@@ -101,304 +418,76 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
     writePageSchema(resolveSchema(tour, 'tour', `/tours/${categorySlug}/${tour.slug || tourSlug}`))
   }, [tour, categorySlug, tourSlug])
 
-  // Photos from the admin panel in order: 1 = hero + cards, 2 = intro, 3–10 = gallery.
-  const adminImages = useTourImages(tour?.title, tour?.slug || tourSlug)
-  const gallery = adminImages || orderedImages(tour?.image, tour?.gallery)
-  // Images 1 and 2 are already shown in the hero and intro, so the gallery starts at image 3.
-  const galleryPhotos = gallery.slice(2, MAX_TOUR_IMAGES)
-
-  // Other tours from the same category for "You may also love".
-  const related = useMemo(() => {
-    if (!tour) return []
-    const seen = new Set([normalize(tour.title)])
-    return tourCatalog
-      .filter((item) => item.category === (tour.categoryLabel || tour.category) && item.image)
-      .map(applyTourPricing)
-      .filter((item) => {
-        const key = normalize(item.title)
-        if (seen.has(key)) return false
-        seen.add(key)
-        return true
-      })
-      .slice(0, 3)
-  }, [tour?.title, tour?.categoryLabel, tour?.category])
-
-  // Lightbox keyboard controls.
   useEffect(() => {
-    if (lightbox === null) return undefined
+    if (lightbox === null || !galleryPhotos.length) return undefined
     const onKey = (event) => {
       if (event.key === 'Escape') setLightbox(null)
-      if (event.key === 'ArrowRight') setLightbox((index) => (index + 1) % galleryPhotos.length)
-      if (event.key === 'ArrowLeft') setLightbox((index) => (index - 1 + galleryPhotos.length) % galleryPhotos.length)
+      if (event.key === 'ArrowRight') setLightbox((current) => (current + 1) % galleryPhotos.length)
+      if (event.key === 'ArrowLeft') setLightbox((current) => (current - 1 + galleryPhotos.length) % galleryPhotos.length)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [lightbox, galleryPhotos.length])
+  }, [galleryPhotos.length, lightbox])
 
   if (!tour) return null
 
-  const displayContactPrice = /^(|contact.*|(from\s*)?aed\s*0)$/i.test(String(tour.price || '').trim())
-    ? 'Contact for price'
-    : tour.price
-  const hasPrice = displayContactPrice !== 'Contact for price'
-  const paragraphs = toParagraphs(tour.description)
-  const subtitle = tour.shortDescription || paragraphs[0] || ''
-  const introImage = gallery[1] || gallery[0]
-  const categoryLabel = tour.categoryLabel || tour.category || 'Experience'
+  const price = displayPriceOf(tour)
+  const category = tour.categoryLabel || tour.category || 'Tours'
+  const introCopy = String(tour.description || tour.shortDescription || '').trim()
   const whatsappHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hi Tripscape, I would like to book ${tour.title}. Please share availability.`)}`
-
-  const scrollToBooking = (event) => {
-    event.preventDefault()
-    document.getElementById('book')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
-
+  const heroDescription = tour.shortDescription || introCopy
   return (
-    <div className="tour-detail-page td-page" ref={pageRef}>
-      <Navbar
-        menuOpen={menuOpen}
-        setMenuOpen={setMenuOpen}
-        variant="light"
-        showTopBar
-      />
-
+    <div className="tp-page" ref={pageRef}>
+      <Navbar menuOpen={menuOpen} setMenuOpen={setMenuOpen} variant="light" showTopBar />
       <main>
-        {/* ============ HERO ============ */}
-        <section className="td-hero" data-hero-reveal>
-          <div className="td-hero__bg" style={{ backgroundImage: `url("${gallery[0]}")` }} />
-          <div className="td-hero__overlay" aria-hidden="true" />
-
-          <div className="td-hero__inner">
-            <div className="td-hero__content">
-              <nav className="td-breadcrumb" aria-label="Breadcrumb">
-                <a href="/">Home</a>
-                <span>/</span>
-                <a href={`/tours?category=${encodeURIComponent(categoryLabel)}`}>{categoryLabel}</a>
-                <span>/</span>
-                <span aria-current="page">{tour.title}</span>
-              </nav>
-
-              <p className="td-hero__eyebrow">{categoryLabel} • Dubai</p>
+        <section className="tp-hero">
+          {images[0] && <div className="tp-hero__bg" style={{ backgroundImage: `url("${images[0]}")` }} aria-hidden="true" />}
+          <div className="tp-container tp-hero__grid">
+            <div className="tp-hero__content">
+              <nav className="tp-breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/tours">Tours</a><span>/</span><span aria-current="page">{tour.title}</span></nav>
+              <div className="tp-hero__pills"><span><Sparkles size={12} /> Tripscape experience</span><span>{category}</span><span>Dubai, UAE</span></div>
               <h1>{tour.title}</h1>
-              {subtitle && <p className="td-hero__sub">{subtitle}</p>}
-
-              <div className="td-hero__cta">
-                <a href="#book" className="td-btn td-btn--gold" onClick={scrollToBooking}>Book This Experience</a>
-                <a href={whatsappHref} className="td-btn td-btn--outline-light" target="_blank" rel="noopener noreferrer"><MessageCircle size={17} /> WhatsApp Us</a>
+              {heroDescription && <p className="tp-hero__description">{heroDescription}</p>}
+              <div className="tp-hero__facts">
+                <div><Clock3 size={19} /><span><small>Duration</small><strong>{tour.duration || 'Varies by package'}</strong></span></div>
+                <div><MapPin size={19} /><span><small>Location</small><strong>{tour.location || 'Dubai, UAE'}</strong></span></div>
+                {tour.rating && <div><Star size={19} fill="currentColor" /><span><small>Guest rating</small><strong>{tour.rating} / 5</strong></span></div>}
+                <div><BadgeCheck size={19} /><span><small>Price</small><strong>{price}</strong></span></div>
               </div>
-
-              <dl className="td-hero__meta">
-                <div>
-                  <dt>Duration</dt>
-                  <dd>{tour.duration || 'Flexible'}</dd>
-                </div>
-                <div>
-                  <dt>Location</dt>
-                  <dd>{tour.location || 'Dubai, UAE'}</dd>
-                </div>
-                <div>
-                  <dt>Rating</dt>
-                  <dd>{tour.rating || '4.9'} <Star size={15} fill="currentColor" /></dd>
-                </div>
-                <div>
-                  <dt>From</dt>
-                  <dd>{displayContactPrice}{hasPrice && tour.unit ? ` ${tour.unit}` : ''}</dd>
-                </div>
-              </dl>
+              <div className="tp-hero__actions"><a href="#book" className="tp-button tp-button--gold">Book This Experience <ArrowRight size={16} /></a><a href={whatsappHref} className="tp-button tp-button--green" target="_blank" rel="noopener noreferrer"><MessageCircle size={17} /> WhatsApp Assistance</a></div>
+              <p className="tp-hero__hint"><ShieldCheck size={14} /> Request your preferred date. Our team will confirm availability.</p>
             </div>
+            {images[0] && <HeroPreview tour={tour} images={images} price={price} />}
           </div>
         </section>
 
-        {/* ============ INTRO ============ */}
-        <section className="td-intro">
-          <div className="container td-intro__grid">
-            <div className="td-intro__image" data-lux-reveal>
-              <img src={introImage} alt={tour.title} loading="lazy" />
+        <div className="tp-top-content">
+          <div className="tp-container tp-content-grid">
+            <div className="tp-main-col">
+              <section className="tp-intro-section" aria-label="Experience overview">
+                <SectionTitle kicker="Why this experience stands out" title={`Why ${tour.title} is worth experiencing`} />
+                <div className="tp-intro__description">{introCopy ? introCopy.split(/\n\s*\n/).filter(Boolean).map((part, i) => <p key={i}>{part}</p>) : <p>Explore the experience details and contact our team to plan your visit.</p>}</div>
+                <IntroHighlights tour={tour} />
+              </section>
+              <Included tour={tour} />
             </div>
-            <div className="td-intro__text" data-lux-reveal>
-              <span className="td-eyebrow">The {categoryLabel} experience</span>
-              <h2>{tour.title}</h2>
-              {(paragraphs.length ? paragraphs : [subtitle]).map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-              <a href="#book" className="td-btn-text" onClick={scrollToBooking}>Reserve this experience</a>
-            </div>
+            <aside className="tp-booking-col" aria-label="Reserve your experience">
+              <div className="tp-booking-col__sticky" id="book"><BookingEnquiryForm tourTitle={tour.title} displayPrice={price} unit={tour.unit} hideServiceSelector={Boolean(tour.hideServiceSelector)} /></div>
+            </aside>
           </div>
-        </section>
+          <div className="tp-container"><BookingProcess /></div>
+        </div>
 
-        {/* ============ HOW IT WORKS ============ */}
-        <section className="td-steps">
-          <div className="container">
-            <SectionHead eyebrow="How it works" title="From booking to the desert." copy="Simple, clear and handled by our local team at every step." />
-            <div className="td-steps__grid">
-              {BOOKING_STEPS.map((step, index) => (
-                <div className="td-step" key={step.title} data-lux-reveal>
-                  <span className="td-step__num">{String(index + 1).padStart(2, '0')}</span>
-                  <h4>{step.title}</h4>
-                  <p>{step.copy}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ============ INCLUDED ============ */}
-        <section className="td-included">
-          <div className="container td-included__grid">
-            <div className="td-included__text" data-lux-reveal>
-              <span className="td-eyebrow">What's included</span>
-              <h2>Everything included in your booking.</h2>
-              <p>Every detail below is part of {tour.title}. Anything not listed can be arranged on request.</p>
-              <a href="#book" className="td-btn-text" onClick={scrollToBooking}>Check availability</a>
-            </div>
-
-            <div data-lux-reveal>
-              <h3 className="td-excluded__title td-included__title">Included</h3>
-              <ul className="td-included__list">
-                {(tour.included || []).map((item) => <li key={item}><span>✓</span>{item}</li>)}
-              </ul>
-
-              {tour.excluded?.length > 0 && (
-                <>
-                  <h3 className="td-excluded__title">Not included</h3>
-                  <ul className="td-included__list td-included__list--excluded">
-                    {tour.excluded.map((item) => <li key={item}><span>✕</span>{item}</li>)}
-                  </ul>
-                </>
-              )}
-            </div>
-          </div>
-        </section>
-
-        {/* ============ GALLERY ============ */}
-        {galleryPhotos.length > 0 && (
-          <section className="td-gallery-section">
-            <div className="container">
-              <SectionHead eyebrow="Gallery" title="Moments worth remembering." />
-              <div className={`td-gallery ${galleryPhotos.length > 6 ? 'td-gallery--four' : ''}`}>
-                {galleryPhotos.map((image, index) => (
-                  <button key={`${image}-${index}`} type="button" onClick={() => setLightbox(index)} aria-label={`Open image ${index + 1}`} data-lux-reveal>
-                    <img src={image} alt={`${tour.title} ${index + 1}`} loading="lazy" />
-                  </button>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* ============ TRUST STRIP ============ */}
-        <section className="td-trust">
-          <div className="container td-trust__grid">
-            {TRUST_ITEMS.map(({ icon: Icon, title, copy }) => (
-              <div className="td-trust__item" key={title}>
-                <span><Icon size={20} /></span>
-                <div>
-                  <strong>{title}</strong>
-                  <small>{copy}</small>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ============ PRICE + BOOKING ============ */}
-        <section className="td-book" id="book">
-          <div className="container">
-            <SectionHead eyebrow="Book your experience" title="Reserve your date." copy="Send your request now — no payment is needed to book an enquiry." />
-
-            <div className="td-book__wide">
-              <div className="td-book__form">
-                <BookingEnquiryForm
-                  tourTitle={tour.title}
-                  displayPrice={displayContactPrice}
-                  hideServiceSelector={Boolean(tour.hideServiceSelector)}
-                />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ============ FAQ ============ */}
-        {tour.faqs?.length > 0 && (
-          <section className="td-faq">
-            <div className="container">
-              <SectionHead eyebrow="FAQ" title={`Questions about ${tour.title}.`} />
-              <div className="td-faq__list">
-                {tour.faqs.map((faq, index) => (
-                  <details key={faq.question} open={index === 0}>
-                    <summary>{faq.question}<span aria-hidden="true">+</span></summary>
-                    <p>{faq.answer}</p>
-                  </details>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* ============ GUEST REVIEW (published reviews only) ============ */}
-        {review && (
-          <section className="td-review">
-            <div className="container td-review__inner" data-lux-reveal>
-              <span className="td-review__quote-icon" aria-hidden="true">“</span>
-              <div className="td-review__stars" aria-label={`${review.rating} out of 5 stars`}>{'★'.repeat(Math.round(review.rating))}</div>
-              <p className="td-review__quote">{review.text}</p>
-              <div className="td-review__author">
-                <span className="td-review__avatar">{review.name.charAt(0)}</span>
-                <span className="td-review__name">{review.name}{review.source && <small>{review.source} review</small>}</span>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* ============ RELATED ============ */}
-        {related.length > 0 && (
-          <section className="td-related">
-            <div className="container">
-              <SectionHead eyebrow="Explore more" title="You may also love these." copy={`More ${categoryLabel.toLowerCase()} experiences from Tripscape.`} />
-              <div className="td-related__grid">
-                {related.map((item) => (
-                  <a key={item.title} href={getTourDetailHref(item.category, item.title)} className="td-related__card" data-lux-reveal>
-                    <div className="td-related__image"><img src={getTourImages(item.title)?.[0] || item.image} alt={item.title} loading="lazy" /></div>
-                    <div className="td-related__body">
-                      <span className="td-related__category">{item.category}</span>
-                      <h3>{item.title}</h3>
-                      <p>{item.price ? `From ${item.price}${item.unit ? ` ${item.unit}` : ''}` : 'Contact for price'}</p>
-                      <span className="td-related__link">View experience</span>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* ============ FINAL CTA ============ */}
-        <section className="td-final-cta">
-          <div className="td-final-cta__bg" style={{ backgroundImage: `url("${gallery[0]}")` }} />
-          <div className="td-final-cta__overlay" aria-hidden="true" />
-          <div className="container td-final-cta__content" data-lux-reveal>
-            <span className="td-eyebrow td-eyebrow--light">Ready when you are</span>
-            <h2>Book {tour.title} today.</h2>
-            <p>Send your request in a minute, or chat with our team on WhatsApp for availability and custom plans.</p>
-            <div className="td-hero__cta td-hero__cta--center">
-              <a href="#book" className="td-btn td-btn--gold" onClick={scrollToBooking}>Book This Experience</a>
-              <a href={whatsappHref} className="td-btn td-btn--outline-light" target="_blank" rel="noopener noreferrer"><MessageCircle size={17} /> WhatsApp Us</a>
-            </div>
-          </div>
-        </section>
+        <ExperienceFlow tour={tour} />
+        <Gallery images={images} tour={tour} onOpen={setLightbox} />
+        <Comparison tour={tour} />
+        <Reviews reviews={reviews} />
+        <Faqs tour={tour} />
+        <RelatedTours tour={tour} />
+        <section className="tp-final-cta"><div className="tp-container tp-final-cta__inner"><div><span>READY FOR YOUR NEXT ADVENTURE?</span><h2>Book {tour.title} Today</h2><p>Choose your preferred date or ask our team for help planning your experience.</p></div><div className="tp-final-cta__actions"><a href="#book" className="tp-button tp-button--white">Book This Experience <ArrowRight size={16} /></a><a href={whatsappHref} target="_blank" rel="noopener noreferrer" className="tp-button tp-button--green"><MessageCircle size={17} /> WhatsApp Concierge</a></div></div></section>
       </main>
 
-      {lightbox !== null && (
-        <div className="td-lightbox" role="dialog" aria-modal="true" aria-label={`${tour.title} gallery`} onClick={() => setLightbox(null)}>
-          <button type="button" className="td-lightbox__close" onClick={() => setLightbox(null)} aria-label="Close gallery"><X size={22} /></button>
-          {galleryPhotos.length > 1 && (
-            <button type="button" className="td-lightbox__nav td-lightbox__nav--prev" onClick={(event) => { event.stopPropagation(); setLightbox((lightbox - 1 + galleryPhotos.length) % galleryPhotos.length) }} aria-label="Previous image"><ChevronLeft size={26} /></button>
-          )}
-          <img src={galleryPhotos[lightbox]} alt={`${tour.title} ${lightbox + 1}`} onClick={(event) => event.stopPropagation()} />
-          {galleryPhotos.length > 1 && (
-            <button type="button" className="td-lightbox__nav td-lightbox__nav--next" onClick={(event) => { event.stopPropagation(); setLightbox((lightbox + 1) % galleryPhotos.length) }} aria-label="Next image"><ChevronRight size={26} /></button>
-          )}
-          <span className="td-lightbox__count">{lightbox + 1} / {galleryPhotos.length}</span>
-        </div>
-      )}
-
+      {lightbox !== null && galleryPhotos[lightbox] && <div className="tp-lightbox" role="dialog" aria-modal="true" aria-label={`${tour.title} image gallery`} onClick={() => setLightbox(null)}><button type="button" className="tp-lightbox__close" onClick={() => setLightbox(null)} aria-label="Close gallery"><X size={23} /></button>{galleryPhotos.length > 1 && <button type="button" className="tp-lightbox__previous" onClick={(event) => { event.stopPropagation(); setLightbox((lightbox - 1 + galleryPhotos.length) % galleryPhotos.length) }} aria-label="Previous photo"><ChevronLeft size={27} /></button>}<img src={galleryPhotos[lightbox]} alt={`${tour.title} photo ${lightbox + 1}`} onClick={(event) => event.stopPropagation()} />{galleryPhotos.length > 1 && <button type="button" className="tp-lightbox__next" onClick={(event) => { event.stopPropagation(); setLightbox((lightbox + 1) % galleryPhotos.length) }} aria-label="Next photo"><ChevronRight size={27} /></button>}<span className="tp-lightbox__count">{lightbox + 1} / {galleryPhotos.length}</span></div>}
       <Footer />
       <CallFloat />
       <WhatsAppFloat />

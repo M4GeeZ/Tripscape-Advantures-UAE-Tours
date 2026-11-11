@@ -106,7 +106,8 @@ export function getBookingAddOns(tourTitle = '') {
     'Photo / Video Package',
   ]
 
-  if (/quad bike/.test(key)) {
+  // "Desert Safari with Quad Bike" packages use the standard desert safari add-ons below.
+  if (/quad bike/.test(key) && !/desert|safari/.test(key)) {
     return uniq([...common, 'Additional Quad Bike Time', 'Desert Safari Combo', 'BBQ Dinner Upgrade'])
   }
 
