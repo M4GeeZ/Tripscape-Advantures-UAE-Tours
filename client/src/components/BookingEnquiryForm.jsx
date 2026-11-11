@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { ArrowRight, CalendarDays, Check, ChevronDown, CreditCard, Mail, MapPin, MessageCircle, Minus, Phone, Plus, Send, ShieldCheck, Tag, Umbrella, X, Zap } from 'lucide-react'
 import CountryCodeSelect from './CountryCodeSelect/CountryCodeSelect'
-import { getBookingAddOns, getBookingServices } from '../bookingOptions'
+import { getBookingServices, getPricedAddOns } from '../bookingOptions'
 import { apiUrl } from '../utils/apiBaseUrl'
 import createSubmissionId from '../utils/createSubmissionId'
 import { formatAed, normalizeTourName, validatePromo } from '../utils/promoOffers'
@@ -61,9 +61,17 @@ function PackageSelect({ value, options, onChange }) {
   )
 }
 
+// "2 adults × AED 299 + add-ons AED 310" (used in the booking record and email).
+function priceBreakdown(pricing) {
+  return [
+    pricing.perPerson ? `${pricing.adults} adult${pricing.adults > 1 ? 's' : ''} × AED ${pricing.unitAmount}` : null,
+    pricing.addOnTotal ? `add-ons AED ${pricing.addOnTotal}` : null,
+  ].filter(Boolean).join(' + ')
+}
+
 export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact for price', unit = '', hideServiceSelector = false }) {
   const serviceOptions = useMemo(() => getBookingServices(tourTitle), [tourTitle])
-  const addOnOptions = useMemo(() => getBookingAddOns(tourTitle), [tourTitle])
+  const addOnOptions = useMemo(() => getPricedAddOns(tourTitle), [tourTitle])
 
   const [form, setForm] = useState({
     service: hideServiceSelector ? tourTitle : (serviceOptions[0] || tourTitle),
@@ -155,6 +163,10 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
     return match ? { currency: match[1].toUpperCase(), amount: match[2] } : { currency: '', amount: displayPrice }
   }, [displayPrice])
 
+  // Ticked add-ons (flat AED price each) are added on top of the tour price.
+  const selectedAddOns = useMemo(() => addOnOptions.filter((item) => form.addOns.includes(item.name)), [addOnOptions, form.addOns])
+  const addOnTotal = useMemo(() => selectedAddOns.reduce((sum, item) => sum + item.price, 0), [selectedAddOns])
+
   // Per-person tours scale with the number of adults (children are free); add-ons are added on top.
   const pricing = useMemo(() => {
     const baseAmount = Number(String(displayPrice).replace(/[^\d.]/g, ''))
@@ -162,10 +174,10 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
     const perPerson = !unit || /person|pax|guest/i.test(unit)
     const adults = Math.max(1, Number(form.adults) || 1)
     const unitAmount = promo ? promo.discountedPrice : baseAmount
-    const addOnTotal = 0
-    const total = unitAmount * (perPerson ? adults : 1) + addOnTotal
-    return { perPerson, adults, unitAmount, addOnTotal, total }
-  }, [displayPrice, unit, form.adults, form.addOns, promo, tourTitle])
+    const baseTotal = unitAmount * (perPerson ? adults : 1)
+    const total = baseTotal + addOnTotal
+    return { perPerson, adults, unitAmount, baseTotal, addOnTotal, total }
+  }, [displayPrice, unit, form.adults, addOnTotal, promo, tourTitle])
 
   const stepGuests = (field, delta, min) => {
     setForm((current) => ({ ...current, [field]: String(Math.max(min, (Number(current[field]) || 0) + delta)) }))
@@ -197,9 +209,9 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
           submissionId,
           tourTitle,
           service: form.service,
-          addOns: form.addOns,
+          addOns: selectedAddOns.map((item) => `${item.name} (+AED ${item.price})`),
           pickup: form.pickup,
-          price: pricing ? `AED ${pricing.total}${pricing.perPerson ? ` (${pricing.adults} adult${pricing.adults > 1 ? "s" : ""} × AED ${pricing.unitAmount})` : ""}` : displayPrice,
+          price: pricing ? `AED ${pricing.total}${priceBreakdown(pricing) ? ` (${priceBreakdown(pricing)})` : ''}` : displayPrice,
           totalPrice: pricing ? `AED ${pricing.total}` : displayPrice,
           promoCode: promo?.code || promoInput.trim(),
           name: form.name,
@@ -237,7 +249,8 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
         travelDate: form.travelDate,
         adults: form.adults,
         children: form.children,
-        price: promo ? `${formatAed(promo.discountedPrice)}${promo.unit ? ` ${promo.unit}` : ''}` : displayPrice,
+        price: pricing ? formatAed(pricing.total) : (promo ? `${formatAed(promo.discountedPrice)}${promo.unit ? ` ${promo.unit}` : ''}` : displayPrice),
+        addOns: selectedAddOns.map((item) => item.name),
         promoCode: promo?.code || '',
         email: form.email,
         emailSent: customerEmailSent,
@@ -264,8 +277,8 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
             <strong className="is-text">{priceParts.currency && <small>{priceParts.currency}</small>}{priceParts.amount}</strong>
           )}
           {pricing && <em>
-            {pricing.perPerson && (pricing.adults > 1 || pricing.addOnTotal)
-                ? `Total · AED ${pricing.unitAmount.toLocaleString('en-US')} × ${pricing.adults} adult${pricing.adults > 1 ? 's' : ''}${pricing.addOnTotal ? ' + add-ons' : ''}`
+            {pricing.addOnTotal || (pricing.perPerson && pricing.adults > 1)
+                ? `Total · ${pricing.perPerson ? `AED ${pricing.unitAmount.toLocaleString('en-US')} × ${pricing.adults} adult${pricing.adults > 1 ? 's' : ''}` : `AED ${pricing.unitAmount.toLocaleString('en-US')}`}${pricing.addOnTotal ? ' + add-ons' : ''}`
                 : pricing.perPerson ? 'per person base' : (unit ? `per ${unit.replace('/', '')}` : 'total')}
           </em>}
           {promo && <em className="bk-head__was">was AED {promo.basePrice.toLocaleString('en-US')} · promo applied</em>}
@@ -313,15 +326,36 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
         <fieldset className="booking-enquiry-addons booking-enquiry-field--full">
           <legend>Select Optional Add-ons</legend>
           <div className="bk-addons">
-            {addOnOptions.map((addOn) => {
-              return (
-                <label key={addOn} className={`bk-addon${form.addOns.includes(addOn) ? ' is-selected' : ''}`}>
-                  <input type="checkbox" checked={form.addOns.includes(addOn)} onChange={() => toggleAddOn(addOn)} />
-                  <span className="bk-addon__name">{addOn}</span>
-                </label>
-              )
-            })}
+            {addOnOptions.map((addOn) => (
+              <label key={addOn.name} className={`bk-addon${form.addOns.includes(addOn.name) ? ' is-selected' : ''}`}>
+                <input type="checkbox" checked={form.addOns.includes(addOn.name)} onChange={() => toggleAddOn(addOn.name)} />
+                <span className="bk-addon__name">{addOn.name}</span>
+                <span className="bk-addon__price">+AED {addOn.price.toLocaleString('en-US')}</span>
+              </label>
+            ))}
           </div>
+
+          {(pricing || addOnTotal > 0) && (
+            <div className="bk-summary" aria-live="polite">
+              {pricing && (
+                <div className="bk-summary__row">
+                  <span>{pricing.perPerson ? `${pricing.adults} adult${pricing.adults > 1 ? 's' : ''} × AED ${pricing.unitAmount.toLocaleString('en-US')}` : 'Package price'}</span>
+                  <strong>AED {pricing.baseTotal.toLocaleString('en-US')}</strong>
+                </div>
+              )}
+              {selectedAddOns.map((item) => (
+                <div className="bk-summary__row bk-summary__row--addon" key={item.name}>
+                  <span>{item.name}</span>
+                  <strong>+AED {item.price.toLocaleString('en-US')}</strong>
+                </div>
+              ))}
+              <div className="bk-summary__row bk-summary__row--total">
+                <span>{pricing ? 'Estimated total' : 'Add-ons total'}</span>
+                <strong>AED {(pricing ? pricing.total : addOnTotal).toLocaleString('en-US')}</strong>
+              </div>
+              {!pricing && <p className="bk-summary__note">The package price is confirmed by our team.</p>}
+            </div>
+          )}
         </fieldset>
 
         <div className="bk-phone booking-enquiry-field--full">
@@ -433,7 +467,8 @@ export default function BookingEnquiryForm({ tourTitle, displayPrice = 'Contact 
               <div><dt>Experience</dt><dd>{confirmation.service}</dd></div>
               <div><dt>Travel date</dt><dd>{confirmation.travelDate}</dd></div>
               <div><dt>Guests</dt><dd>{confirmation.adults} adult{Number(confirmation.adults) > 1 ? 's' : ''}{Number(confirmation.children) > 0 ? `, ${confirmation.children} child${Number(confirmation.children) > 1 ? 'ren' : ''}` : ''}</dd></div>
-              <div><dt>Price</dt><dd>{confirmation.price}{confirmation.promoCode && <small> · code {confirmation.promoCode}</small>}</dd></div>
+              {confirmation.addOns?.length > 0 && <div><dt>Add-ons</dt><dd>{confirmation.addOns.join(', ')}</dd></div>}
+              <div><dt>Total</dt><dd>{confirmation.price}{confirmation.promoCode && <small> · code {confirmation.promoCode}</small>}</dd></div>
             </dl>
 
             {confirmation.emailSent && <p className="booking-confirm__email"><Mail size={14} /> A copy has been sent to {confirmation.email}</p>}

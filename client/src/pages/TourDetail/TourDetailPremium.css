@@ -644,3 +644,16 @@
 
 /* Package dropdown may shrink inside its grid cell (it ran past the edge on 320px phones). */
 .tp-page .bk-select { min-width: 0; max-width: 100%; }
+
+/* Priced add-ons: one full-width row each (name on the left, price on the right) + live total. */
+.tp-page .bk-addons { grid-template-columns: 1fr; gap: 8px; }
+.tp-page .bk-addon { padding: 10px 12px; gap: 10px; align-items: center; font-size: 12.5px; }
+.tp-page .bk-addon__name { line-height: 1.35; }
+.tp-page .bk-addon__price { flex: 0 0 auto; white-space: nowrap; font-size: 12px; font-weight: 900; color: var(--tp-gold-dark); }
+.tp-page .bk-summary { margin-top: 10px; padding: 11px 13px; border: 1px dashed #e3c892; border-radius: 10px; background: #fffbf3; }
+.tp-page .bk-summary__row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 3px 0; font-size: 12px; color: #4b5668; }
+.tp-page .bk-summary__row strong { flex: 0 0 auto; white-space: nowrap; color: #243041; font-weight: 800; }
+.tp-page .bk-summary__row--addon strong { color: var(--tp-gold-dark); }
+.tp-page .bk-summary__row--total { margin-top: 6px; padding-top: 8px; border-top: 1px solid #efdcb4; font-size: 13px; font-weight: 800; color: #172235; }
+.tp-page .bk-summary__row--total strong { font-size: 16px; color: var(--tp-gold-dark); }
+.tp-page .bk-summary__note { margin: 6px 0 0; font-size: 11px; color: #7a8696; }

@@ -141,3 +141,57 @@ export function getBookingAddOns(tourTitle = '') {
 
   return uniq([...common, 'Private / VIP Upgrade'])
 }
+
+/*
+  Priced add-ons shown in the booking form (AED, flat price per booking).
+  The visitor ticks the extras they want and the form adds them to the total.
+  >>> Edit the numbers below to change a price; nothing else needs to change. <<<
+*/
+const addOn = (name, price) => ({ name, price })
+
+const PRIVATE_SUV = addOn('Private 4×4 SUV Transfer (Exclusive Car)', 280)
+const DRONE_REEL = addOn('4K Drone Photography & Video Reel', 190)
+const PRIVATE_HOTEL_TRANSFER = addOn('Private Hotel Transfer', 250)
+const PHOTO_VIDEO_REEL = addOn('Photo & Video Reel', 190)
+
+export function getPricedAddOns(tourTitle = '') {
+  const key = String(tourTitle).toLowerCase()
+
+  if (/quad bike/.test(key) && !/desert|safari/.test(key)) {
+    return [PRIVATE_SUV, DRONE_REEL, addOn('Extra 30 Min Quad Bike Track Extension', 120), addOn('BBQ Dinner Upgrade', 90)]
+  }
+
+  if (/buggy|can-am/.test(key)) {
+    return [PRIVATE_SUV, DRONE_REEL, addOn('Extra 30 Min Dune Buggy Ride', 220), addOn('BBQ Dinner Upgrade', 90)]
+  }
+
+  if (/e-jet|water go kart/.test(key)) {
+    return [PRIVATE_HOTEL_TRANSFER, addOn('Photo & Video Reel', 150), addOn('Extra Ride Session (10 Laps)', 120)]
+  }
+
+  if (/desert|safari|camel|falcon|bedouin|caravanserai|fortress/.test(key)) {
+    return [PRIVATE_SUV, DRONE_REEL, addOn('Quad Bike Ride Upgrade (30 Min)', 120), addOn('VIP Seating Upgrade', 150)]
+  }
+
+  if (/city tour|emirates tour|mosque|heritage|abu dhabi|old dubai/.test(key)) {
+    return [addOn('Private Vehicle Upgrade', 300), addOn('Professional Photographer (2 Hours)', 200), addOn('Extra Tour Hour', 100)]
+  }
+
+  if (/cruise|dhow/.test(key)) {
+    return [addOn('Premium / Upper Deck Seating', 60), addOn('Celebration Setup (Cake & Decoration)', 200), PRIVATE_HOTEL_TRANSFER]
+  }
+
+  if (/helicopter|flight|aerial|skyline|iconic tour|palm tour|vision tour/.test(key)) {
+    return [PRIVATE_HOTEL_TRANSFER, PHOTO_VIDEO_REEL, addOn('Celebration Setup (Flowers & Cake)', 200)]
+  }
+
+  if (/yacht|jet ski|scuba|water activ/.test(key)) {
+    return [addOn('Extra Activity Time (15 Min)', 100), addOn('Photo & Video Reel', 150), PRIVATE_HOTEL_TRANSFER]
+  }
+
+  if (/burj|museum|aquarium|frame|aya|village|ski dubai|palm|dolphin|img worlds|warner|ferrari|miracle garden|garden glow|aquaventure|green planet|yas waterworld|lost chambers/.test(key)) {
+    return [PRIVATE_HOTEL_TRANSFER, addOn('Photographer Add-on', 150), addOn('Guided Assistance Add-on', 120)]
+  }
+
+  return [PRIVATE_HOTEL_TRANSFER, PHOTO_VIDEO_REEL, addOn('Private / VIP Upgrade', 300)]
+}
