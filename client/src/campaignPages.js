@@ -1,5 +1,6 @@
 import { tourCatalog } from './data'
 import { applyTourPricing } from './utils/tourPricing'
+import { seoPages } from './seoPages'
 
 const findTour = (title) => tourCatalog.find((tour) => tour.title === title)
 const pickTours = (titles) => titles.map(findTour).filter(Boolean)
@@ -385,6 +386,26 @@ function buildPackageItem(item) {
   }
 }
 
+// /tours/desert-safari has its own content (written by the SEO team, see seoPages.js).
+// It shares the evening safari packages, FAQs and details, but not the text above them.
+const desertSafariSeo = seoPages['/tours/desert-safari']
+campaignPages['desert-safari'] = {
+  ...campaignPages['evening-desert-safari'],
+  slug: 'desert-safari',
+  canonicalPath: '/tours/desert-safari',
+  eyebrow: 'LUXURY DESERT SAFARI DUBAI',
+  title: desertSafariSeo.h1,
+  heroCopy: desertSafariSeo.intro,
+  seoTitle: desertSafariSeo.metaTitle,
+  seoDescription: desertSafariSeo.metaDescription,
+  sectionTitle: desertSafariSeo.packagesTitle,
+  sectionCopy: desertSafariSeo.packagesCopy,
+  whyChoose: desertSafariSeo.whyChoose,
+  faqsTitle: desertSafariSeo.faqsTitle,
+  // Existing FAQs stay as they are; the new ones are added after them.
+  faqs: [...campaignPages['evening-desert-safari'].faqs, ...desertSafariSeo.extraFaqs],
+}
+
 Object.values(campaignPages).forEach((page) => {
   if (page.packageItems) {
     page.tours = page.packageItems.map(buildPackageItem).filter(Boolean).map(applyTourPricing)
@@ -394,6 +415,5 @@ Object.values(campaignPages).forEach((page) => {
 })
 
 export function getCampaignPage(slug) {
-  if (slug === 'desert-safari') return campaignPages['evening-desert-safari']
   return campaignPages[slug]
 }

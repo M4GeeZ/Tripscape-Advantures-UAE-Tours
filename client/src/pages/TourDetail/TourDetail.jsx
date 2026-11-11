@@ -18,6 +18,9 @@ import { reviews as siteReviews } from '../../data'
 import { getTourImages, MAX_TOUR_IMAGES, orderedImages, useTourImages } from '../../utils/tourImages'
 import { applyTourPricing } from '../../utils/tourPricing'
 import { resolveSchema, writePageSchema } from '../../utils/schemaManager'
+import { canonicalUrl } from '../../utils/canonical'
+import { applyMeta } from '../../SeoHead'
+import { getSeoPage } from '../../seoPages'
 import './TourDetail.css' // Retains existing loading / shared styles used by dynamic pages.
 import './TourDetailPremium.css'
 
@@ -127,12 +130,15 @@ const BOOKING_STEPS = [
   { title: 'Enjoy your adventure', description: 'Arrive with the booking details provided and enjoy your selected experience.' },
 ]
 
-function BookingProcess() {
+function BookingProcess({ process = null }) {
+  const steps = process?.steps?.length ? process.steps : BOOKING_STEPS
   return (
     <div className="tp-process">
-      <SectionTitle centered kicker="Effortless planning" title="How It Works: From Booking to the Desert" copy="A simple, guided booking journey with our team handling the details." />
+      {process
+        ? <SectionTitle centered kicker="Effortless planning" title={process.title} copy={process.copy} />
+        : <SectionTitle centered kicker="Effortless planning" title="How It Works: From Booking to the Desert" copy="A simple, guided booking journey with our team handling the details." />}
       <div className="tp-process__steps">
-        {BOOKING_STEPS.map((step, i) => (
+        {steps.map((step, i) => (
           <div className="tp-process__step" key={step.title}>
             <span className="tp-process__number">{String(i + 1).padStart(2, '0')}</span>
             <span className="tp-process__dot" aria-hidden="true" />
@@ -345,15 +351,15 @@ const GENERAL_FAQS = [
   { question: 'How can I check pickup or meeting details?', answer: 'Pickup and meeting arrangements are confirmed with our team for your selected package.' },
 ]
 
-function Faqs({ tour }) {
+function Faqs({ tour, title = '' }) {
   const faqs = asArray(tour.faqs).filter((faq) => faq && faq.question && faq.answer)
   return (
     <section className="tp-faq-section">
       <div className="tp-container">
-        <SectionTitle centered kicker="Clear answers, better planning" title="Frequently Asked Questions" copy={`Helpful answers before you book ${tour.title}.`} />
+        <SectionTitle centered kicker="Clear answers, better planning" title={title || 'Frequently Asked Questions'} copy={`Helpful answers before you book ${tour.title}.`} />
         <div className="tp-faq-list">
           {(faqs.length ? faqs : GENERAL_FAQS).map((faq, i) => (
-            <details key={`${i}-${faq.question}`}><summary>{faq.question}<span aria-hidden="true">+</span></summary><p>{faq.answer}</p></details>
+            <details key={`${i}-${faq.question}`}><summary><h3>{faq.question}</h3><span aria-hidden="true">+</span></summary><p>{faq.answer}</p></details>
           ))}
         </div>
       </div>
@@ -393,6 +399,9 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
   const [lightbox, setLightbox] = useState(null)
   const reviews = usePublishedReviews()
   const adminImages = useTourImages(tour?.title, tour?.slug || tourSlug)
+  // Content written by the SEO team for this page (see seoPages.js), if any.
+  const seo = getSeoPage(`/tours/${categorySlug}/${tourSlug}`)
+  const seoFaqs = useMemo(() => (seo?.faqs || []), [seo])
   const images = adminImages || orderedImages(tour?.image, tour?.gallery)
   const galleryPhotos = getGalleryPhotos(images)
   const pageRef = useRef(null)
@@ -404,19 +413,13 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
 
   useEffect(() => {
     if (!tour) return
-    const title = tour.seoTitle || `${tour.title} | Tripscape Tourism`
-    const description = tour.metaDescription || tour.shortDescription || tour.description || ''
-    document.title = title
-    const meta = document.querySelector('meta[name="description"]')
-    if (meta && description) meta.setAttribute('content', description.slice(0, 320))
-    let canonical = document.querySelector('link[rel="canonical"]')
-    if (!canonical) { canonical = document.createElement('link'); canonical.rel = 'canonical'; document.head.appendChild(canonical) }
-    canonical.href = tour.canonical || `${window.location.origin}/tours/${categorySlug}/${tour.slug || tourSlug}`
-    let robots = document.querySelector('meta[name="robots"]')
-    if (!robots) { robots = document.createElement('meta'); robots.name = 'robots'; document.head.appendChild(robots) }
-    robots.content = tour.robots || 'index,follow'
-    writePageSchema(resolveSchema(tour, 'tour', `/tours/${categorySlug}/${tour.slug || tourSlug}`))
-  }, [tour, categorySlug, tourSlug])
+    const pagePath = `/tours/${categorySlug}/${tour.slug || tourSlug}`
+    const title = seo?.metaTitle || tour.seoTitle || `${tour.title} | Tripscape Tourism`
+    const description = seo?.metaDescription || tour.metaDescription || tour.shortDescription || tour.description || ''
+    applyMeta({ title, description: description.slice(0, 320), canonical: tour.canonical || pagePath, robots: tour.robots, ogType: 'website' }, pagePath)
+    // The schema follows what is on the page: the SEO team's FAQs, meta description and canonical URL.
+    writePageSchema(resolveSchema({ ...tour, canonical: canonicalUrl(tour.canonical || pagePath), ...(seo ? { metaDescription: seo.metaDescription, faqs: seoFaqs } : {}) }, 'tour', pagePath))
+  }, [tour, categorySlug, tourSlug, seo, seoFaqs])
 
   useEffect(() => {
     if (lightbox === null || !galleryPhotos.length) return undefined
@@ -435,7 +438,9 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
   const category = tour.categoryLabel || tour.category || 'Tours'
   const introCopy = String(tour.description || tour.shortDescription || '').trim()
   const whatsappHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hi Tripscape, I would like to book ${tour.title}. Please share availability.`)}`
-  const heroDescription = tour.shortDescription || introCopy
+  const heroDescription = seo?.intro || tour.shortDescription || introCopy
+  const ctaBook = seo?.heroCtas?.book || 'Book This Experience'
+  const ctaWhatsapp = seo?.heroCtas?.whatsapp || 'WhatsApp Assistance'
   return (
     <div className="tp-page" ref={pageRef}>
       <Navbar menuOpen={menuOpen} setMenuOpen={setMenuOpen} variant="light" showTopBar />
@@ -446,15 +451,15 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
             <div className="tp-hero__content">
               <nav className="tp-breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/tours">Tours</a><span>/</span><span aria-current="page">{tour.title}</span></nav>
               <div className="tp-hero__pills"><span><Sparkles size={12} /> Tripscape experience</span><span>{category}</span><span>Dubai, UAE</span></div>
-              <h1>{tour.title}</h1>
-              {heroDescription && <p className="tp-hero__description">{heroDescription}</p>}
+              <h1>{seo?.h1 || tour.title}</h1>
+              {heroDescription && <p className={`tp-hero__description${seo?.intro ? ' tp-hero__description--full' : ''}`}>{heroDescription}</p>}
               <div className="tp-hero__facts">
                 <div><Clock3 size={19} /><span><small>Duration</small><strong>{tour.duration || 'Varies by package'}</strong></span></div>
                 <div><MapPin size={19} /><span><small>Location</small><strong>{tour.location || 'Dubai, UAE'}</strong></span></div>
                 {tour.rating && <div><Star size={19} fill="currentColor" /><span><small>Guest rating</small><strong>{tour.rating} / 5</strong></span></div>}
                 <div><BadgeCheck size={19} /><span><small>Price</small><strong>{price}</strong></span></div>
               </div>
-              <div className="tp-hero__actions"><a href="#book" className="tp-button tp-button--gold">Book This Experience <ArrowRight size={16} /></a><a href={whatsappHref} className="tp-button tp-button--green" target="_blank" rel="noopener noreferrer"><MessageCircle size={17} /> WhatsApp Assistance</a></div>
+              <div className="tp-hero__actions"><a href="#book" className="tp-button tp-button--gold">{ctaBook} <ArrowRight size={16} /></a><a href={whatsappHref} className="tp-button tp-button--green" target="_blank" rel="noopener noreferrer"><MessageCircle size={17} /> {ctaWhatsapp}</a></div>
               <p className="tp-hero__hint"><ShieldCheck size={14} /> Request your preferred date. Our team will confirm availability.</p>
             </div>
             {images[0] && <HeroPreview tour={tour} images={images} price={price} />}
@@ -465,8 +470,18 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
           <div className="tp-container tp-content-grid">
             <div className="tp-main-col">
               <section className="tp-intro-section" aria-label="Experience overview">
-                <SectionTitle kicker="Why this experience stands out" title={`Why ${tour.title} is worth experiencing`} />
-                <div className="tp-intro__description">{introCopy ? introCopy.split(/\n\s*\n/).filter(Boolean).map((part, i) => <p key={i}>{part}</p>) : <p>Explore the experience details and contact our team to plan your visit.</p>}</div>
+                {seo?.sections?.length ? seo.sections.map((section, index) => (
+                  <div className="tp-seo-block" key={section.title}>
+                    <SectionTitle kicker={index === 0 ? 'Why this experience stands out' : 'Tripscape Adventures'} title={section.title} />
+                    <div className="tp-intro__description">{section.paragraphs.map((part) => <p key={part.slice(0, 40)}>{part}</p>)}</div>
+                    {section.cta && <a className="tp-button tp-button--gold tp-seo-block__cta" href={section.cta.href}>{section.cta.label}</a>}
+                  </div>
+                )) : (
+                  <>
+                    <SectionTitle kicker="Why this experience stands out" title={`Why ${tour.title} is worth experiencing`} />
+                    <div className="tp-intro__description">{introCopy ? introCopy.split(/\n\s*\n/).filter(Boolean).map((part, i) => <p key={i}>{part}</p>) : <p>Explore the experience details and contact our team to plan your visit.</p>}</div>
+                  </>
+                )}
                 <IntroHighlights tour={tour} />
               </section>
               <Included tour={tour} />
@@ -475,14 +490,14 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
               <div className="tp-booking-col__sticky" id="book"><BookingEnquiryForm tourTitle={tour.title} displayPrice={price} unit={tour.unit} hideServiceSelector={Boolean(tour.hideServiceSelector)} /></div>
             </aside>
           </div>
-          <div className="tp-container"><BookingProcess /></div>
+          <div className="tp-container"><BookingProcess process={seo?.process || null} /></div>
         </div>
 
         <ExperienceFlow tour={tour} />
         <Gallery images={images} tour={tour} onOpen={setLightbox} />
         <Comparison tour={tour} />
         <Reviews reviews={reviews} />
-        <Faqs tour={tour} />
+        <Faqs tour={seo ? { ...tour, faqs: seoFaqs } : tour} title={seo?.faqsTitle} />
         <RelatedTours tour={tour} />
         <section className="tp-final-cta"><div className="tp-container tp-final-cta__inner"><div><span>READY FOR YOUR NEXT ADVENTURE?</span><h2>Book {tour.title} Today</h2><p>Choose your preferred date or ask our team for help planning your experience.</p></div><div className="tp-final-cta__actions"><a href="#book" className="tp-button tp-button--white">Book This Experience <ArrowRight size={16} /></a><a href={whatsappHref} target="_blank" rel="noopener noreferrer" className="tp-button tp-button--green"><MessageCircle size={17} /> WhatsApp Concierge</a></div></div></section>
       </main>

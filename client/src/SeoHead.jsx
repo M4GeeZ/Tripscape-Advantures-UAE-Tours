@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
-import { seoMetaByPath } from './seoMeta'
+import { isMetaClaimed } from './utils/metaOwner'
 import { apiUrl } from './utils/apiBaseUrl'
 import { resolveSchema, writePageSchema } from './utils/schemaManager'
+import { setCanonical } from './utils/canonical'
 
 function putMeta(name, content, property = false) {
   if (content == null || content === '') return
@@ -10,27 +11,33 @@ function putMeta(name, content, property = false) {
   if (!node) { node = document.createElement('meta'); node.setAttribute(attr, name); document.head.appendChild(node) }
   node.content = content
 }
-function putCanonical(href) {
-  if (!href) return
-  let node = document.head.querySelector('link[rel="canonical"]')
-  if (!node) { node = document.createElement('link'); node.rel = 'canonical'; document.head.appendChild(node) }
-  node.href = href
-}
-function applyMeta(meta, path) {
+export function applyMeta(meta, path) {
   if (!meta) return
   const title = meta.seoTitle || meta.title
   const description = meta.metaDescription || meta.description
   if (title) document.title = title
   putMeta('description', description)
   putMeta('robots', meta.robots || 'index,follow')
-  putCanonical(meta.canonical || `https://tripscapetourism.com${path}`)
+  const canonical = setCanonical(meta.canonical || path)
   putMeta('og:title', title, true)
   putMeta('og:description', description, true)
-  putMeta('og:url', meta.canonical || `https://tripscapetourism.com${path}`, true)
+  putMeta('og:url', canonical, true)
   putMeta('og:type', meta.ogType || 'website', true)
   putMeta('twitter:card', meta.twitterCard || 'summary_large_image')
   putMeta('twitter:title', title)
   putMeta('twitter:description', description)
+}
+
+// The page's own title, description and canonical, applied on top of the sitewide data.
+function withCurrentPageMeta(local) {
+  return {
+    ...local,
+    seoTitle: '',
+    title: document.title,
+    metaDescription: '',
+    description: document.head.querySelector('meta[name="description"]')?.content || local.description,
+    canonical: document.head.querySelector('link[rel="canonical"]')?.href || local.canonical,
+  }
 }
 
 export default function SeoHead() {
@@ -44,20 +51,25 @@ export default function SeoHead() {
     const isBlogDetail = /^\/blog\/[^/]+$/.test(path)
     // Standard detail pages load their specific CMS metadata and schema, not a sitewide fallback.
     if (isStandardTour || isBlogDetail) return
-    const local = seoMetaByPath[path] || null
-    if (local) {
-      applyMeta(local, path)
-      writePageSchema(resolveSchema(local, 'page', path, local.schema || null))
-    }
     let alive = true
-    fetch(apiUrl(`/api/seo?path=${encodeURIComponent(path)}`))
-      .then(res => res.ok ? res.json() : null)
-      .then(override => {
-        if (!alive || !override) return
-        applyMeta({ ...local, ...override }, path)
-        writePageSchema(resolveSchema({ ...local, ...override, title: override.seoTitle || local?.title }, 'page', path, local?.schema || null))
-      })
-      .catch(() => {})
+    // seoMeta.js is large (every page's title and schema), so it is loaded after the page is shown.
+    import('./seoMeta').then(({ seoMetaByPath }) => {
+      if (!alive) return
+      const local = seoMetaByPath[path] || null
+      if (local) {
+        // A page that sets its own title, description and canonical keeps them.
+        applyMeta(isMetaClaimed(path) ? withCurrentPageMeta(local) : local, path)
+        writePageSchema(resolveSchema(local, 'page', path, local.schema || null))
+      }
+      fetch(apiUrl(`/api/seo?path=${encodeURIComponent(path)}`))
+        .then(res => res.ok ? res.json() : null)
+        .then(override => {
+          if (!alive || !override) return
+          applyMeta({ ...local, ...override }, path)
+          writePageSchema(resolveSchema({ ...local, ...override, title: override.seoTitle || local?.title }, 'page', path, local?.schema || null))
+        })
+        .catch(() => {})
+    }).catch(() => {})
     return () => {alive = false}
   }, [])
   return null

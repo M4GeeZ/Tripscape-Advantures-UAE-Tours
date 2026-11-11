@@ -1,3 +1,4 @@
+import { claimPageMeta } from '../../utils/metaOwner'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Check, MessageCircle, Phone, PlayCircle, ShieldCheck, Star, X } from 'lucide-react'
 import Navbar from '../../components/Navbar/Navbar'
@@ -35,6 +36,7 @@ export default function DesertEJet({ menuOpen, setMenuOpen }) {
 
   useEffect(() => {
     window.scrollTo(0, 0)
+    claimPageMeta()
     document.title = 'Water Go Kart Dubai | Desert E-Jet Experience'
     let meta = document.querySelector('meta[name="description"]')
     if (!meta) {

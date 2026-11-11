@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { useSmoothScroll } from "./hooks/useSmoothScroll";
 
 import Home from "./pages/Home/Home";
@@ -14,7 +14,8 @@ import About from "./pages/About/About";
 import Blog from "./pages/Blog/Blog";
 import BlogDetail from "./pages/Blog/BlogDetail";
 import Contact from "./pages/Contact/Contact";
-import AdminApp from './pages/Admin/AdminApp';
+// The admin panel is only needed on its private URL, so it is loaded on demand and kept out of the public bundle.
+const AdminApp = lazy(() => import('./pages/Admin/AdminApp'));
 import SeoHead from './SeoHead';
 
 import SideRails from "./components/SideRails/SideRails";
@@ -34,7 +35,7 @@ export default function App() {
   const ADMIN_PANEL_PATH = '/admin-panel-tripscape-tourism-993';
 
   if (normalizedPath === ADMIN_PANEL_PATH) {
-    return <AdminApp />;
+    return <Suspense fallback={null}><AdminApp /></Suspense>;
   }
 
   const pageProps = {

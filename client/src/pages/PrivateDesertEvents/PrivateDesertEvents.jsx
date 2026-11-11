@@ -1,3 +1,4 @@
+import { claimPageMeta } from '../../utils/metaOwner'
 import { useEffect, useRef } from 'react'
 import { Check, MessageCircle, Phone } from 'lucide-react'
 import Navbar from '../../components/Navbar/Navbar'
@@ -24,6 +25,7 @@ export default function PrivateDesertEvents({ menuOpen, setMenuOpen }) {
   useLuxuryReveal(pageRef)
 
   useEffect(() => {
+    claimPageMeta()
     document.title = 'VIP Private Desert Safari | Family & Event Packages'
     window.scrollTo(0, 0)
   }, [])

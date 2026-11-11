@@ -262,8 +262,11 @@
   .tp-preview__image { height: 190px; }
   .tp-preview__body { padding: 8px; }
   .tp-content-grid { display: flex; flex-direction: column; }
-  .tp-main-col { width: 100%; order: 0; }
-  .tp-booking-col { width: 100%; order: 1; }
+  /* Phone/tablet order: booking form, then "Everything included", then the description and the rest. */
+  .tp-page .tp-content-grid > .tp-main-col { display: contents; }
+  .tp-page .tp-content-grid > .tp-booking-col { width: 100%; order: 0; }
+  .tp-page .tp-content-grid > .tp-main-col > .tp-inclusions { order: 1; }
+  .tp-page .tp-content-grid > .tp-main-col > .tp-intro-section { order: 2; }
   .tp-booking-col__sticky { position: static; }
   .tp-page .booking-enquiry-card { padding: 13px 22px 20px; }
   .tp-page .booking-enquiry-addons__grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
@@ -657,3 +660,9 @@
 .tp-page .bk-summary__row--total { margin-top: 6px; padding-top: 8px; border-top: 1px solid #efdcb4; font-size: 13px; font-weight: 800; color: #172235; }
 .tp-page .bk-summary__row--total strong { font-size: 16px; color: var(--tp-gold-dark); }
 .tp-page .bk-summary__note { margin: 6px 0 0; font-size: 11px; color: #7a8696; }
+
+/* SEO copy blocks (pages with content written by the SEO team) */
+.tp-hero__description.tp-hero__description--full { display: block; -webkit-line-clamp: unset; overflow: visible; max-width: 760px; }
+.tp-page .tp-seo-block + .tp-seo-block { margin-top: 30px; padding-top: 26px; border-top: 1px solid #eef1f6; }
+.tp-page .tp-seo-block__cta { margin-top: 16px; width: fit-content; }
+.tp-faq-list summary h3 { margin: 0; flex: 1; min-width: 0; font: inherit; color: inherit; letter-spacing: inherit; }

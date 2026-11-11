@@ -606,17 +606,17 @@ export const seoMetaByPath = {
     }
   },
   "/tours/desert-safari": {
-    "title": "Desert Safari Dubai | Evening, Morning & VIP Tours",
-    "description": "Book a Dubai desert safari with dune bashing, BBQ dinner, live entertainment and private or VIP options through Tripscape Tourism. Check availability.",
-    "canonical": "https://tripscapetourism.com/tours/desert-safari",
+    "title": "Luxury Desert Safari Dubai | VIP & Private Tours",
+    "description": "Experience the best Luxury Desert Safari Dubai with thrilling dune bashing, private seating, camel rides, BBQ dinner, and VIP services. Book your safari today!",
+    "canonical": "https://tripscapetourism.com/tours/desert-safari/",
     "robots": "index,follow",
-    "ogTitle": "Desert Safari Dubai | Evening, Morning & VIP Tours",
-    "ogDescription": "Book a Dubai desert safari with dune bashing, BBQ dinner, live entertainment and private or VIP options through Tripscape Tourism. Check availability.",
-    "ogUrl": "https://tripscapetourism.com/tours/desert-safari",
+    "ogTitle": "Luxury Desert Safari Dubai | VIP & Private Tours",
+    "ogDescription": "Experience the best Luxury Desert Safari Dubai with thrilling dune bashing, private seating, camel rides, BBQ dinner, and VIP services. Book your safari today!",
+    "ogUrl": "https://tripscapetourism.com/tours/desert-safari/",
     "ogType": "website",
     "twitterCard": "summary_large_image",
-    "twitterTitle": "Desert Safari Dubai | Evening, Morning & VIP Tours",
-    "twitterDescription": "Book a Dubai desert safari with dune bashing, BBQ dinner, live entertainment and private or VIP options through Tripscape Tourism. Check availability.",
+    "twitterTitle": "Luxury Desert Safari Dubai | VIP & Private Tours",
+    "twitterDescription": "Experience the best Luxury Desert Safari Dubai with thrilling dune bashing, private seating, camel rides, BBQ dinner, and VIP services. Book your safari today!",
     "schema": {
       "@context": "https://schema.org",
       "@graph": [
@@ -624,8 +624,8 @@ export const seoMetaByPath = {
           "@type": "CollectionPage",
           "@id": "https://tripscapetourism.com/tours/desert-safari#webpage",
           "url": "https://tripscapetourism.com/tours/desert-safari",
-          "name": "Desert Safari Dubai | Evening, Morning & VIP Tours",
-          "description": "Book a Dubai desert safari with dune bashing, BBQ dinner, live entertainment and private or VIP options through Tripscape Tourism. Check availability.",
+          "name": "Luxury Desert Safari Dubai | VIP & Private Tours",
+          "description": "Experience the best Luxury Desert Safari Dubai with thrilling dune bashing, private seating, camel rides, BBQ dinner, and VIP services. Book your safari today!",
           "isPartOf": {
             "@id": "https://tripscapetourism.com/#website"
           },

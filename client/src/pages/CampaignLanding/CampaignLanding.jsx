@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Check, Clock3, MapPin, MessageCircle, Phone, ShieldCheck, Star, X } from 'lucide-react'
+import { Armchair, CalendarCheck, Car, Check, Clock3, Headphones, MapPin, MessageCircle, Phone, ShieldCheck, Smile, Star, Wallet, X } from 'lucide-react'
 import Navbar from '../../components/Navbar/Navbar'
 import Footer from '../../components/Footer/Footer'
 import WhatsAppFloat from '../../components/WhatsAppFloat/WhatsAppFloat'
@@ -14,11 +14,14 @@ import { apiUrl } from '../../utils/apiBaseUrl'
 import createSubmissionId from '../../utils/createSubmissionId'
 import { ExperiencePriceRow } from '../../components/ExperienceCard/ExperienceCard'
 import { useTourCardImage } from '../../utils/tourImages'
+import { applyMeta } from '../../SeoHead'
+import { claimPageMeta } from '../../utils/metaOwner'
 import '../../components/ExperienceCardActions/ExperienceCardActions.css'
 import '../../components/ExperienceCard/ExperienceCard.css'
 import './CampaignLanding.css'
 
 const PHONE = '+971549930684'
+const WHY_ICONS = { wallet: Wallet, support: Headphones, booking: CalendarCheck, everyone: Smile, comfort: Armchair, private: Car }
 const WHATSAPP = '971549930684'
 
 function tomorrow() {
@@ -245,22 +248,9 @@ export default function CampaignLanding({ slug, menuOpen, setMenuOpen }) {
   useEffect(() => {
     if (!page) return
     window.scrollTo(0, 0)
-    document.title = page.seoTitle
-    let meta = document.querySelector('meta[name="description"]')
-    if (!meta) {
-      meta = document.createElement('meta')
-      meta.name = 'description'
-      document.head.appendChild(meta)
-    }
-    meta.content = page.seoDescription
-    let canonical = document.querySelector('link[rel="canonical"]')
-    if (!canonical) {
-      canonical = document.createElement('link')
-      canonical.rel = 'canonical'
-      document.head.appendChild(canonical)
-    }
-    const canonicalPath = page.canonicalPath || (page.slug === 'evening-desert-safari' ? '/tours/desert-safari' : `/tours/${page.slug}`)
-    canonical.href = `${window.location.origin}${canonicalPath}`
+    const canonicalPath = page.canonicalPath || `/tours/${page.slug}`
+    claimPageMeta()
+    applyMeta({ title: page.seoTitle, description: page.seoDescription, canonical: canonicalPath }, canonicalPath)
   }, [page])
 
   if (!page) return null
@@ -302,6 +292,25 @@ export default function CampaignLanding({ slug, menuOpen, setMenuOpen }) {
           </div>
         </section>
 
+        {page.whyChoose && (
+          <section className="ad-why" aria-labelledby="ad-why-title">
+            <div className="container">
+              <div className="ad-section-head ad-section-head--center" data-lux-reveal><span className="ad-eyebrow ad-eyebrow--dark">WHY TRIPSCAPE</span><h2 id="ad-why-title">{page.whyChoose.title}</h2></div>
+              <div className="ad-why__grid">
+                {page.whyChoose.items.map((item) => {
+                  const Icon = WHY_ICONS[item.icon] || Check
+                  return (
+                    <article className="ad-why__card" key={item.title} data-lux-reveal>
+                      <span className="ad-why__icon"><Icon size={30} strokeWidth={1.8} /></span>
+                      <div><h3>{item.title}</h3><p>{item.text}</p></div>
+                    </article>
+                  )
+                })}
+              </div>
+            </div>
+          </section>
+        )}
+
         <section className="ad-booking-section">
           <div className="container ad-booking-section__grid">
             <div className="ad-booking-copy" data-lux-reveal><span className="ad-eyebrow">BOOK DIRECT</span><h2>Tell us your date and package.</h2><p>Complete the short form. Your request will open in WhatsApp with all booking details ready to send.</p><div className="ad-booking-contact"><a href={whatsappIntro} target="_blank" rel="noreferrer"><MessageCircle size={20} /> WhatsApp booking</a><a href={`tel:${PHONE}`}><Phone size={20} /> +971 54 993 0684</a></div></div>
@@ -326,8 +335,8 @@ export default function CampaignLanding({ slug, menuOpen, setMenuOpen }) {
 
         <section className="ad-faqs">
           <div className="container ad-faqs__grid">
-            <div className="ad-section-head" data-lux-reveal><span className="ad-eyebrow ad-eyebrow--dark">FAQS</span><h2>Questions before booking</h2></div>
-            <div className="ad-faqs__list" data-lux-reveal>{page.faqs.map(([question, answer], index) => <details key={question} open={index === 0}><summary>{question}</summary><p>{answer}</p></details>)}</div>
+            <div className="ad-section-head" data-lux-reveal><span className="ad-eyebrow ad-eyebrow--dark">FAQS</span><h2>{page.faqsTitle || 'Questions before booking'}</h2></div>
+            <div className="ad-faqs__list" data-lux-reveal>{page.faqs.map(([question, answer], index) => <details key={question} open={index === 0}><summary><h3>{question}</h3></summary><p>{answer}</p></details>)}</div>
           </div>
         </section>
 

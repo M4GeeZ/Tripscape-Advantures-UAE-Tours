@@ -94,7 +94,11 @@ function addUnique(list, value) {
 }
 
 function getSeo(route, data) {
-  const { campaignPages, tourCategoryPages, tourDetailPages, blogArticles } = data
+  const { campaignPages, tourCategoryPages, tourDetailPages, blogArticles, getSeoPage } = data
+
+  // Pages with content written by the SEO team (src/seoPages.js)
+  const seoPage = getSeoPage(route)
+  if (seoPage) return { title: seoPage.metaTitle, description: seoPage.metaDescription, preloadImage: seoPage.preloadImage }
 
   if (route === '/') {
     return {
@@ -171,22 +175,42 @@ function injectSeo(template, route, seo) {
   html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${escapeHtml(seo.title)}</title>`)
   html = html.replace(/<meta\s+name=["']description["'][^>]*>/i, `<meta name="description" content="${escapeHtml(seo.description)}" />`)
 
+  // Same canonical form as the browser (src/utils/canonical.js): the live server redirects to the trailing-slash URL.
   const canonical = `${origin}${route === '/' ? '/' : `${route}/`}`
   if (/<link\s+rel=["']canonical["']/i.test(html)) {
     html = html.replace(/<link\s+rel=["']canonical["'][^>]*>/i, `<link rel="canonical" href="${canonical}" />`)
   } else {
     html = html.replace('</head>', `  <link rel="canonical" href="${canonical}" />\n</head>`)
   }
+
+  // Open Graph / Twitter tags that match the title, description and canonical above.
+  const social = [
+    `<meta property="og:title" content="${escapeHtml(seo.title)}" />`,
+    `<meta property="og:description" content="${escapeHtml(seo.description)}" />`,
+    `<meta property="og:url" content="${canonical}" />`,
+    '<meta property="og:type" content="website" />',
+    `<meta name="twitter:title" content="${escapeHtml(seo.title)}" />`,
+    `<meta name="twitter:description" content="${escapeHtml(seo.description)}" />`
+  ].join('\n    ')
+  html = html.replace('</head>', `  ${social}\n</head>`)
+
+  // LCP image: index.html preloads the HOME hero on every page. Keep that for the home page only;
+  // other pages preload their own hero image when we know it.
+  const homePreload = /<link\s+rel=["']preload"\s+as=["']image["']\s+href=["']\/images\/hero-desert\.webp["'][\s\S]*?\/>/i
+  const preloadImage = route === '/' ? '/images/hero-desert.webp' : seo.preloadImage
+  const preloadTag = preloadImage ? `<link rel="preload" as="image" href="${escapeHtml(preloadImage)}" fetchpriority="high" />` : ''
+  html = homePreload.test(html) ? html.replace(homePreload, preloadTag) : (preloadTag ? html.replace('</head>', `  ${preloadTag}\n</head>`) : html)
   return html
 }
 
 async function loadRoutes(vite) {
   const appSource = await fs.readFile(path.join(clientRoot, 'src/App.jsx'), 'utf8')
-  const [{ tourCategoryPages }, { tourDetailPages }, { blogArticles }, { campaignPages }] = await Promise.all([
+  const [{ tourCategoryPages }, { tourDetailPages }, { blogArticles }, { campaignPages }, { getSeoPage }] = await Promise.all([
     vite.ssrLoadModule('/src/tourCategoryPages.js'),
     vite.ssrLoadModule('/src/tourDetails.js'),
     vite.ssrLoadModule('/src/blogArticles.js'),
-    vite.ssrLoadModule('/src/campaignPages.js')
+    vite.ssrLoadModule('/src/campaignPages.js'),
+    vite.ssrLoadModule('/src/seoPages.js')
   ])
 
   const routes = ['/','/tours','/services','/about','/blog','/contact']
@@ -203,7 +227,7 @@ async function loadRoutes(vite) {
 
   if (/privacy-policy/i.test(appSource)) addUnique(routes, '/privacy-policy')
 
-  return { routes: routes.map(normalizeRoute), tourCategoryPages, tourDetailPages, blogArticles, campaignPages }
+  return { routes: routes.map(normalizeRoute), tourCategoryPages, tourDetailPages, blogArticles, campaignPages, getSeoPage }
 }
 
 async function main() {

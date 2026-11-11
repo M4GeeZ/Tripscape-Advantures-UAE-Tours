@@ -15,6 +15,8 @@ import { getCardPoints } from '../../utils/cardContent'
 import './TourCategory.css'
 import { applyTourPricing } from '../../utils/tourPricing'
 import { useTourCardImage } from '../../utils/tourImages'
+import { setCanonical } from '../../utils/canonical'
+import { claimPageMeta } from '../../utils/metaOwner'
 
 function CategoryTourCard({ tour: rawTour, page }) {
   const tour = applyTourPricing(rawTour)
@@ -57,6 +59,7 @@ export default function TourCategory({ slug, menuOpen, setMenuOpen }) {
   useEffect(() => {
     window.scrollTo(0, 0)
     if (page?.campaign) {
+      claimPageMeta()
       document.title = page.campaign.seoTitle
       let meta = document.querySelector('meta[name="description"]')
       if (!meta) {
@@ -66,13 +69,7 @@ export default function TourCategory({ slug, menuOpen, setMenuOpen }) {
       }
       meta.setAttribute('content', page.campaign.seoDescription)
 
-      let canonical = document.querySelector('link[rel="canonical"]')
-      if (!canonical) {
-        canonical = document.createElement('link')
-        canonical.setAttribute('rel', 'canonical')
-        document.head.appendChild(canonical)
-      }
-      canonical.setAttribute('href', `${window.location.origin}${window.location.pathname}`)
+      setCanonical(window.location.pathname)
     }
   }, [slug, page])
 

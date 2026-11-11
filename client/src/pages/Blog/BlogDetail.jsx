@@ -9,6 +9,7 @@ import { blogArticles, getBlogArticle } from '../../blogArticles'
 import { apiUrl } from '../../utils/apiBaseUrl'
 import './Blog.css'
 import { resolveSchema, writePageSchema } from '../../utils/schemaManager'
+import { setCanonical } from '../../utils/canonical'
 
 function fallbackContent(article) {
   const included = (article.included || []).map((item) => `<li>${item}</li>`).join('')
@@ -39,9 +40,7 @@ export default function BlogDetail({ slug, menuOpen, setMenuOpen }) {
     document.title = title
     const meta = document.querySelector('meta[name="description"]')
     if (meta && description) meta.setAttribute('content', description.slice(0, 320))
-    let canonical = document.querySelector('link[rel="canonical"]')
-    if (!canonical) { canonical = document.createElement('link'); canonical.rel = 'canonical'; document.head.appendChild(canonical) }
-    canonical.href = article.canonical || `${window.location.origin}/blog/${article.slug}`
+    setCanonical(article.canonical || `/blog/${article.slug}`)
     let robots = document.querySelector('meta[name="robots"]')
     if (!robots) { robots = document.createElement('meta'); robots.name = 'robots'; document.head.appendChild(robots) }
     robots.content = article.robots || 'index,follow'
