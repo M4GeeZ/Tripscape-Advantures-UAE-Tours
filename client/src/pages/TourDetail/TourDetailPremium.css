@@ -713,3 +713,29 @@
 /* Seamless loop: two stacked copies cross-fade into each other (see HeroVideo.jsx) */
 .tp-hero__video { opacity: 0; transition: opacity 1.5s linear; }
 .tp-hero__video.is-active { opacity: 1; }
+
+/* Hero: description is cut to 200 characters in JSX, so it is never clamped; it now sits directly above the buttons */
+.tp-page .tp-hero__description { display: block; -webkit-line-clamp: unset; overflow: visible; }
+@media (min-width: 901px) { .tp-page .tp-hero__description { margin-bottom: 36px; } }
+@media (max-width: 900px) { .tp-page .tp-hero__description { margin-bottom: 22px; } }
+
+/* Mobile hero: same content as desktop, just more air and an even overlay so text reads across the full width */
+@media (max-width: 640px) {
+  .tp-page .tp-hero .tp-container { width: calc(100% - 40px); }
+  .tp-page .tp-hero::before { background: linear-gradient(180deg, rgba(0,0,0,.66) 0%, rgba(0,0,0,.5) 50%, rgba(0,0,0,.66) 100%); }
+  .tp-page .tp-hero__grid { gap: 36px; padding-top: 64px; padding-bottom: 40px; }
+  .tp-page .tp-breadcrumb { margin-bottom: 18px; padding-right: 0; font-size: 12px; }
+  .tp-page .tp-hero h1 { margin-bottom: 16px; font-size: clamp(28px, 8.4vw, 34px); line-height: 1.14; letter-spacing: -.04em; }
+  .tp-page .tp-hero__description { margin-bottom: 28px; font-size: 14.5px; line-height: 1.72; color: #e8edf2; }
+  .tp-page .tp-hero__actions { flex-direction: column; align-items: stretch; gap: 12px; }
+  .tp-page .tp-hero__actions .tp-button { flex: 0 0 auto; width: 100%; min-height: 52px; border-radius: 12px; font-size: 14px; }
+  .tp-page .tp-hero__hint { align-items: flex-start; margin-top: 16px; font-size: 12px; line-height: 1.5; }
+  .tp-page .tp-hero__hint svg { margin-top: 2px; }
+  .tp-page .tp-preview { padding: 12px; border-radius: 18px; }
+  .tp-page .tp-preview__image { height: 200px; border-radius: 12px; }
+  .tp-page .tp-preview__body { padding: 18px 6px 4px; }
+  .tp-page .tp-preview__title { margin-bottom: 10px; font-size: 15px; }
+  .tp-page .tp-preview__body li { padding: 9px 0; font-size: 13px; }
+  .tp-page .tp-preview__footer { margin-top: 16px; }
+  .tp-page .tp-preview__link { min-height: 42px; padding: 10px 18px; font-size: 13px; }
+}

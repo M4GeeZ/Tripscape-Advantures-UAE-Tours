@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   ArrowRight, ArrowUpRight, BadgeCheck, Camera, Check,
-  CheckCircle2, ChevronLeft, ChevronRight, Clock3, Compass, Headphones,
-  MapPin, Minus, ShieldCheck, Sparkles, Star, Users, X,
+  CheckCircle2, ChevronLeft, ChevronRight, Compass, Headphones,
+  Minus, ShieldCheck, Star, Users, X,
 } from 'lucide-react'
 import WhatsAppIcon from '../../components/WhatsAppIcon'
 import HeroVideo from '../../components/HeroVideo'
@@ -31,6 +31,14 @@ const HERO_VIDEO = '/videos/hero/desert-safari.mp4'
 const WHATSAPP_NUMBER = '971549930684'
 const normalize = (value) => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
 const asArray = (value) => Array.isArray(value) ? value.filter(Boolean) : []
+
+// Shortens to at most `max` characters (including the ellipsis), cutting at a word boundary.
+function shortText(text, max) {
+  const value = String(text || '').replace(/\s+/g, ' ').trim()
+  if (value.length <= max) return value
+  const cut = value.slice(0, max - 1)
+  return `${cut.slice(0, cut.lastIndexOf(' ') > 0 ? cut.lastIndexOf(' ') : cut.length).replace(/[,.;:\s]+$/, '')}…`
+}
 
 function displayPriceOf(tour) {
   const raw = String(tour?.price || '').trim()
@@ -453,7 +461,6 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
   if (!tour) return null
 
   const price = displayPriceOf(tour)
-  const category = tour.categoryLabel || tour.category || 'Tours'
   const introCopy = String(tour.description || tour.shortDescription || '').trim()
   const whatsappHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hi Tripscape, I would like to book ${tour.title}. Please share availability.`)}`
   const heroDescription = seo?.intro || tour.shortDescription || introCopy
@@ -469,15 +476,8 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
           <div className="tp-container tp-hero__grid">
             <div className="tp-hero__content">
               <nav className="tp-breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/tours">Tours</a><span>/</span><span aria-current="page">{tour.title}</span></nav>
-              <div className="tp-hero__pills"><span><Sparkles size={12} /> Tripscape experience</span><span>{category}</span><span>Dubai, UAE</span></div>
               <h1>{seo?.h1 || tour.title}</h1>
-              {heroDescription && <p className={`tp-hero__description${seo?.intro ? ' tp-hero__description--full' : ''}`}>{heroDescription}</p>}
-              <div className="tp-hero__facts">
-                <div><Clock3 size={19} /><span><small>Duration</small><strong>{tour.duration || 'Varies by package'}</strong></span></div>
-                <div><MapPin size={19} /><span><small>Location</small><strong>{tour.location || 'Dubai, UAE'}</strong></span></div>
-                {tour.rating && <div><Star size={19} fill="currentColor" /><span><small>Guest rating</small><strong>{tour.rating} / 5</strong></span></div>}
-                <div><BadgeCheck size={19} /><span><small>Price</small><strong>{price}</strong></span></div>
-              </div>
+              {heroDescription && <p className="tp-hero__description">{shortText(heroDescription, 200)}</p>}
               <div className="tp-hero__actions"><a href="#book" className="tp-button tp-button--gold">{ctaBook} <ArrowRight size={16} /></a><a href={whatsappHref} className="tp-button tp-button--green" target="_blank" rel="noopener noreferrer"><WhatsAppIcon size={17} /> {ctaWhatsapp}</a></div>
               <p className="tp-hero__hint"><ShieldCheck size={14} /> Request your preferred date. Our team will confirm availability.</p>
             </div>
