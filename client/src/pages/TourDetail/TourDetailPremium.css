@@ -262,8 +262,8 @@
   .tp-preview__image { height: 190px; }
   .tp-preview__body { padding: 8px; }
   .tp-content-grid { display: flex; flex-direction: column; }
-  .tp-booking-col { width: 100%; order: 0; }
-  .tp-main-col { width: 100%; order: 1; }
+  .tp-main-col { width: 100%; order: 0; }
+  .tp-booking-col { width: 100%; order: 1; }
   .tp-booking-col__sticky { position: static; }
   .tp-page .booking-enquiry-card { padding: 13px 22px 20px; }
   .tp-page .booking-enquiry-addons__grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
@@ -606,3 +606,41 @@
 .tp-page .tp-review-card__top { gap: 12px; }
 .tp-page .tp-review-card__avatar { width: 46px; height: 46px; overflow: hidden; font-size: 17px; border: 2px solid #fff; box-shadow: 0 0 0 2px #ecd3a1, 0 6px 14px rgba(110,76,20,.15); }
 .tp-page .tp-review-card__avatar img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 50%; }
+
+/* =====================================================================
+   Phones and tablets only (desktop is untouched)
+   ===================================================================== */
+
+/* Nothing may push the page wider than the screen (this made one side look
+   wider than the other and shifted everything on phones). */
+.tp-page { overflow-x: clip; }
+
+/* Booking form header: price block no longer runs off the right edge. */
+@media (max-width: 480px) {
+  .tp-page .bk-head { flex-direction: column; align-items: stretch; gap: 12px; }
+  .tp-page .bk-head__price { width: 100%; align-items: flex-start; text-align: left; }
+  .tp-page .bk-head__price strong { justify-content: flex-start; }
+  .tp-page .bk-head__badge { white-space: normal; }
+}
+
+/* Compact hero on phones. */
+@media (max-width: 640px) {
+  .tp-hero__grid { gap: 18px; padding-top: 20px; padding-bottom: 26px; }
+  .tp-breadcrumb { flex-wrap: nowrap; gap: 6px; margin-bottom: 12px; padding-right: 52px; white-space: nowrap; overflow: hidden; }
+  .tp-breadcrumb a, .tp-breadcrumb > span:first-of-type, .tp-breadcrumb > span:nth-of-type(2) { flex: 0 0 auto; }
+  .tp-breadcrumb [aria-current] { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .tp-hero__pills { gap: 6px; margin-bottom: 11px; }
+  .tp-hero__pills span { padding: 5px 8px; font-size: 9.5px; }
+  .tp-hero__pills span:nth-child(3) { display: none; }
+  .tp-hero h1 { margin-bottom: 11px; font-size: clamp(26px, 7.4vw, 34px); line-height: 1.12; letter-spacing: -.045em; }
+  .tp-hero__description { margin-bottom: 15px; font-size: 13px; line-height: 1.6; -webkit-line-clamp: 3; }
+  .tp-hero__facts { gap: 6px; margin-bottom: 14px; }
+  .tp-hero__facts > div { min-height: 52px; gap: 8px; padding: 8px 9px; }
+  .tp-hero__facts small { font-size: 9.5px; }
+  .tp-hero__facts strong { font-size: 11.5px; }
+  .tp-hero__actions .tp-button { min-height: 46px; flex: 1 1 100%; font-size: 12px; }
+  .tp-hero__hint { margin-top: 11px; font-size: 11px; line-height: 1.45; }
+}
+
+/* Package dropdown may shrink inside its grid cell (it ran past the edge on 320px phones). */
+.tp-page .bk-select { min-width: 0; max-width: 100%; }

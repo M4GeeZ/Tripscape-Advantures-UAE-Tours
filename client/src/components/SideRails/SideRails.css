@@ -488,3 +488,8 @@
     height: 14px;
   }
 }
+
+/* Phones: the fixed side rails cover page text (the call and WhatsApp buttons stay). */
+@media (max-width: 640px) {
+  .side-rail { display: none !important; }
+}
