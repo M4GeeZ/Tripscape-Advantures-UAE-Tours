@@ -150,7 +150,7 @@ export function getBookingAddOns(tourTitle = '') {
 const addOn = (name, price) => ({ name, price })
 
 const PRIVATE_SUV = addOn('Private 4×4 SUV Transfer (Exclusive Car)', 280)
-const DRONE_REEL = addOn('4K Drone Photography & Video Reel', 190)
+const BUGGY_RIDE = addOn('Dune Buggy Ride Upgrade', 600)
 const PRIVATE_HOTEL_TRANSFER = addOn('Private Hotel Transfer', 250)
 const PHOTO_VIDEO_REEL = addOn('Photo & Video Reel', 190)
 
@@ -158,11 +158,11 @@ export function getPricedAddOns(tourTitle = '') {
   const key = String(tourTitle).toLowerCase()
 
   if (/quad bike/.test(key) && !/desert|safari/.test(key)) {
-    return [PRIVATE_SUV, DRONE_REEL, addOn('Extra 30 Min Quad Bike Track Extension', 120), addOn('BBQ Dinner Upgrade', 90)]
+    return [PRIVATE_SUV, BUGGY_RIDE, addOn('Extra 30 Min Quad Bike Track Extension', 120), addOn('BBQ Dinner Upgrade', 90)]
   }
 
   if (/buggy|can-am/.test(key)) {
-    return [PRIVATE_SUV, DRONE_REEL, addOn('Extra 30 Min Dune Buggy Ride', 220), addOn('BBQ Dinner Upgrade', 90)]
+    return [PRIVATE_SUV, addOn('Extra 30 Min Dune Buggy Ride', 600), addOn('Quad Bike Ride Upgrade (30 Min)', 120), addOn('BBQ Dinner Upgrade', 90)]
   }
 
   if (/e-jet|water go kart/.test(key)) {
@@ -170,7 +170,7 @@ export function getPricedAddOns(tourTitle = '') {
   }
 
   if (/desert|safari|camel|falcon|bedouin|caravanserai|fortress/.test(key)) {
-    return [PRIVATE_SUV, DRONE_REEL, addOn('Quad Bike Ride Upgrade (30 Min)', 120), addOn('VIP Seating Upgrade', 150)]
+    return [PRIVATE_SUV, BUGGY_RIDE, addOn('Quad Bike Ride Upgrade (30 Min)', 120), addOn('VIP Seating Upgrade', 150)]
   }
 
   if (/city tour|emirates tour|mosque|heritage|abu dhabi|old dubai/.test(key)) {

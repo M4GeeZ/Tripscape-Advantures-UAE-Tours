@@ -506,9 +506,9 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
     <div className="tp-page" ref={pageRef}>
       <Navbar menuOpen={menuOpen} setMenuOpen={setMenuOpen} variant="light" showTopBar />
       <main>
-        <section className="tp-hero">
+        <section className={`tp-hero${heroVideoOk ? ' tp-hero--video' : ''}`}>
           {images[0] && <div className="tp-hero__bg" style={{ backgroundImage: `url("${images[0]}")` }} aria-hidden="true" />}
-          {heroVideoOk && <HeroVideo src={HERO_VIDEO} poster={images[0]} onError={() => setHeroVideoOk(false)} />}
+          {heroVideoOk && <HeroVideo src={HERO_VIDEO} onError={() => setHeroVideoOk(false)} />}
           <div className="tp-container tp-hero__grid">
             <div className="tp-hero__content">
               <nav className="tp-breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/tours">Tours</a><span>/</span><span aria-current="page">{tour.title}</span></nav>

@@ -68,6 +68,22 @@
     />
 
     <title>Tripscape Adventures</title>
+    <!-- Page preloader (logo animation) -->
+    <style>
+      #tp-preloader{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;background:radial-gradient(circle at 50% 42%,#1b2f4a 0%,#0e1a2b 62%,#0a1320 100%);transition:opacity .6s ease,visibility .6s ease}
+      #tp-preloader.is-done{opacity:0;visibility:hidden;pointer-events:none}
+      #tp-preloader .tp-pre__box{display:flex;flex-direction:column;align-items:center;gap:26px;padding:0 24px}
+      #tp-preloader .tp-pre__logo{position:relative;width:min(300px,64vw);animation:tp-pre-in .9s cubic-bezier(.2,.7,.2,1) both,tp-pre-float 3.2s ease-in-out .9s infinite}
+      #tp-preloader .tp-pre__logo img{display:block;width:100%;height:auto}
+      #tp-preloader .tp-pre__logo::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,rgba(255,214,140,.75) 50%,transparent 65%);background-size:250% 100%;background-position:150% 0;-webkit-mask:var(--tp-logo) center/contain no-repeat;mask:var(--tp-logo) center/contain no-repeat;animation:tp-pre-shine 2.1s ease-in-out .5s infinite}
+      #tp-preloader .tp-pre__bar{width:min(190px,48vw);height:3px;border-radius:3px;background:rgba(255,255,255,.14);overflow:hidden}
+      #tp-preloader .tp-pre__bar span{display:block;height:100%;width:40%;border-radius:3px;background:linear-gradient(90deg,#c98b2e,#f2c571);animation:tp-pre-bar 1.3s ease-in-out infinite}
+      @keyframes tp-pre-in{from{opacity:0;transform:translateY(14px) scale(.92)}to{opacity:1;transform:none}}
+      @keyframes tp-pre-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+      @keyframes tp-pre-shine{from{background-position:150% 0}to{background-position:-60% 0}}
+      @keyframes tp-pre-bar{0%{transform:translateX(-110%)}100%{transform:translateX(300%)}}
+      @media (prefers-reduced-motion:reduce){#tp-preloader .tp-pre__logo,#tp-preloader .tp-pre__logo::after,#tp-preloader .tp-pre__bar span{animation:none}}
+    </style>
   </head>
 
   <body>
@@ -81,6 +97,27 @@
       ></iframe>
     </noscript>
     <!-- End Google Tag Manager (noscript) -->
+
+    <div id="tp-preloader" role="status" aria-label="Loading Tripscape Adventures">
+      <div class="tp-pre__box">
+        <div class="tp-pre__logo" style="--tp-logo:url('/images/nav-logo-white.png')"><img src="/images/nav-logo-white.png" alt="Tripscape Adventures" width="300" /></div>
+        <div class="tp-pre__bar" aria-hidden="true"><span></span></div>
+      </div>
+    </div>
+    <script>
+      (function () {
+        var el = document.getElementById('tp-preloader');
+        if (!el) return;
+        var start = Date.now(), closed = false;
+        function close() {
+          if (closed) return; closed = true;
+          var wait = Math.max(0, 1100 - (Date.now() - start));
+          setTimeout(function () { el.classList.add('is-done'); setTimeout(function () { el.remove(); }, 800); }, wait);
+        }
+        if (document.readyState === 'complete') close(); else window.addEventListener('load', close);
+        setTimeout(close, 6000);
+      })();
+    </script>
 
     <div id="root"></div>
 

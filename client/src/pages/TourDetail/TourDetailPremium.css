@@ -779,3 +779,8 @@
 @media (min-width: 1181px) and (max-width: 1700px) and (max-height: 700px) {
   .tp-page { zoom: .75; }
 }
+
+/* The hero video plays straight away: the tour photo is only the fallback when the video is missing or motion is reduced. */
+@media (prefers-reduced-motion: no-preference) {
+  .tp-hero--video .tp-hero__bg { display: none; }
+}
