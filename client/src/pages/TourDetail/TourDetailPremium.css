@@ -739,3 +739,21 @@
   .tp-page .tp-preview__footer { margin-top: 16px; }
   .tp-page .tp-preview__link { min-height: 42px; padding: 10px 18px; font-size: 13px; }
 }
+
+/* Review source tabs: Google / Tripadvisor */
+.tp-page .tp-reviews-switch { display: flex; flex-direction: column; align-items: center; gap: 14px; margin: -20px 0 var(--tp-title-gap); }
+.tp-page .tp-review-tabs { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.tp-page .tp-review-tab { display: inline-flex; align-items: center; gap: 9px; min-height: 44px; padding: 9px 20px; border: 1px solid #e6dccb; border-radius: 999px; background: #fff; color: #4b4437; font: inherit; font-size: 13.5px; font-weight: 800; cursor: pointer; transition: border-color .2s ease, background .2s ease, box-shadow .2s ease, transform .2s ease; }
+.tp-page .tp-review-tab svg { flex: 0 0 auto; }
+.tp-page .tp-review-tab:hover { border-color: #d8b97a; transform: translateY(-1px); }
+.tp-page .tp-review-tab:focus-visible { outline: 3px solid rgba(201,138,46,.3); outline-offset: 2px; }
+.tp-page .tp-review-tab[aria-selected="true"] { border-color: var(--tp-gold); background: #fff8ec; color: #1d2433; box-shadow: 0 8px 20px rgba(168,107,20,.14); }
+.tp-page .tp-review-card__title { display: block; margin-bottom: 6px; color: #1d2433; font-weight: 800; }
+.tp-page .tp-reviews-all { display: flex; justify-content: center; margin: 18px 0 0; }
+.tp-page .tp-reviews-all a { display: inline-flex; align-items: center; gap: 6px; color: #8a5a14; font-size: 13px; font-weight: 800; text-decoration: none; border-bottom: 1px solid transparent; }
+.tp-page .tp-reviews-all a:hover { border-bottom-color: currentColor; }
+@media (max-width: 640px) {
+  .tp-page .tp-reviews-switch { gap: 12px; margin-top: -14px; }
+  .tp-page .tp-review-tabs { width: 100%; gap: 8px; }
+  .tp-page .tp-review-tab { flex: 1 1 0; justify-content: center; padding: 9px 10px; font-size: 12.5px; }
+}

@@ -15,7 +15,10 @@ import { tourCatalog } from '../../data'
 import { getTourDetail, getTourDetailHref } from '../../tourDetails'
 import { apiUrl } from '../../utils/apiBaseUrl'
 import { isDisplayableReview } from '../../utils/reviews'
-import { googleReviews } from '../../data/googleReviews'
+import { GOOGLE_REVIEWS_URL, googleReviews } from '../../data/googleReviews'
+import { TRIPADVISOR_RATING, TRIPADVISOR_TOTAL, TRIPADVISOR_URL, tripadvisorReviews } from '../../data/tripadvisorReviews'
+import { GoogleLogo, TripadvisorLogo } from '../../components/ReviewLogos'
+import InstagramFeed from '../../components/InstagramFeed/InstagramFeed'
 import { reviews as siteReviews } from '../../data'
 import { getTourImages, MAX_TOUR_IMAGES, orderedImages, useTourImages } from '../../utils/tourImages'
 import { applyTourPricing } from '../../utils/tourPricing'
@@ -316,9 +319,17 @@ function reviewerPhoto(name) {
   return REVIEWER_PHOTOS.includes(first) ? `/images/reviewers/${first}.jpg` : ''
 }
 
-function Reviews({ reviews }) {
+const isTripadvisor = (review) => /tripadvisor/i.test(String(review?.source || ''))
+
+function Reviews({ reviews: allReviews }) {
   const trackRef = useRef(null)
   const [progress, setProgress] = useState(25)
+  const [tab, setTab] = useState('google')
+  // Google tab: every review that is not from Tripadvisor. Tripadvisor tab: the saved Tripadvisor reviews
+  // plus any review added in the admin panel with the source "Tripadvisor".
+  const googleList = useMemo(() => allReviews.filter((review) => !isTripadvisor(review)), [allReviews])
+  const tripadvisorList = useMemo(() => [...allReviews.filter(isTripadvisor), ...tripadvisorReviews], [allReviews])
+  const reviews = tab === 'tripadvisor' ? tripadvisorList : googleList
 
   const updateEdge = () => {
     const track = trackRef.current
@@ -332,6 +343,13 @@ function Reviews({ reviews }) {
     return () => window.removeEventListener('resize', updateEdge)
   }, [reviews.length])
 
+  // Start from the first review when the source changes.
+  useEffect(() => {
+    trackRef.current?.scrollTo({ left: 0, behavior: 'auto' })
+    updateEdge()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab])
+
   const slide = (direction) => {
     const track = trackRef.current
     if (!track) return
@@ -343,19 +361,25 @@ function Reviews({ reviews }) {
     else track.scrollBy({ left: direction * step, behavior: 'smooth' })
   }
 
-  if (!reviews.length) return null
+  if (!googleList.length && !tripadvisorList.length) return null
   return (
     <section className="tp-reviews-section">
       <div className="tp-container">
         <SectionTitle centered kicker="Authentic guest experiences" title="Verified Explorer Reviews" copy="Published feedback shared by Tripscape customers." />
-        <div className="tp-reviews-badge"><span className="tp-rating-label"><Star size={16} fill="currentColor" /> Guest experiences</span></div>
-        <div className="tp-reviews" ref={trackRef} onScroll={updateEdge} tabIndex={0} aria-label="Customer reviews">
+        <div className="tp-reviews-switch">
+          <div className="tp-review-tabs" role="tablist" aria-label="Review source">
+            <button type="button" role="tab" id="reviews-tab-google" aria-selected={tab === 'google'} aria-controls="reviews-panel" className="tp-review-tab" onClick={() => setTab('google')}><GoogleLogo size={20} /><span>Google reviews</span></button>
+            <button type="button" role="tab" id="reviews-tab-tripadvisor" aria-selected={tab === 'tripadvisor'} aria-controls="reviews-panel" className="tp-review-tab" onClick={() => setTab('tripadvisor')}><TripadvisorLogo size={22} /><span>Tripadvisor</span></button>
+          </div>
+          <span className="tp-rating-label"><Star size={16} fill="currentColor" /> {tab === 'tripadvisor' ? `${TRIPADVISOR_RATING} · ${TRIPADVISOR_TOTAL} reviews on Tripadvisor` : 'Guest experiences'}</span>
+        </div>
+        <div className="tp-reviews" id="reviews-panel" role="tabpanel" aria-labelledby={`reviews-tab-${tab}`} ref={trackRef} onScroll={updateEdge} tabIndex={0} aria-label="Customer reviews" key={tab}>
           {reviews.map((review, index) => (
             <article className="tp-review-card" key={review._id || `${review.name}-${index}`} style={{ '--i': index }}>
               <span className="tp-review-card__quote" aria-hidden="true">“</span>
-              <div className="tp-review-card__top"><span className="tp-review-card__avatar">{reviewerPhoto(review.name) ? <img src={reviewerPhoto(review.name)} alt="" loading="lazy" width="46" height="46" /> : String(review.name || 'G').charAt(0)}</span><div><strong>{review.name || 'Guest'}</strong>{review.source && <small>{review.source}</small>}</div></div>
+              <div className="tp-review-card__top"><span className="tp-review-card__avatar">{reviewerPhoto(review.name) ? <img src={reviewerPhoto(review.name)} alt="" loading="lazy" width="46" height="46" /> : String(review.name || 'G').charAt(0)}</span><div><strong>{review.name || 'Guest'}</strong>{review.source && <small>{[review.source, tab === 'tripadvisor' ? review.place : '', tab === 'tripadvisor' ? review.date : ''].filter(Boolean).join(' · ')}</small>}</div></div>
               {Number.isFinite(Number(review.rating)) && <div className="tp-review-card__stars" aria-label={`${review.rating} out of 5 stars`}>{'★'.repeat(Math.max(0, Math.min(5, Math.round(Number(review.rating)))))}</div>}
-              <p>{review.text}</p>
+              <p>{review.title && <strong className="tp-review-card__title">{review.title}</strong>}{review.text}</p>
             </article>
           ))}
         </div>
@@ -364,6 +388,11 @@ function Reviews({ reviews }) {
           <div className="tp-reviews-progress" aria-hidden="true"><span style={{ width: `${progress}%` }} /></div>
           <button type="button" onClick={() => slide(1)} aria-label="Next reviews"><ChevronRight size={20} /></button>
         </div>
+        <p className="tp-reviews-all">
+          {tab === 'tripadvisor'
+            ? <a href={TRIPADVISOR_URL} target="_blank" rel="noopener noreferrer">Read all {TRIPADVISOR_TOTAL} reviews on Tripadvisor <ArrowUpRight size={15} /></a>
+            : <a href={GOOGLE_REVIEWS_URL} target="_blank" rel="noopener noreferrer">See all reviews on Google <ArrowUpRight size={15} /></a>}
+        </p>
       </div>
     </section>
   )
@@ -514,6 +543,7 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
 
         <ExperienceFlow tour={tour} />
         <Gallery images={images} tour={tour} onOpen={setLightbox} />
+        <InstagramFeed />
         <Comparison tour={tour} />
         <Reviews reviews={reviews} />
         <Faqs tour={seo ? { ...tour, faqs: seoFaqs } : tour} title={seo?.faqsTitle} />
