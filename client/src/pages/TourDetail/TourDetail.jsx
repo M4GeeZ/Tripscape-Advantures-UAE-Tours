@@ -380,6 +380,11 @@ function Reviews({ reviews: allReviews }) {
           </div>
           <span className="tp-rating-label"><Star size={16} fill="currentColor" /> {tab === 'tripadvisor' ? `${TRIPADVISOR_RATING} · ${TRIPADVISOR_TOTAL} reviews on Tripadvisor` : 'Guest experiences'}</span>
         </div>
+        <div className="tp-reviews-nav tp-reviews-nav--top">
+          <button type="button" onClick={() => slide(-1)} aria-label="Previous reviews"><ChevronLeft size={20} /></button>
+          <div className="tp-reviews-progress" aria-hidden="true"><span style={{ width: `${progress}%` }} /></div>
+          <button type="button" onClick={() => slide(1)} aria-label="Next reviews"><ChevronRight size={20} /></button>
+        </div>
         <div className={`tp-reviews${tab === 'tripadvisor' ? ' tp-reviews--fit' : ''}`} id="reviews-panel" role="tabpanel" aria-labelledby={`reviews-tab-${tab}`} ref={trackRef} onScroll={updateEdge} tabIndex={0} aria-label="Customer reviews" key={tab}>
           {reviews.map((review, index) => (
             <article className="tp-review-card" key={review._id || `${review.name}-${index}`} style={{ '--i': index }}>
@@ -389,11 +394,6 @@ function Reviews({ reviews: allReviews }) {
               <p>{review.title && <strong className="tp-review-card__title">{review.title}</strong>}{review.text}</p>
             </article>
           ))}
-        </div>
-        <div className="tp-reviews-nav">
-          <button type="button" onClick={() => slide(-1)} aria-label="Previous reviews"><ChevronLeft size={20} /></button>
-          <div className="tp-reviews-progress" aria-hidden="true"><span style={{ width: `${progress}%` }} /></div>
-          <button type="button" onClick={() => slide(1)} aria-label="Next reviews"><ChevronRight size={20} /></button>
         </div>
         <p className="tp-reviews-all">
           {tab === 'tripadvisor'

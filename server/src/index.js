@@ -14,6 +14,7 @@ import adminRouter from './routes/admin.js'
 import seoRouter from './routes/seo.js'
 import promosRouter from './routes/promos.js'
 import instagramRouter from './routes/instagram.js'
+import youtubeRouter from './routes/youtube.js'
 import { securityHeaders } from './middleware/security.js'
 import { seedInitialBlogs, seedInitialTours } from './data/seedCms.js'
 import { serveMedia, serveUploadFromDb } from './utils/uploadStore.js'
@@ -63,6 +64,7 @@ app.use('/api/blogs', blogsRouter)
 app.use('/api/seo', seoRouter)
 app.use('/api/promos', promosRouter)
 app.use('/api/instagram', instagramRouter)
+app.use('/api/youtube', youtubeRouter)
 app.use('/api/admin/auth', adminAuthRouter)
 app.use('/api/admin', adminRouter)
 app.use('/api/uploads', express.static(path.resolve(__dirname, '../uploads'), { maxAge: '7d', immutable: true }))

@@ -602,6 +602,7 @@
 .tp-page .tp-reviews-nav { display: flex; align-items: center; justify-content: center; gap: 18px; max-width: 520px; margin: 6px auto 0; }
 .tp-page .tp-reviews-nav button { flex: 0 0 auto; width: 46px; height: 46px; display: grid; place-items: center; padding: 0; border: 1px solid #e6dccb; border-radius: 50%; background: #fff; color: #7a5316; cursor: pointer; box-shadow: 0 6px 16px rgba(48,42,33,.08); transition: background .2s, color .2s, transform .2s, box-shadow .2s; }
 .tp-page .tp-reviews-nav button:hover { background: var(--tp-gold-dark); border-color: var(--tp-gold-dark); color: #fff; transform: translateY(-2px); box-shadow: 0 10px 22px rgba(168,107,20,.28); }
+.tp-page .tp-reviews-nav--top { margin: 0 auto 10px; }
 .tp-page .tp-reviews-nav button:active { transform: scale(.94); }
 .tp-page .tp-reviews-nav .tp-reviews-progress { flex: 1; margin: 0; }
 .tp-page .tp-reviews-section .tp-section-title--center p { margin-inline: auto; }
@@ -758,4 +759,23 @@
   .tp-page .tp-reviews-switch { gap: 12px; margin-top: -14px; }
   .tp-page .tp-review-tabs { width: 100%; gap: 8px; }
   .tp-page .tp-review-tab { flex: 1 1 0; justify-content: center; padding: 9px 10px; font-size: 12.5px; }
+}
+
+/* Laptop screens (1920x1080 with Windows scaling of 125-150%) are only ~1280-1540px wide: keep a clear gap on both sides. */
+@media (min-width: 1181px) {
+  .tp-page .tp-container { width: min(1220px, calc(100% - 2 * max(64px, 8vw))); }
+}
+
+/*
+  Laptops (1920x1080 with Windows scaling) show only ~1280x600px of page: the tour page is drawn at 80% (75% on very short
+  screens) so a whole section fits on screen, like browser zoom 80%. Header, footer and floating buttons are not touched.
+*/
+@media (min-width: 1181px) and (max-width: 1700px) and (max-height: 900px) {
+  .tp-page { zoom: .8; }
+  .tp-page .tp-container { width: min(1220px, calc(100% - 96px)); }
+  .tp-booking-col__sticky { top: 125px; }
+  .tp-page .tp-gallery-section { padding-block: 40px; }
+}
+@media (min-width: 1181px) and (max-width: 1700px) and (max-height: 700px) {
+  .tp-page { zoom: .75; }
 }
