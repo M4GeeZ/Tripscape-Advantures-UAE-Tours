@@ -19,6 +19,7 @@ import { GOOGLE_REVIEWS_URL, googleReviews } from '../../data/googleReviews'
 import { TRIPADVISOR_RATING, TRIPADVISOR_TOTAL, TRIPADVISOR_URL, tripadvisorReviews } from '../../data/tripadvisorReviews'
 import { GoogleLogo, TripadvisorLogo } from '../../components/ReviewLogos'
 import InstagramFeed from '../../components/InstagramFeed/InstagramFeed'
+import YoutubeFeed from '../../components/YoutubeFeed/YoutubeFeed'
 import { reviews as siteReviews } from '../../data'
 import { getTourImages, MAX_TOUR_IMAGES, orderedImages, useTourImages } from '../../utils/tourImages'
 import { applyTourPricing } from '../../utils/tourPricing'
@@ -314,9 +315,15 @@ function Comparison({ tour }) {
 
 // Placeholder profile photos (stored locally) keyed by reviewer first name; others fall back to an initial.
 const REVIEWER_PHOTOS = ['ravindu', 'cara', 'davide', 'babita', 'oneil', 'ardelia', 'simon', 'priya', 'james', 'sophie', 'daniel']
-function reviewerPhoto(name) {
+function reviewerPhoto(name, anyName = false) {
   const first = String(name || '').trim().split(' ')[0].toLowerCase().replace(/[^a-z]/g, '')
-  return REVIEWER_PHOTOS.includes(first) ? `/images/reviewers/${first}.jpg` : ''
+  if (REVIEWER_PHOTOS.includes(first)) return `/images/reviewers/${first}.jpg`
+  if (!anyName) return ''
+  // Everyone else gets one of the placeholder photos, always the same one for the same name.
+  const key = String(name || 'guest')
+  let hash = 0
+  for (let i = 0; i < key.length; i += 1) hash = (hash * 31 + key.charCodeAt(i)) % 9973
+  return `/images/reviewers/${REVIEWER_PHOTOS[hash % REVIEWER_PHOTOS.length]}.jpg`
 }
 
 const isTripadvisor = (review) => /tripadvisor/i.test(String(review?.source || ''))
@@ -373,11 +380,11 @@ function Reviews({ reviews: allReviews }) {
           </div>
           <span className="tp-rating-label"><Star size={16} fill="currentColor" /> {tab === 'tripadvisor' ? `${TRIPADVISOR_RATING} · ${TRIPADVISOR_TOTAL} reviews on Tripadvisor` : 'Guest experiences'}</span>
         </div>
-        <div className="tp-reviews" id="reviews-panel" role="tabpanel" aria-labelledby={`reviews-tab-${tab}`} ref={trackRef} onScroll={updateEdge} tabIndex={0} aria-label="Customer reviews" key={tab}>
+        <div className={`tp-reviews${tab === 'tripadvisor' ? ' tp-reviews--fit' : ''}`} id="reviews-panel" role="tabpanel" aria-labelledby={`reviews-tab-${tab}`} ref={trackRef} onScroll={updateEdge} tabIndex={0} aria-label="Customer reviews" key={tab}>
           {reviews.map((review, index) => (
             <article className="tp-review-card" key={review._id || `${review.name}-${index}`} style={{ '--i': index }}>
               <span className="tp-review-card__quote" aria-hidden="true">“</span>
-              <div className="tp-review-card__top"><span className="tp-review-card__avatar">{reviewerPhoto(review.name) ? <img src={reviewerPhoto(review.name)} alt="" loading="lazy" width="46" height="46" /> : String(review.name || 'G').charAt(0)}</span><div><strong>{review.name || 'Guest'}</strong>{review.source && <small>{[review.source, tab === 'tripadvisor' ? review.place : '', tab === 'tripadvisor' ? review.date : ''].filter(Boolean).join(' · ')}</small>}</div></div>
+              <div className="tp-review-card__top"><span className="tp-review-card__avatar">{reviewerPhoto(review.name, tab === 'tripadvisor') ? <img src={reviewerPhoto(review.name, tab === 'tripadvisor')} alt="" loading="lazy" width="46" height="46" /> : String(review.name || 'G').charAt(0)}</span><div><strong>{review.name || 'Guest'}</strong>{review.source && <small>{[review.source, tab === 'tripadvisor' ? review.place : '', tab === 'tripadvisor' ? review.date : ''].filter(Boolean).join(' · ')}</small>}</div></div>
               {Number.isFinite(Number(review.rating)) && <div className="tp-review-card__stars" aria-label={`${review.rating} out of 5 stars`}>{'★'.repeat(Math.max(0, Math.min(5, Math.round(Number(review.rating)))))}</div>}
               <p>{review.title && <strong className="tp-review-card__title">{review.title}</strong>}{review.text}</p>
             </article>
@@ -545,6 +552,7 @@ export default function TourDetail({ categorySlug, tourSlug, menuOpen, setMenuOp
         <Gallery images={images} tour={tour} onOpen={setLightbox} />
         <InstagramFeed />
         <Comparison tour={tour} />
+        <YoutubeFeed />
         <Reviews reviews={reviews} />
         <Faqs tour={seo ? { ...tour, faqs: seoFaqs } : tour} title={seo?.faqsTitle} />
         <RelatedTours tour={tour} />

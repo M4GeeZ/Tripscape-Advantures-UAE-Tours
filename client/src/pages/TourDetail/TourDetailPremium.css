@@ -748,6 +748,8 @@
 .tp-page .tp-review-tab:hover { border-color: #d8b97a; transform: translateY(-1px); }
 .tp-page .tp-review-tab:focus-visible { outline: 3px solid rgba(201,138,46,.3); outline-offset: 2px; }
 .tp-page .tp-review-tab[aria-selected="true"] { border-color: var(--tp-gold); background: #fff8ec; color: #1d2433; box-shadow: 0 8px 20px rgba(168,107,20,.14); }
+/* Tripadvisor tab: each card is only as tall as its own text, so just the long reviews are big. */
+.tp-page .tp-reviews--fit { align-items: flex-start; }
 .tp-page .tp-review-card__title { display: block; margin-bottom: 6px; color: #1d2433; font-weight: 800; }
 .tp-page .tp-reviews-all { display: flex; justify-content: center; margin: 18px 0 0; }
 .tp-page .tp-reviews-all a { display: inline-flex; align-items: center; gap: 6px; color: #8a5a14; font-size: 13px; font-weight: 800; text-decoration: none; border-bottom: 1px solid transparent; }

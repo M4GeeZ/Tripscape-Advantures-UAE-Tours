@@ -1,0 +1,14 @@
+/* YouTube section: same layout as the Instagram one, with a few colour and player tweaks. */
+.yt-section {
+  background:
+    radial-gradient(circle at 88% 0%, rgba(255, 60, 60, .14), transparent 42%),
+    radial-gradient(circle at 8% 100%, rgba(201, 139, 46, .14), transparent 40%),
+    #101826;
+}
+
+.yt-card__play { background: #ff0033; color: #fff; }
+.yt-card:hover .yt-card__play { background: #fff; color: #ff0033; }
+
+.yt-modal__box { width: min(760px, 100%); }
+.yt-modal__media { aspect-ratio: 16 / 9; max-height: none; }
+.yt-modal__media iframe { width: 100%; height: 100%; display: block; border: 0; background: #000; }
